@@ -1,12 +1,21 @@
 from io import StringIO
+import os
 
 from alembic import command
 from alembic.config import Config
+from sqlalchemy import URL
 
 
 def test_alembic_offline_upgrade_renders_phase_1_5_hardening() -> None:
     output = StringIO()
     config = Config("alembic.ini", output_buffer=output)
+    os.environ["DATABASE_URL"] = URL.create(
+        "postgresql+psycopg",
+        username="test_user",
+        password="test_password",
+        host="localhost",
+        database="tally_test",
+    ).render_as_string(hide_password=False)
 
     command.upgrade(config, "head", sql=True)
 

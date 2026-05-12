@@ -1,17 +1,47 @@
 from typing import Annotated
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlmodel import Session
 
+from app.api.router import api_router
+from app.core.config import get_settings
+from app.core.middleware import RequestSizeLimitMiddleware
 from app.db.session import get_session
 
+
+settings = get_settings()
 
 app = FastAPI(
     title="Tally API",
     version="0.1.0",
     description="CSV-first spending intelligence backend. Tally does not provide financial advice.",
 )
+app.add_middleware(RequestSizeLimitMiddleware, max_body_bytes=settings.max_request_body_bytes)
+app.include_router(api_router)
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(
+    request: Request,
+    exc: RequestValidationError,
+) -> JSONResponse:
+    del request, exc
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+        content={"detail": "Invalid request payload."},
+    )
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    del request, exc
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"detail": "Internal server error."},
+    )
 
 
 @app.get("/health", tags=["health"])

@@ -19,8 +19,16 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
       - name: Install dependencies
         run: python -m pip install -e ".[dev]"
 
       - name: Run tests
         run: pytest
+
+      - name: Run mobile auth safety check
+        run: npm --prefix mobile run check:auth

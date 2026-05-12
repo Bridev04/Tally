@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Tally",
+    "slug": "tally",
+    "scheme": "tally",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "plugins": ["expo-router", "expo-secure-store"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

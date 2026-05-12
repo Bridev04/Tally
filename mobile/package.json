@@ -1,0 +1,31 @@
+{
+  "name": "tally-mobile",
+  "version": "0.1.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "check:auth": "node scripts/check-auth-safety.mjs"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.1.1",
+    "expo": "~55.0.23",
+    "expo-router": "~55.0.14",
+    "expo-secure-store": "~55.0.13",
+    "expo-status-bar": "~55.0.6",
+    "react": "19.2.6",
+    "react-native": "0.85.3",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.25.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.0",
+    "typescript": "~6.0.3"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
+  }
+}

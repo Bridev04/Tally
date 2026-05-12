@@ -4,6 +4,7 @@ from decimal import Decimal
 import pytest
 from sqlalchemy import event, inspect
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.pool import StaticPool
 from sqlmodel import SQLModel, Session, create_engine, select
 
 from app.models import (
@@ -18,7 +19,11 @@ from app.models import (
 
 
 def create_test_engine():
-    engine = create_engine("sqlite:///:memory:")
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
 
     @event.listens_for(engine, "connect")
     def enable_foreign_keys(dbapi_connection, connection_record):  # noqa: ANN001

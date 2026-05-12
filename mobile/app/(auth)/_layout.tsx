@@ -1,0 +1,31 @@
+import { Redirect, Stack } from "expo-router";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+
+import { useAuth } from "@/context/AuthContext";
+
+export default function AuthLayout() {
+  const { isLoading, token } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator color="#256B5B" />
+      </View>
+    );
+  }
+
+  if (token) {
+    return <Redirect href="/(app)" />;
+  }
+
+  return <Stack screenOptions={{ headerShown: false }} />;
+}
+
+const styles = StyleSheet.create({
+  centered: {
+    alignItems: "center",
+    backgroundColor: "#F7F4EF",
+    flex: 1,
+    justifyContent: "center",
+  },
+});

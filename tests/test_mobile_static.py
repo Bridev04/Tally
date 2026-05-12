@@ -19,6 +19,7 @@ def test_mobile_uses_secure_store_not_async_storage() -> None:
     assert "expo-secure-store" in source
     assert "SecureStore.setItemAsync" in source
     assert "SecureStore.deleteItemAsync" in source
+    assert "AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY" in source
     assert "AsyncStorage" not in source
 
 

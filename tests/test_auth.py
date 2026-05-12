@@ -173,9 +173,19 @@ def test_auth_endpoints_reject_malformed_payloads(client) -> None:  # noqa: ANN0
     test_client = TestClient(client)
 
     response = test_client.post("/auth/register", json={"email": "not-an-email"})
+    mass_assignment_response = test_client.post(
+        "/auth/register",
+        json={
+            "email": "extra@example.com",
+            "password": "correct-horse-battery",
+            "password_hash": "attacker-controlled",
+        },
+    )
 
     assert response.status_code == 422
     assert response.json() == {"detail": "Invalid request payload."}
+    assert mass_assignment_response.status_code == 422
+    assert mass_assignment_response.json() == {"detail": "Invalid request payload."}
 
 
 def test_auth_rate_limit_behavior(client) -> None:  # noqa: ANN001

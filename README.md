@@ -3,6 +3,10 @@
 Tally is a CSV-first spending intelligence backend. It does not connect to banks,
 store card numbers, store bank credentials, or provide financial advice.
 
+Allowed transaction input sources are CSV upload, manual transaction entry, paste
+import, and synthetic demo data only. Do not add bank connections, account
+aggregation, or financial-account login flows.
+
 ## Phase 1
 
 - SQLModel database models
@@ -32,6 +36,8 @@ to its parsed transactions.
 - Audit log entries for register and login events
 - Basic in-memory auth endpoint rate limiting
 - Expo Router mobile auth shell with SecureStore token persistence
+- Hardened auth schemas that reject unexpected fields
+- Explicit no-bank-import guardrails for future transaction ingestion
 
 The current rate limiter is process-local, which is fine for this phase and local
 development. Before running multiple backend instances, replace it with a Redis

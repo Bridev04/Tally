@@ -8,7 +8,7 @@ from sqlmodel import Session
 
 from app.api.router import api_router
 from app.core.config import get_settings
-from app.core.middleware import RequestSizeLimitMiddleware
+from app.core.middleware import RequestSizeLimitMiddleware, SecurityHeadersMiddleware
 from app.db.session import get_session
 
 
@@ -19,6 +19,7 @@ app = FastAPI(
     version="0.1.0",
     description="CSV-first spending intelligence backend. Tally does not provide financial advice.",
 )
+app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(RequestSizeLimitMiddleware, max_body_bytes=settings.max_request_body_bytes)
 app.include_router(api_router)
 

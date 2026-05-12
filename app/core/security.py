@@ -29,6 +29,7 @@ def create_access_token(
     now = datetime.now(UTC)
     payload = {
         "sub": str(user_id),
+        "typ": "access",
         "iat": int(now.timestamp()),
         "exp": int((now + expires_delta).timestamp()),
     }
@@ -39,7 +40,8 @@ def decode_access_token(*, token: str, secret: SecretStr, algorithms: list[str])
     try:
         payload = jwt.decode(token, secret.get_secret_value(), algorithms=algorithms)
         subject = payload.get("sub")
-        if not isinstance(subject, str):
+        token_type = payload.get("typ")
+        if not isinstance(subject, str) or token_type != "access":
             raise InvalidTokenError
         return uuid.UUID(subject)
     except (InvalidTokenError, ValueError) as exc:

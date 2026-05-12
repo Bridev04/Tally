@@ -2,7 +2,7 @@ from datetime import timedelta
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
@@ -43,6 +43,15 @@ def check_auth_rate_limit(
     limiter.check(key=f"{request.url.path}:{get_client_ip(request)}")
 
 
+def check_auth_identity_rate_limit(
+    *,
+    email: str,
+    request: Request,
+    limiter: InMemoryRateLimiter,
+) -> None:
+    limiter.check(key=f"{request.url.path}:email:{email.lower()}")
+
+
 def build_token_response(*, user: User, settings: Settings) -> TokenResponse:
     token = create_access_token(
         user_id=user.id,
@@ -61,9 +70,13 @@ def build_token_response(*, user: User, settings: Settings) -> TokenResponse:
 )
 def register(
     payload: RegisterRequest,
+    request: Request,
+    response: Response,
     session: Annotated[Session, Depends(get_session)],
     settings: Annotated[Settings, Depends(get_settings)],
+    limiter: Annotated[InMemoryRateLimiter, Depends(get_auth_rate_limiter)],
 ) -> TokenResponse:
+    check_auth_identity_rate_limit(email=payload.email, request=request, limiter=limiter)
     existing_user = session.exec(select(User).where(User.email == payload.email)).first()
     if existing_user is not None:
         raise HTTPException(
@@ -87,6 +100,8 @@ def register(
     session.commit()
     session.refresh(user)
     logger.info("User registered", extra={"user_id": str(user.id)})
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
     return build_token_response(user=user, settings=settings)
 
 
@@ -97,9 +112,13 @@ def register(
 )
 def login(
     payload: LoginRequest,
+    request: Request,
+    response: Response,
     session: Annotated[Session, Depends(get_session)],
     settings: Annotated[Settings, Depends(get_settings)],
+    limiter: Annotated[InMemoryRateLimiter, Depends(get_auth_rate_limiter)],
 ) -> TokenResponse:
+    check_auth_identity_rate_limit(email=payload.email, request=request, limiter=limiter)
     user = session.exec(select(User).where(User.email == payload.email)).first()
     if user is None or not verify_password(payload.password, user.password_hash):
         raise HTTPException(
@@ -111,6 +130,8 @@ def login(
     session.commit()
     session.refresh(user)
     logger.info("User logged in", extra={"user_id": str(user.id)})
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
     return build_token_response(user=user, settings=settings)
 
 

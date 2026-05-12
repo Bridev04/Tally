@@ -5,6 +5,9 @@ import { getMe, login as loginRequest, register as registerRequest } from "@/lib
 import type { User } from "@/types/auth";
 
 const tokenKey = "tally.authToken";
+const secureStoreOptions: SecureStore.SecureStoreOptions = {
+  keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+};
 
 type AuthContextValue = {
   isLoading: boolean;
@@ -27,7 +30,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     async function restoreSession() {
       try {
-        const storedToken = await SecureStore.getItemAsync(tokenKey);
+        const storedToken = await SecureStore.getItemAsync(tokenKey, secureStoreOptions);
         if (!storedToken) {
           return;
         }
@@ -37,7 +40,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           setUser(currentUser);
         }
       } catch {
-        await SecureStore.deleteItemAsync(tokenKey);
+        await SecureStore.deleteItemAsync(tokenKey, secureStoreOptions);
       } finally {
         if (isMounted) {
           setIsLoading(false);
@@ -52,7 +55,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, []);
 
   async function persistSession(nextToken: string, nextUser: User) {
-    await SecureStore.setItemAsync(tokenKey, nextToken);
+    await SecureStore.setItemAsync(tokenKey, nextToken, secureStoreOptions);
     setToken(nextToken);
     setUser(nextUser);
   }
@@ -68,7 +71,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }
 
   async function logout() {
-    await SecureStore.deleteItemAsync(tokenKey);
+    await SecureStore.deleteItemAsync(tokenKey, secureStoreOptions);
     setToken(null);
     setUser(null);
   }

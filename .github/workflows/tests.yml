@@ -32,3 +32,6 @@ jobs:
 
       - name: Run mobile auth safety check
         run: npm --prefix mobile run check:auth
+
+      - name: Audit mobile production dependencies
+        run: npm --prefix mobile audit --omit=dev

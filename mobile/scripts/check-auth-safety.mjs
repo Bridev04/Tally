@@ -25,6 +25,7 @@ const checks = [
   ["does not use AsyncStorage", !source.includes("AsyncStorage")],
   ["saves token with SecureStore", source.includes("SecureStore.setItemAsync")],
   ["clears token with SecureStore", source.includes("SecureStore.deleteItemAsync")],
+  ["uses device-local keychain access", source.includes("AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY")],
   ["validates email form input", source.includes("emailPattern")],
   ["validates register password length", source.includes("password.length < 8")],
   ["protects app navigation", source.includes("<Redirect href=\"/(auth)/login\"")],

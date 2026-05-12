@@ -4,7 +4,7 @@ from decimal import Decimal
 import uuid
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, DateTime, JSON, Numeric
+from sqlalchemy import CheckConstraint, Column, DateTime, JSON, Numeric
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.models.common import utc_now
@@ -15,9 +15,20 @@ if TYPE_CHECKING:
 
 class MonthlyInsightReport(SQLModel, table=True):
     __tablename__ = "monthly_insight_reports"
+    __table_args__ = (
+        CheckConstraint(
+            "total_spend >= 0",
+            name="ck_monthly_insight_reports_total_spend_nonnegative",
+        ),
+    )
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="users.id", nullable=False, index=True)
+    user_id: uuid.UUID = Field(
+        foreign_key="users.id",
+        ondelete="CASCADE",
+        nullable=False,
+        index=True,
+    )
     month: date = Field(nullable=False, index=True)
     total_spend: Decimal = Field(sa_column=Column(Numeric(12, 2), nullable=False))
     top_categories_json: dict = Field(default_factory=dict, sa_column=Column(JSON, nullable=False))

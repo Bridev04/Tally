@@ -1,7 +1,9 @@
 from datetime import date
 from decimal import Decimal
 
-from sqlalchemy import inspect
+import pytest
+from sqlalchemy import event, inspect
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import SQLModel, Session, create_engine, select
 
 from app.models import (
@@ -15,8 +17,19 @@ from app.models import (
 )
 
 
-def test_core_models_can_be_created() -> None:
+def create_test_engine():
     engine = create_engine("sqlite:///:memory:")
+
+    @event.listens_for(engine, "connect")
+    def enable_foreign_keys(dbapi_connection, connection_record):  # noqa: ANN001
+        del connection_record
+        dbapi_connection.execute("PRAGMA foreign_keys=ON")
+
+    return engine
+
+
+def test_core_models_can_be_created() -> None:
+    engine = create_test_engine()
     SQLModel.metadata.create_all(engine)
 
     with Session(engine) as session:
@@ -99,7 +112,7 @@ def test_core_models_can_be_created() -> None:
 
 
 def test_required_indexes_exist() -> None:
-    engine = create_engine("sqlite:///:memory:")
+    engine = create_test_engine()
     SQLModel.metadata.create_all(engine)
     inspector = inspect(engine)
 
@@ -111,3 +124,75 @@ def test_required_indexes_exist() -> None:
     assert "ix_transactions_transaction_date" in transaction_indexes
     assert "ix_transactions_category" in transaction_indexes
     assert "ix_transactions_merchant_normalized" in transaction_indexes
+
+
+def test_check_constraints_exist() -> None:
+    engine = create_test_engine()
+    SQLModel.metadata.create_all(engine)
+    inspector = inspect(engine)
+
+    upload_checks = {check["name"] for check in inspector.get_check_constraints("transaction_uploads")}
+    transaction_checks = {check["name"] for check in inspector.get_check_constraints("transactions")}
+    subscription_checks = {check["name"] for check in inspector.get_check_constraints("subscriptions")}
+
+    assert "ck_transaction_uploads_upload_status" in upload_checks
+    assert "ck_transaction_uploads_row_counts" in upload_checks
+    assert "ck_transactions_category_confidence" in transaction_checks
+    assert "ck_transactions_currency_length" in transaction_checks
+    assert "ck_subscriptions_confidence_score" in subscription_checks
+    assert "ck_subscriptions_status" in subscription_checks
+
+
+def test_upload_row_count_constraint_is_enforced() -> None:
+    engine = create_test_engine()
+    SQLModel.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        user = User(email="counts@example.com", password_hash="hashed-password")
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+
+        session.add(
+            TransactionUpload(
+                user_id=user.id,
+                file_name="bad-counts.csv",
+                upload_status="processed",
+                total_rows=1,
+                processed_rows=2,
+            )
+        )
+
+        with pytest.raises(IntegrityError):
+            session.commit()
+
+
+def test_upload_delete_cascades_to_transactions() -> None:
+    engine = create_test_engine()
+    SQLModel.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        user = User(email="cascade@example.com", password_hash="hashed-password")
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+
+        upload = TransactionUpload(user_id=user.id, file_name="cascade.csv", total_rows=1)
+        session.add(upload)
+        session.commit()
+        session.refresh(upload)
+
+        transaction = Transaction(
+            user_id=user.id,
+            upload_id=upload.id,
+            transaction_date=date(2026, 5, 1),
+            merchant_raw="MERCHANT",
+            amount=Decimal("10.00"),
+        )
+        session.add(transaction)
+        session.commit()
+
+        session.delete(upload)
+        session.commit()
+
+        assert session.exec(select(Transaction)).all() == []

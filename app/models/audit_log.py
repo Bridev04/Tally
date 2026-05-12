@@ -15,7 +15,12 @@ class AuditLog(SQLModel, table=True):
     __tablename__ = "audit_logs"
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="users.id", nullable=False, index=True)
+    user_id: uuid.UUID = Field(
+        foreign_key="users.id",
+        ondelete="CASCADE",
+        nullable=False,
+        index=True,
+    )
     action: str = Field(nullable=False, max_length=255)
     metadata_json: dict = Field(default_factory=dict, sa_column=Column(JSON, nullable=False))
     created_at: datetime = Field(

@@ -3,7 +3,7 @@ from decimal import Decimal
 import uuid
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, Numeric
+from sqlalchemy import CheckConstraint, Column, Numeric
 from sqlmodel import Field, Relationship
 
 from app.models.common import TimestampMixin
@@ -15,10 +15,27 @@ if TYPE_CHECKING:
 
 class Transaction(TimestampMixin, table=True):
     __tablename__ = "transactions"
+    __table_args__ = (
+        CheckConstraint(
+            "category_confidence IS NULL OR (category_confidence >= 0 AND category_confidence <= 1)",
+            name="ck_transactions_category_confidence",
+        ),
+        CheckConstraint("length(currency) = 3", name="ck_transactions_currency_length"),
+    )
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="users.id", nullable=False, index=True)
-    upload_id: uuid.UUID = Field(foreign_key="transaction_uploads.id", nullable=False, index=True)
+    user_id: uuid.UUID = Field(
+        foreign_key="users.id",
+        ondelete="CASCADE",
+        nullable=False,
+        index=True,
+    )
+    upload_id: uuid.UUID = Field(
+        foreign_key="transaction_uploads.id",
+        ondelete="CASCADE",
+        nullable=False,
+        index=True,
+    )
     transaction_date: date = Field(nullable=False, index=True)
     merchant_raw: str = Field(nullable=False, max_length=500)
     merchant_normalized: str | None = Field(default=None, index=True, max_length=255)

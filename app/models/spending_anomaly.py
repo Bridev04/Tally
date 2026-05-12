@@ -3,7 +3,7 @@ from decimal import Decimal
 import uuid
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, DateTime, Numeric
+from sqlalchemy import CheckConstraint, Column, DateTime, Numeric
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.models.common import utc_now
@@ -14,9 +14,20 @@ if TYPE_CHECKING:
 
 class SpendingAnomaly(SQLModel, table=True):
     __tablename__ = "spending_anomalies"
+    __table_args__ = (
+        CheckConstraint(
+            "severity IN ('low', 'medium', 'high')",
+            name="ck_spending_anomalies_severity",
+        ),
+    )
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    user_id: uuid.UUID = Field(foreign_key="users.id", nullable=False, index=True)
+    user_id: uuid.UUID = Field(
+        foreign_key="users.id",
+        ondelete="CASCADE",
+        nullable=False,
+        index=True,
+    )
     anomaly_type: str = Field(nullable=False, max_length=100)
     category: str | None = Field(default=None, index=True, max_length=100)
     merchant_name: str | None = Field(default=None, index=True, max_length=255)

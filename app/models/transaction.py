@@ -44,6 +44,7 @@ class Transaction(TimestampMixin, table=True):
     currency: str = Field(default="USD", nullable=False, max_length=3)
     category: str | None = Field(default=None, index=True, max_length=100)
     category_confidence: float | None = Field(default=None, ge=0, le=1)
+    category_manually_set: bool = Field(default=False, nullable=False)
     payment_type: str | None = Field(default=None, max_length=100)
     is_recurring_candidate: bool = Field(default=False, nullable=False)
 

@@ -4,6 +4,8 @@ import uuid
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from app.schemas.transaction import TransactionRead
+
 
 class StrictSchema(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
@@ -43,20 +45,6 @@ class PasteConfirmRequest(PastePreviewRequest):
 
 class DemoLoadRequest(StrictSchema):
     allow_overwrite: bool = False
-
-
-class TransactionRead(BaseModel):
-    id: uuid.UUID
-    transaction_date: date
-    merchant_raw: str
-    merchant_normalized: str | None
-    description: str | None
-    amount: Decimal
-    currency: str
-    category: str | None
-    created_at: datetime
-
-    model_config = ConfigDict(from_attributes=True)
 
 
 class UploadRead(BaseModel):

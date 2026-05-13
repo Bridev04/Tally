@@ -19,7 +19,57 @@ export type Transaction = {
   amount: string;
   currency: string;
   category: string | null;
+  category_confidence: number | null;
+  payment_type: string | null;
+  is_recurring_candidate: boolean;
   created_at: string;
+  updated_at: string;
+};
+
+export type TransactionFilters = {
+  date_from?: string;
+  date_to?: string;
+  category?: string;
+  merchant?: string;
+  search?: string;
+  payment_type?: string;
+  min_amount?: string;
+  max_amount?: string;
+  limit?: number;
+  offset?: number;
+};
+
+export type TransactionListResponse = {
+  transactions: Transaction[];
+  limit: number;
+  offset: number;
+  count: number;
+};
+
+export type CategorySummaryItem = {
+  category: string;
+  total_amount: string;
+  transaction_count: number;
+  percentage_of_total_expenses: string;
+};
+
+export type CategorySummaryResponse = {
+  items: CategorySummaryItem[];
+  total_expenses: string;
+  total_income: string;
+  transaction_count: number;
+};
+
+export type MerchantSummaryItem = {
+  merchant_normalized: string;
+  total_amount: string;
+  transaction_count: number;
+  first_seen: string;
+  last_seen: string;
+};
+
+export type MerchantSummaryResponse = {
+  items: MerchantSummaryItem[];
 };
 
 export type ImportResult = {
@@ -125,14 +175,80 @@ function authHeaders(token: string) {
   };
 }
 
-export function listTransactions(token: string): Promise<{ transactions: Transaction[] }> {
-  return request<{ transactions: Transaction[] }>(
-    "/transactions",
+function queryString(params?: Record<string, string | number | undefined>): string {
+  const query = new URLSearchParams();
+  Object.entries(params ?? {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== "") {
+      query.set(key, String(value));
+    }
+  });
+  const serialized = query.toString();
+  return serialized ? `?${serialized}` : "";
+}
+
+export function listTransactions(token: string, filters?: TransactionFilters): Promise<TransactionListResponse> {
+  return request<TransactionListResponse>(
+    `/transactions${queryString(filters)}`,
     {
       method: "GET",
       headers: authHeaders(token),
     },
     "Could not load transactions.",
+  );
+}
+
+export function getTransaction(token: string, transactionId: string): Promise<Transaction> {
+  return request<Transaction>(
+    `/transactions/${transactionId}`,
+    {
+      method: "GET",
+      headers: authHeaders(token),
+    },
+    "Could not load that transaction.",
+  );
+}
+
+export function updateTransactionCategory(
+  token: string,
+  transactionId: string,
+  category: string,
+): Promise<Transaction> {
+  return request<Transaction>(
+    `/transactions/${transactionId}/category`,
+    {
+      method: "PATCH",
+      headers: authHeaders(token),
+      body: JSON.stringify({ category }),
+    },
+    "Could not update the category.",
+  );
+}
+
+export function getCategorySummary(
+  token: string,
+  filters?: Pick<TransactionFilters, "date_from" | "date_to">,
+): Promise<CategorySummaryResponse> {
+  return request<CategorySummaryResponse>(
+    `/transactions/categories/summary${queryString(filters)}`,
+    {
+      method: "GET",
+      headers: authHeaders(token),
+    },
+    "Could not load category summary.",
+  );
+}
+
+export function getMerchantSummary(
+  token: string,
+  filters?: Pick<TransactionFilters, "date_from" | "date_to" | "category">,
+): Promise<MerchantSummaryResponse> {
+  return request<MerchantSummaryResponse>(
+    `/transactions/merchants/summary${queryString(filters)}`,
+    {
+      method: "GET",
+      headers: authHeaders(token),
+    },
+    "Could not load merchant summary.",
   );
 }
 

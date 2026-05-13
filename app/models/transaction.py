@@ -20,6 +20,10 @@ class Transaction(TimestampMixin, table=True):
             "category_confidence IS NULL OR (category_confidence >= 0 AND category_confidence <= 1)",
             name="ck_transactions_category_confidence",
         ),
+        CheckConstraint(
+            "category_source IN ('auto', 'manual', 'imported', 'unknown')",
+            name="ck_transactions_category_source",
+        ),
         CheckConstraint("length(currency) = 3", name="ck_transactions_currency_length"),
     )
 
@@ -45,6 +49,9 @@ class Transaction(TimestampMixin, table=True):
     category: str | None = Field(default=None, index=True, max_length=100)
     category_confidence: float | None = Field(default=None, ge=0, le=1)
     category_manually_set: bool = Field(default=False, nullable=False)
+    category_source: str = Field(default="unknown", nullable=False, index=True, max_length=20)
+    categorization_reason: str | None = Field(default=None, max_length=500)
+    categorization_rule: str | None = Field(default=None, max_length=255)
     payment_type: str | None = Field(default=None, max_length=100)
     is_recurring_candidate: bool = Field(default=False, nullable=False)
 

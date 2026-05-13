@@ -20,6 +20,10 @@ export type Transaction = {
   currency: string;
   category: string | null;
   category_confidence: number | null;
+  category_manually_set: boolean;
+  category_source: string;
+  categorization_reason: string | null;
+  categorization_rule: string | null;
   payment_type: string | null;
   is_recurring_candidate: boolean;
   created_at: string;

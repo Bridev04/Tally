@@ -1,0 +1,54 @@
+# Safety And Privacy
+
+Tally is not a financial advisor. It does not give investment, loan, credit, tax,
+or financial advice. It helps users understand imported transaction data through
+categorization, subscription detection, anomaly detection, and neutral spending
+insights.
+
+## Data Sources
+
+Allowed sources:
+
+- CSV upload
+- Manual transaction entry
+- Paste import
+- Synthetic demo data
+
+Disallowed sources:
+
+- Real bank connections
+- Plaid
+- FinanceKit
+- Bank APIs
+- Card linking
+- Account linking
+
+## Phase 5 Categorization
+
+Phase 5 categorization is deterministic and explainable. It does not use AI,
+LLMs, embeddings, or external enrichment APIs.
+
+The categorizer stores:
+
+- `category`
+- `category_confidence`
+- `category_source`
+- `categorization_reason`
+- `categorization_rule`
+
+Low-confidence or unclear transactions are marked `needs_review`. Users can edit
+categories, and those manual corrections are protected from future automatic
+categorization unless an authenticated request explicitly sets
+`overwrite_manual=true`.
+
+## Security Practices
+
+- Secrets are read from centralized settings and are never exposed to the mobile app.
+- Protected routes require authentication and current-user scoping.
+- Import, auth, and transaction routes use rate limiting.
+- Request and upload sizes are limited.
+- Schemas reject unexpected fields to reduce mass-assignment risk.
+- ORM-safe queries are used for database access.
+- Errors are generic and avoid stack traces, SQL details, internal paths, or secrets.
+- Audit logs record security-relevant events without raw CSV contents, pasted rows,
+  full transaction text, passwords, tokens, API keys, or card/bank credentials.

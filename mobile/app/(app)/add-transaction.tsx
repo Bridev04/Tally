@@ -1,10 +1,44 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/context/AuthContext";
 import { createManualTransaction } from "@/lib/api";
+
+const categories = [
+  "food",
+  "transportation",
+  "rent",
+  "subscriptions",
+  "shopping",
+  "entertainment",
+  "utilities",
+  "education",
+  "health",
+  "income",
+  "transfer",
+  "fees",
+  "other",
+  "needs_review",
+];
+
+const categoryLabels: Record<string, string> = {
+  food: "Food",
+  transportation: "Transportation",
+  rent: "Rent",
+  subscriptions: "Subscriptions",
+  shopping: "Shopping",
+  entertainment: "Entertainment",
+  utilities: "Utilities",
+  education: "Education",
+  health: "Health",
+  income: "Income",
+  transfer: "Transfer",
+  fees: "Fees",
+  other: "Other",
+  needs_review: "Needs review",
+};
 
 export default function AddTransactionScreen() {
   const { token } = useAuth();
@@ -87,7 +121,20 @@ export default function AddTransactionScreen() {
           value={currency}
         />
         <TextInput onChangeText={setDescription} placeholder="Description" style={styles.input} value={description} />
-        <TextInput onChangeText={setCategory} placeholder="Category optional" style={styles.input} value={category} />
+        <View style={styles.pickerBlock}>
+          <Text style={styles.sectionLabel}>Category optional</Text>
+          <View style={styles.categoryPicker}>
+            <CategoryChip isSelected={!category} label="Auto" onPress={() => setCategory("")} />
+            {categories.map((item) => (
+              <CategoryChip
+                key={item}
+                isSelected={category === item}
+                label={categoryLabels[item]}
+                onPress={() => setCategory(item)}
+              />
+            ))}
+          </View>
+        </View>
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <Pressable
           accessibilityRole="button"
@@ -99,6 +146,18 @@ export default function AddTransactionScreen() {
         </Pressable>
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+function CategoryChip({ isSelected, label, onPress }: { isSelected: boolean; label: string; onPress: () => void }) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      style={({ pressed }) => [styles.chip, isSelected && styles.chipSelected, pressed && styles.buttonPressed]}
+    >
+      <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>{label}</Text>
+    </Pressable>
   );
 }
 
@@ -126,6 +185,40 @@ const styles = StyleSheet.create({
     fontSize: 16,
     minHeight: 52,
     paddingHorizontal: 14,
+  },
+  pickerBlock: {
+    gap: 10,
+  },
+  sectionLabel: {
+    color: "#38443E",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+  categoryPicker: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  chip: {
+    backgroundColor: "#FFFFFF",
+    borderColor: "#D8D0C7",
+    borderRadius: 8,
+    borderWidth: 1,
+    minHeight: 36,
+    justifyContent: "center",
+    paddingHorizontal: 12,
+  },
+  chipSelected: {
+    backgroundColor: "#256B5B",
+    borderColor: "#256B5B",
+  },
+  chipText: {
+    color: "#38443E",
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  chipTextSelected: {
+    color: "#FFFFFF",
   },
   error: {
     color: "#A23B31",

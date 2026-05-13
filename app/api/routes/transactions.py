@@ -16,6 +16,8 @@ from app.schemas.imports import ManualTransactionRequest, ManualTransactionRespo
 from app.schemas.transaction import (
     CategorySummaryResponse,
     MerchantSummaryResponse,
+    TransactionCategorizeRequest,
+    TransactionCategorizeResponse,
     TransactionCategory,
     TransactionCategoryUpdate,
     TransactionFilterParams,
@@ -25,6 +27,7 @@ from app.schemas.transaction import (
 from app.services.audit import create_audit_log
 from app.services.manual_transaction import ManualTransactionService
 from app.services.transaction import TransactionService
+from app.services.transaction_categorizer import TransactionCategorizerService
 
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
@@ -171,6 +174,43 @@ def get_merchant_summary(
         date_from=date_from,
         date_to=date_to,
         category=category,
+    )
+
+
+@router.post("/categorize", response_model=TransactionCategorizeResponse)
+def categorize_transactions(
+    payload: TransactionCategorizeRequest,
+    current_user: CurrentTransactionUser,
+    session: Annotated[Session, Depends(get_session)],
+) -> TransactionCategorizeResponse:
+    summary = TransactionCategorizerService().categorize_user_transactions(
+        session=session,
+        user_id=current_user.id,
+        force=payload.force,
+        overwrite_manual=payload.overwrite_manual,
+        transaction_ids=payload.transaction_ids,
+    )
+    create_audit_log(
+        session=session,
+        user_id=current_user.id,
+        action="transaction.bulk_categorized",
+        metadata={
+            "processed": summary.processed,
+            "updated": summary.updated,
+            "skipped_manual": summary.skipped_manual,
+            "needs_review": summary.needs_review,
+            "transaction_ids_requested": len(payload.transaction_ids or []),
+            "force": payload.force,
+            "overwrite_manual": payload.overwrite_manual,
+        },
+    )
+    session.commit()
+    return TransactionCategorizeResponse(
+        processed=summary.processed,
+        updated=summary.updated,
+        skipped_manual=summary.skipped_manual,
+        needs_review=summary.needs_review,
+        categories=summary.categories,
     )
 
 

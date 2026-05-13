@@ -20,7 +20,6 @@ synthetic_transactions = [
         "description": "Netflix Subscription",
         "amount": Decimal("-549.00"),
         "currency": "PHP",
-        "category": "subscriptions",
     },
     {
         "transaction_date": date(2026, 1, 3),
@@ -28,7 +27,6 @@ synthetic_transactions = [
         "description": "Grab Ride",
         "amount": Decimal("-230.00"),
         "currency": "PHP",
-        "category": "transport",
     },
     {
         "transaction_date": date(2026, 1, 4),
@@ -36,7 +34,6 @@ synthetic_transactions = [
         "description": "Salary",
         "amount": Decimal("35000.00"),
         "currency": "PHP",
-        "category": "income",
     },
     {
         "transaction_date": date(2026, 1, 7),
@@ -44,7 +41,6 @@ synthetic_transactions = [
         "description": "Electric bill",
         "amount": Decimal("-3100.00"),
         "currency": "PHP",
-        "category": "utilities",
     },
 ]
 

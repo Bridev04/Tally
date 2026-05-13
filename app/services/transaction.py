@@ -62,6 +62,10 @@ class TransactionService:
         old_category = transaction.category
         transaction.category = category.value
         transaction.category_manually_set = True
+        transaction.category_source = "manual"
+        transaction.category_confidence = None
+        transaction.categorization_reason = "Category supplied by user."
+        transaction.categorization_rule = None
         session.add(transaction)
         create_audit_log(
             session=session,

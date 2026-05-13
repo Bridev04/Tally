@@ -28,6 +28,13 @@ class TransactionCategory(StrEnum):
     needs_review = "needs_review"
 
 
+class TransactionCategorySource(StrEnum):
+    auto = "auto"
+    manual = "manual"
+    imported = "imported"
+    unknown = "unknown"
+
+
 class TransactionCreate(SQLModel):
     user_id: uuid.UUID
     upload_id: uuid.UUID
@@ -40,6 +47,9 @@ class TransactionCreate(SQLModel):
     category: str | None = None
     category_confidence: float | None = None
     category_manually_set: bool = False
+    category_source: str = TransactionCategorySource.unknown.value
+    categorization_reason: str | None = None
+    categorization_rule: str | None = None
     payment_type: str | None = None
     is_recurring_candidate: bool = False
 
@@ -50,6 +60,9 @@ class TransactionUpdate(SQLModel):
     category: str | None = None
     category_confidence: float | None = None
     category_manually_set: bool | None = None
+    category_source: str | None = None
+    categorization_reason: str | None = None
+    categorization_rule: str | None = None
     payment_type: str | None = None
     is_recurring_candidate: bool | None = None
 
@@ -64,6 +77,10 @@ class TransactionRead(BaseModel):
     currency: str
     category: str | None
     category_confidence: float | None
+    category_manually_set: bool
+    category_source: str
+    categorization_reason: str | None
+    categorization_rule: str | None
     payment_type: str | None
     is_recurring_candidate: bool
     created_at: datetime
@@ -117,6 +134,27 @@ class TransactionFilterParams(BaseModel):
 
 class TransactionCategoryUpdate(StrictSchema):
     category: TransactionCategory
+
+
+class TransactionCategorizeRequest(StrictSchema):
+    force: bool = False
+    overwrite_manual: bool = False
+    transaction_ids: list[uuid.UUID] | None = Field(default=None, max_length=100)
+
+    @field_validator("transaction_ids")
+    @classmethod
+    def reject_duplicate_transaction_ids(cls, value: list[uuid.UUID] | None) -> list[uuid.UUID] | None:
+        if value is not None and len(set(value)) != len(value):
+            raise ValueError("transaction_ids must not contain duplicates.")
+        return value
+
+
+class TransactionCategorizeResponse(BaseModel):
+    processed: int
+    updated: int
+    skipped_manual: int
+    needs_review: int
+    categories: dict[str, int]
 
 
 class CategorySummaryItem(BaseModel):

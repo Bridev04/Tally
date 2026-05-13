@@ -4,7 +4,7 @@ import uuid
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.schemas.transaction import TransactionRead
+from app.schemas.transaction import TransactionCategory, TransactionRead
 
 
 class StrictSchema(BaseModel):
@@ -17,7 +17,7 @@ class ManualTransactionRequest(StrictSchema):
     description: str = Field(min_length=1, max_length=1000)
     amount: Decimal = Field(max_digits=12, decimal_places=2)
     currency: str = Field(min_length=3, max_length=3)
-    category: str | None = Field(default=None, min_length=1, max_length=100)
+    category: TransactionCategory | None = None
 
     @field_validator("amount")
     @classmethod

@@ -56,7 +56,8 @@ class ManualTransactionService:
             description=description,
             amount=amount,
             currency=payload.currency,
-            category=payload.category,
+            category=payload.category.value if payload.category is not None else None,
+            category_source="manual" if payload.category is not None else None,
         )
         session.add(transaction)
         upload.processed_rows = 1

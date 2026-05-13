@@ -6,6 +6,7 @@ import uuid
 from sqlmodel import Session, select
 
 from app.models import Transaction, TransactionUpload
+from app.services.transaction_categorizer import TransactionCategorizerService
 
 
 class ImportValidationError(ValueError):
@@ -13,12 +14,10 @@ class ImportValidationError(ValueError):
 
 
 whitespace_pattern = re.compile(r"\s+")
-merchant_noise_pattern = re.compile(r"[^a-z0-9 ]+")
 
 
 def normalize_merchant(value: str) -> str:
-    cleaned = merchant_noise_pattern.sub(" ", value.lower().strip())
-    return whitespace_pattern.sub(" ", cleaned).strip()
+    return TransactionCategorizerService.normalize_merchant(value)
 
 
 def clean_text(value: str | None, *, max_length: int) -> str:
@@ -107,8 +106,9 @@ def build_transaction(
     amount: Decimal,
     currency: str,
     category: str | None = None,
+    category_source: str | None = None,
 ) -> Transaction:
-    return Transaction(
+    transaction = Transaction(
         user_id=user_id,
         upload_id=upload_id,
         transaction_date=transaction_date,
@@ -119,3 +119,14 @@ def build_transaction(
         currency=currency,
         category=category,
     )
+    categorizer = TransactionCategorizerService()
+    if category is None:
+        result = categorizer.categorize_transaction(transaction)
+        categorizer.apply_result(transaction=transaction, result=result, source="auto")
+    else:
+        transaction.category_source = category_source or "manual"
+        transaction.category_manually_set = transaction.category_source == "manual"
+        transaction.category_confidence = None
+        transaction.categorization_reason = "Category supplied by user." if transaction.category_manually_set else None
+        transaction.categorization_rule = None
+    return transaction

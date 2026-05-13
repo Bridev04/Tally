@@ -137,6 +137,7 @@ export default function TransactionsScreen() {
     Boolean(dateTo.trim()) ||
     amountMode !== "all";
   const summaryCurrency = transactions[0]?.currency ?? "PHP";
+  const needsReviewCount = summary?.items.find((item) => item.category === "needs_review")?.transaction_count ?? 0;
 
   async function openTransaction(transaction: Transaction) {
     if (!token) {
@@ -215,6 +216,7 @@ export default function TransactionsScreen() {
         <View style={styles.summaryRow}>
           <SummaryCard label="Expenses" value={formatAmount(summary?.total_expenses ?? "0.00", summaryCurrency)} />
           <SummaryCard label="Count" value={String(summary?.transaction_count ?? 0)} />
+          <SummaryCard label="Needs Review" value={String(needsReviewCount)} />
         </View>
 
         {topCategories.length > 0 ? (
@@ -244,13 +246,20 @@ export default function TransactionsScreen() {
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
             <FilterChip isSelected={!category} label="All" onPress={() => setCategory("")} />
+            <FilterChip
+              isSelected={category === "needs_review"}
+              label="Needs Review"
+              onPress={() => setCategory("needs_review")}
+            />
             {categories.map((item) => (
+              item === "needs_review" ? null : (
               <FilterChip
                 key={item}
                 isSelected={category === item}
                 label={labelForCategory(item)}
                 onPress={() => setCategory(item)}
               />
+              )
             ))}
           </ScrollView>
 
@@ -364,12 +373,12 @@ export default function TransactionsScreen() {
                 <DetailRow label="Payment" value={selectedTransaction.payment_type ?? "Not provided"} />
                 <DetailRow
                   label="Confidence"
-                  value={
-                    selectedTransaction.category_confidence === null
-                      ? "Not provided"
-                      : `${Math.round(selectedTransaction.category_confidence * 100)}%`
-                  }
+                  value={confidenceLabel(selectedTransaction)}
                 />
+                <DetailRow label="Source" value={sourceLabel(selectedTransaction.category_source)} />
+                {selectedTransaction.categorization_reason ? (
+                  <DetailRow label="Reason" value={selectedTransaction.categorization_reason} />
+                ) : null}
 
                 <View style={styles.pickerBlock}>
                   <Text style={styles.sectionLabel}>Category</Text>
@@ -433,16 +442,21 @@ function TransactionRow({ item, onPress }: { item: Transaction; onPress: () => v
           <Text style={styles.date}>{item.transaction_date}</Text>
           <Text style={styles.dot}>.</Text>
           <Text style={styles.category}>{labelForCategory(item.category ?? "needs_review")}</Text>
-          {item.category_confidence !== null ? (
-            <>
-              <Text style={styles.dot}>.</Text>
-              <Text style={styles.date}>{Math.round(item.category_confidence * 100)}%</Text>
-            </>
-          ) : null}
+          <ConfidenceBadge transaction={item} />
         </View>
       </View>
       <Ionicons color="#7A736C" name="chevron-forward" size={18} />
     </Pressable>
+  );
+}
+
+function ConfidenceBadge({ transaction }: { transaction: Transaction }) {
+  const label = confidenceLabel(transaction);
+  const isNeedsReview = transaction.category === "needs_review";
+  return (
+    <View style={[styles.confidenceBadge, isNeedsReview && styles.needsReviewBadge]}>
+      <Text style={[styles.confidenceBadgeText, isNeedsReview && styles.needsReviewBadgeText]}>{label}</Text>
+    </View>
   );
 }
 
@@ -509,6 +523,39 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 
 function labelForCategory(category: string) {
   return categoryLabels[category] ?? category;
+}
+
+function confidenceLabel(transaction: Transaction) {
+  if (transaction.category === "needs_review") {
+    return "Needs review";
+  }
+  if (transaction.category_source === "manual") {
+    return "Manual";
+  }
+  const confidence = transaction.category_confidence;
+  if (confidence === null) {
+    return "Unknown";
+  }
+  if (confidence >= 0.8) {
+    return `High ${Math.round(confidence * 100)}%`;
+  }
+  if (confidence >= 0.6) {
+    return `Medium ${Math.round(confidence * 100)}%`;
+  }
+  return `Low ${Math.round(confidence * 100)}%`;
+}
+
+function sourceLabel(source: string) {
+  if (source === "auto") {
+    return "Automatic";
+  }
+  if (source === "manual") {
+    return "Manual";
+  }
+  if (source === "imported") {
+    return "Imported";
+  }
+  return "Unknown";
 }
 
 function formatAmount(amount: string, currency: string) {
@@ -761,6 +808,27 @@ const styles = StyleSheet.create({
     color: "#38443E",
     fontSize: 12,
     fontWeight: "700",
+  },
+  confidenceBadge: {
+    backgroundColor: "#E7F1ED",
+    borderColor: "#B8D2CA",
+    borderRadius: 7,
+    borderWidth: 1,
+    minHeight: 24,
+    justifyContent: "center",
+    paddingHorizontal: 8,
+  },
+  confidenceBadgeText: {
+    color: "#256B5B",
+    fontSize: 11,
+    fontWeight: "800",
+  },
+  needsReviewBadge: {
+    backgroundColor: "#FFF0E0",
+    borderColor: "#E5B46D",
+  },
+  needsReviewBadgeText: {
+    color: "#8F5A15",
   },
   emptyState: {
     alignItems: "flex-start",

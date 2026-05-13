@@ -46,6 +46,22 @@ or managed edge rate limiter so limits apply across all workers.
 JWTs are stored only with Expo SecureStore on mobile. Do not move them to
 AsyncStorage or frontend logs.
 
+## Phase 5
+
+- Deterministic transaction categorization service, with no AI or LLM calls
+- Merchant normalization for common payment prefixes, punctuation, and aliases
+- Explainable keyword rules for merchant and description matching
+- Category confidence scores from 0 to 1
+- `needs_review` fallback for unclear low-confidence transactions
+- Manual category corrections protected from automatic overwrites
+- `POST /transactions/categorize` for authenticated bulk categorization
+- Auto-categorization after CSV upload, paste confirm, manual entry without a category, and synthetic demo data
+- Mobile confidence badges, Needs Review filtering, and dashboard review count
+
+Tally remains an informational transaction organization app. Categories and
+confidence scores are editable aids for understanding imported data; they are
+not financial advice, investment advice, credit advice, or loan advice.
+
 ## Environment
 
 Copy `.env.example` to `.env` and set real values locally or in your host's

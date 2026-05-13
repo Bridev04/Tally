@@ -45,6 +45,8 @@ def test_valid_csv_upload(client, session: Session) -> None:  # noqa: ANN001
     assert len(transactions) == 2
     assert {transaction.user_id for transaction in transactions} == {UUID(user["user"]["id"])}
     assert transactions[0].merchant_normalized == "netflix"
+    assert transactions[0].category == "subscriptions"
+    assert transactions[0].category_source == "auto"
 
 
 def test_csv_upload_missing_required_column(client) -> None:  # noqa: ANN001
@@ -126,9 +128,34 @@ def test_manual_transaction_creation(client, session: Session) -> None:  # noqa:
 
     assert response.status_code == 201
     assert response.json()["transaction"]["merchant_normalized"] == "company payroll"
+    assert response.json()["transaction"]["category_source"] == "manual"
     transaction = session.exec(select(Transaction)).one()
     assert transaction.user_id == UUID(user["user"]["id"])
     assert transaction.amount == Decimal("35000.00")
+    assert transaction.category_manually_set is True
+
+
+def test_manual_transaction_without_category_is_auto_categorized(client, session: Session) -> None:  # noqa: ANN001
+    test_client = TestClient(client)
+    user = register_user(test_client)
+
+    response = test_client.post(
+        "/transactions/manual",
+        headers=auth_headers(user),
+        json={
+            "transaction_date": "2026-01-04",
+            "merchant": "Starbucks",
+            "description": "Coffee",
+            "amount": "-180",
+            "currency": "PHP",
+        },
+    )
+
+    assert response.status_code == 201
+    transaction = session.exec(select(Transaction)).one()
+    assert transaction.category == "food"
+    assert transaction.category_source == "auto"
+    assert transaction.category_manually_set is False
 
 
 def test_manual_transaction_validation_errors(client) -> None:  # noqa: ANN001
@@ -214,7 +241,9 @@ def test_paste_confirm_revalidates_server_side(client, session: Session) -> None
     assert response.status_code == 201
     assert response.json()["processed_rows"] == 1
     assert len(response.json()["invalid_rows"]) == 1
-    assert len(session.exec(select(Transaction)).all()) == 1
+    transaction = session.exec(select(Transaction)).one()
+    assert transaction.category == "subscriptions"
+    assert transaction.category_source == "auto"
 
 
 def test_paste_import_rejects_oversized_input(client) -> None:  # noqa: ANN001
@@ -250,6 +279,10 @@ def test_demo_data_loads_for_current_user_only(client, session: Session) -> None
     ).all()
     assert len(first_transactions) == 4
     assert second_transactions == []
+    categories = {transaction.merchant_raw: transaction.category for transaction in first_transactions}
+    assert categories["Netflix"] == "subscriptions"
+    assert categories["Grab"] == "transportation"
+    assert categories["Company Payroll"] == "income"
 
 
 def test_demo_data_deduplicates_without_overwrite(client, session: Session) -> None:  # noqa: ANN001

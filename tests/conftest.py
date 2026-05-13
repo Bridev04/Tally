@@ -10,6 +10,7 @@ os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 os.environ.setdefault("JWT_SECRET", "test-only-jwt-secret-with-enough-length")
 
 from app.api.routes import auth as auth_routes  # noqa: E402
+from app.api.routes import imports as import_routes  # noqa: E402
 from app.db.session import get_session  # noqa: E402
 from app.main import app  # noqa: E402
 
@@ -43,7 +44,9 @@ def client(session: Session):  # noqa: ANN201
         yield session
 
     auth_routes.auth_rate_limiter = None
+    import_routes.import_rate_limiter = None
     app.dependency_overrides[get_session] = override_get_session
     yield app
     app.dependency_overrides.clear()
     auth_routes.auth_rate_limiter = None
+    import_routes.import_rate_limiter = None

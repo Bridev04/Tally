@@ -15,7 +15,7 @@ class TransactionUpload(TimestampMixin, table=True):
     __tablename__ = "transaction_uploads"
     __table_args__ = (
         CheckConstraint(
-            "upload_status IN ('pending', 'processing', 'processed', 'failed')",
+            "upload_status IN ('pending', 'processing', 'completed', 'failed')",
             name="ck_transaction_uploads_upload_status",
         ),
         CheckConstraint(

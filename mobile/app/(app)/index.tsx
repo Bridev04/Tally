@@ -11,6 +11,7 @@ export default function HomeScreen() {
       <View style={styles.content}>
         <Text style={styles.title}>Tally</Text>
         <Text style={styles.email}>{user?.email}</Text>
+        <Text style={styles.copy}>Import transactions from files, pasted rows, manual entries, or synthetic sample data.</Text>
       </View>
     </SafeAreaView>
   );
@@ -35,5 +36,11 @@ const styles = StyleSheet.create({
   email: {
     color: "#5F6A63",
     fontSize: 16,
+  },
+  copy: {
+    color: "#38443E",
+    fontSize: 16,
+    lineHeight: 24,
+    marginTop: 14,
   },
 });

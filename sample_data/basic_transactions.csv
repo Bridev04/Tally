@@ -1,0 +1,5 @@
+date,description,merchant,amount,currency
+2026-01-01,Netflix Subscription,Netflix,-549,PHP
+2026-01-03,Grab Ride,Grab,-230,PHP
+2026-01-04,Salary,Company Payroll,35000,PHP
+2026-01-07,Electric bill,Meralco,-3100,PHP

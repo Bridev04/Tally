@@ -31,8 +31,22 @@ export default function AppLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "Dashboard",
           tabBarIcon: ({ color, size }) => <Ionicons color={color} name="home-outline" size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="import"
+        options={{
+          title: "Import",
+          tabBarIcon: ({ color, size }) => <Ionicons color={color} name="add-circle-outline" size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="transactions"
+        options={{
+          title: "Transactions",
+          tabBarIcon: ({ color, size }) => <Ionicons color={color} name="list-outline" size={size} />,
         }}
       />
       <Tabs.Screen
@@ -42,6 +56,8 @@ export default function AppLayout() {
           tabBarIcon: ({ color, size }) => <Ionicons color={color} name="settings-outline" size={size} />,
         }}
       />
+      <Tabs.Screen name="add-transaction" options={{ href: null, title: "Add transaction" }} />
+      <Tabs.Screen name="paste-import" options={{ href: null, title: "Paste transactions" }} />
     </Tabs>
   );
 }

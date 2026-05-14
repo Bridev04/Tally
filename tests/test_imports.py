@@ -277,7 +277,7 @@ def test_demo_data_loads_for_current_user_only(client, session: Session) -> None
     second_transactions = session.exec(
         select(Transaction).where(Transaction.user_id == UUID(second_user["user"]["id"]))
     ).all()
-    assert len(first_transactions) == 4
+    assert len(first_transactions) == 21
     assert second_transactions == []
     categories = {transaction.merchant_raw: transaction.category for transaction in first_transactions}
     assert categories["Netflix"] == "subscriptions"
@@ -294,8 +294,8 @@ def test_demo_data_deduplicates_without_overwrite(client, session: Session) -> N
 
     assert first.status_code == 201
     assert second.status_code == 201
-    assert second.json()["duplicate_rows"] == 4
-    assert len(session.exec(select(Transaction)).all()) == 4
+    assert second.json()["duplicate_rows"] == 21
+    assert len(session.exec(select(Transaction)).all()) == 21
 
 
 def test_unauthorized_users_cannot_access_import_routes(client) -> None:  # noqa: ANN001

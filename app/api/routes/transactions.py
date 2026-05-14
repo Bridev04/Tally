@@ -26,6 +26,7 @@ from app.schemas.transaction import (
 )
 from app.services.audit import create_audit_log
 from app.services.manual_transaction import ManualTransactionService
+from app.services.subscription_detection import SubscriptionDetectionService
 from app.services.transaction import TransactionService
 from app.services.transaction_categorizer import TransactionCategorizerService
 
@@ -136,6 +137,7 @@ def create_manual_transaction(
         action="transaction.manual_created",
         metadata={"transaction_id": str(transaction.id)},
     )
+    SubscriptionDetectionService().detect_and_upsert(session=session, user_id=current_user.id)
     session.commit()
     session.refresh(transaction)
     return ManualTransactionResponse(transaction=TransactionRead.model_validate(transaction))

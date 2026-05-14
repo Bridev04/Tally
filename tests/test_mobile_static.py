@@ -39,3 +39,12 @@ def test_mobile_has_protected_navigation_and_logout() -> None:
     assert '<Redirect href="/(auth)/login"' in source
     assert '<Redirect href="/(app)"' in source
     assert "onPress={logout}" in source
+
+
+def test_mobile_has_recurring_screen_and_detection_cta() -> None:
+    source = read_mobile_source()
+
+    assert "Recurring" in source
+    assert "Detect recurring payments" in source
+    assert "Pattern confidence" in source
+    assert "No recurring payments detected yet." in source

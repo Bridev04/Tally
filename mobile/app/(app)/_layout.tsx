@@ -50,6 +50,13 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
+        name="recurring"
+        options={{
+          title: "Recurring",
+          tabBarIcon: ({ color, size }) => <Ionicons color={color} name="repeat-outline" size={size} />,
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: "Settings",

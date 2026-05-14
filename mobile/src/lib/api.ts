@@ -76,6 +76,41 @@ export type MerchantSummaryResponse = {
   items: MerchantSummaryItem[];
 };
 
+export type Subscription = {
+  id: string;
+  merchant_name: string;
+  average_amount: string;
+  frequency: string;
+  first_seen: string;
+  last_seen: string;
+  next_expected_date: string | null;
+  confidence_score: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type SubscriptionFilters = {
+  status?: string;
+  frequency?: string;
+  search?: string;
+  limit?: number;
+  offset?: number;
+};
+
+export type SubscriptionListResponse = {
+  subscriptions: Subscription[];
+  limit: number;
+  offset: number;
+  count: number;
+};
+
+export type SubscriptionDetectionResponse = {
+  subscriptions: Subscription[];
+  detected_count: number;
+  updated_count: number;
+};
+
 export type ImportResult = {
   upload_id: string;
   total_rows: number;
@@ -253,6 +288,31 @@ export function getMerchantSummary(
       headers: authHeaders(token),
     },
     "Could not load merchant summary.",
+  );
+}
+
+export function listSubscriptions(
+  token: string,
+  filters?: SubscriptionFilters,
+): Promise<SubscriptionListResponse> {
+  return request<SubscriptionListResponse>(
+    `/subscriptions${queryString(filters)}`,
+    {
+      method: "GET",
+      headers: authHeaders(token),
+    },
+    "Could not load recurring payments.",
+  );
+}
+
+export function detectSubscriptions(token: string): Promise<SubscriptionDetectionResponse> {
+  return request<SubscriptionDetectionResponse>(
+    "/subscriptions/detect",
+    {
+      method: "POST",
+      headers: authHeaders(token),
+    },
+    "Could not detect recurring payments.",
   );
 }
 

@@ -62,6 +62,20 @@ Tally remains an informational transaction organization app. Categories and
 confidence scores are editable aids for understanding imported data; they are
 not financial advice, investment advice, credit advice, or loan advice.
 
+## Phase 6
+
+- Deterministic recurring subscription and recurring payment detection, with no AI or LLM calls
+- Merchant-based grouping scoped to the authenticated user
+- Expense-only recurrence checks for weekly, biweekly, monthly, and yearly cadences
+- Confidence scores from occurrence count, amount consistency, interval consistency, and subscription category signals
+- Status calculation for active, paused, and cancelled patterns
+- `POST /subscriptions/detect`, `GET /subscriptions`, `GET /subscriptions/{id}`, and `PATCH /subscriptions/{id}/status`
+- Automatic detection after CSV upload, paste confirm, manual entry, and synthetic demo data
+- Mobile Recurring tab with status filters, confidence badges, and a detection CTA
+
+Recurring detection is a neutral pattern-finding feature over imported
+transactions. It is not financial advice and does not connect to banks.
+
 ## Environment
 
 Copy `.env.example` to `.env` and set real values locally or in your host's
@@ -75,6 +89,12 @@ Required backend variables:
 - `ACCESS_TOKEN_EXPIRE_MINUTES`
 - `AUTH_RATE_LIMIT_REQUESTS`
 - `AUTH_RATE_LIMIT_WINDOW_SECONDS`
+- `IMPORT_RATE_LIMIT_REQUESTS`
+- `IMPORT_RATE_LIMIT_WINDOW_SECONDS`
+- `TRANSACTION_RATE_LIMIT_REQUESTS`
+- `TRANSACTION_RATE_LIMIT_WINDOW_SECONDS`
+- `SUBSCRIPTION_RATE_LIMIT_REQUESTS`
+- `SUBSCRIPTION_RATE_LIMIT_WINDOW_SECONDS`
 - `MAX_REQUEST_BODY_BYTES`
 - `MAX_UPLOAD_BYTES`
 

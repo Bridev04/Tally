@@ -24,6 +24,7 @@ from app.services.audit import create_audit_log
 from app.services.csv_import import CSVImportService
 from app.services.demo_data import DemoDataService
 from app.services.paste_import import PasteImportService
+from app.services.subscription_detection import SubscriptionDetectionService
 from app.services.transaction_import_utils import ImportValidationError
 
 
@@ -83,6 +84,7 @@ async def upload_csv(
             "duplicate_rows": result.duplicate_rows,
         },
     )
+    SubscriptionDetectionService().detect_and_upsert(session=session, user_id=current_user.id)
     session.commit()
     session.refresh(result.upload)
     logger.info(
@@ -164,6 +166,7 @@ def confirm_paste_import(
             "invalid_rows": len(result.invalid_rows),
         },
     )
+    SubscriptionDetectionService().detect_and_upsert(session=session, user_id=current_user.id)
     session.commit()
     return ImportResultResponse(
         upload_id=result.upload.id,
@@ -197,6 +200,7 @@ def load_sample_data(
             "allow_overwrite": payload.allow_overwrite,
         },
     )
+    SubscriptionDetectionService().detect_and_upsert(session=session, user_id=current_user.id)
     session.commit()
     return ImportResultResponse(
         upload_id=upload.id,

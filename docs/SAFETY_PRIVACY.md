@@ -41,11 +41,26 @@ categories, and those manual corrections are protected from future automatic
 categorization unless an authenticated request explicitly sets
 `overwrite_manual=true`.
 
+## Phase 6 Recurring Detection
+
+Phase 6 recurring payment detection is deterministic and explainable. It does
+not use AI, LLMs, embeddings, bank enrichment, or external transaction APIs.
+
+The detector only analyzes transactions that belong to the logged-in user. It
+groups expense transactions by normalized merchant, ignores income and transfers,
+checks amount consistency and date intervals, and uses existing subscription
+category signals as confidence inputs.
+
+Detected records are neutral spending patterns. Tally may show language such as
+`Detected recurring pattern` or `Expected again around`, but it must not tell the
+user to cancel, keep, invest, borrow, repay, or make any other financial
+decision.
+
 ## Security Practices
 
 - Secrets are read from centralized settings and are never exposed to the mobile app.
 - Protected routes require authentication and current-user scoping.
-- Import, auth, and transaction routes use rate limiting.
+- Import, auth, transaction, and subscription routes use rate limiting.
 - Request and upload sizes are limited.
 - Schemas reject unexpected fields to reduce mass-assignment risk.
 - ORM-safe queries are used for database access.

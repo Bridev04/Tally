@@ -222,3 +222,57 @@ Returns counts for the selected month:
 
 Anomaly responses intentionally omit raw transaction descriptions and other
 private imported text unless needed for a neutral explanation.
+
+## Dashboard
+
+`GET /dashboard/summary`
+
+Protected route. Returns a deterministic Home Dashboard summary for the current
+authenticated user only. It uses imported, pasted, manual, and synthetic data; it
+does not connect to banks and does not call AI or LLM services.
+
+Optional query parameters:
+
+- `month`: `YYYY-MM`. If omitted, the backend uses the latest transaction month
+  for the current user.
+
+Response shape:
+
+```json
+{
+  "month": "2026-05",
+  "currency": "PHP",
+  "total_income": "50000.00",
+  "total_expenses": "18420.00",
+  "net_flow": "31580.00",
+  "transaction_count": 42,
+  "top_categories": [
+    {
+      "category": "food",
+      "total_amount": "4200.00",
+      "transaction_count": 12,
+      "percentage_of_total_expenses": "22.80"
+    }
+  ],
+  "recent_transactions": [],
+  "subscription_summary": {
+    "active_count": 3,
+    "estimated_monthly_total": "1197.00",
+    "upcoming_items": []
+  },
+  "anomaly_summary": {
+    "total_count": 2,
+    "high_count": 0,
+    "medium_count": 1,
+    "low_count": 1,
+    "latest_items": []
+  },
+  "needs_review_count": 4,
+  "latest_upload": null,
+  "has_data": true
+}
+```
+
+If the user has no transactions, the endpoint returns `has_data=false`, zeroed
+totals, and empty arrays. Dashboard responses omit password hashes, raw upload
+contents, raw imported file text, and other users' data.

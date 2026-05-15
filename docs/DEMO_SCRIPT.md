@@ -58,3 +58,46 @@ Narration points:
 - Results are based only on imported, pasted, manual, or synthetic transactions.
 - Tally does not connect to banks and does not provide financial advice.
 - Results are review prompts, not instructions.
+
+## Phase 8 Home Dashboard
+
+1. Register or log in.
+2. Open Home and confirm the empty state says no imported transactions yet.
+3. Tap Try Demo Data or import the sample CSV.
+4. Return to Home and confirm the financial pulse dashboard appears.
+5. Confirm the screen uses the Stitch design direction:
+   - warm cream background
+   - dark forest green pulse card
+   - soft rounded summary cards
+   - upcoming charges
+   - top categories with rounded progress bars
+   - recent transactions
+   - spending insights preview
+   - bottom tabs for Home, Insights, Add, Recurring, and Profile
+6. Tap View all under recent transactions and confirm Transactions opens.
+7. Tap See all under upcoming charges and confirm Recurring opens.
+8. Tap the insight card and confirm Budget Leaks / Insights opens.
+9. Tap Add and confirm Import opens.
+10. Tap Profile and confirm Settings opens.
+
+Backend smoke test:
+
+1. Start the backend.
+2. Register or log in a test user.
+3. Load demo data.
+4. Run categorization, subscription detection, and anomaly detection if needed.
+5. Call `GET /dashboard/summary`.
+6. Confirm `has_data=true`, spending totals, top categories, recent
+   transactions, recurring summary, and anomaly summary are present.
+7. Create a second user and confirm their dashboard does not show the first
+   user's rows.
+8. Confirm unauthenticated requests return 401.
+9. Confirm a new user with no transactions gets `has_data=false`.
+
+Narration points:
+
+- The dashboard is deterministic and uses user-owned imported or synthetic data
+  only.
+- The dashboard does not connect to banks and does not provide financial advice.
+- Language stays neutral: financial pulse, detected pattern, may be worth
+  reviewing, and based on imported transactions.

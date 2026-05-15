@@ -159,6 +159,78 @@ export type AnomalySummaryResponse = {
   month: string;
 };
 
+export type DashboardTopCategory = {
+  category: string;
+  total_amount: string;
+  transaction_count: number;
+  percentage_of_total_expenses: string;
+};
+
+export type DashboardRecentTransaction = {
+  id: string;
+  transaction_date: string;
+  merchant_normalized: string | null;
+  description: string | null;
+  amount: string;
+  currency: string;
+  category: string | null;
+  category_confidence: number | null;
+};
+
+export type DashboardSubscriptionItem = {
+  id: string;
+  merchant_name: string;
+  average_amount: string;
+  frequency: string;
+  next_expected_date: string | null;
+  status: string;
+};
+
+export type DashboardAnomalyItem = {
+  id: string;
+  anomaly_type: string;
+  category: string | null;
+  merchant_name: string | null;
+  amount_delta: string | null;
+  percentage_change: number | null;
+  explanation: string;
+  severity: string;
+  created_at: string;
+};
+
+export type DashboardSummaryResponse = {
+  month: string | null;
+  currency: string;
+  total_income: string;
+  total_expenses: string;
+  net_flow: string;
+  transaction_count: number;
+  top_categories: DashboardTopCategory[];
+  recent_transactions: DashboardRecentTransaction[];
+  subscription_summary: {
+    active_count: number;
+    estimated_monthly_total: string;
+    upcoming_items: DashboardSubscriptionItem[];
+  };
+  anomaly_summary: {
+    total_count: number;
+    high_count: number;
+    medium_count: number;
+    low_count: number;
+    latest_items: DashboardAnomalyItem[];
+  };
+  needs_review_count: number;
+  latest_upload: {
+    id: string;
+    file_name: string;
+    upload_status: string;
+    total_rows: number;
+    processed_rows: number;
+    created_at: string;
+  } | null;
+  has_data: boolean;
+};
+
 export type ImportResult = {
   upload_id: string;
   total_rows: number;
@@ -395,6 +467,17 @@ export function getAnomalySummary(token: string, month?: string): Promise<Anomal
       headers: authHeaders(token),
     },
     "Could not load budget leak summary.",
+  );
+}
+
+export function getDashboardSummary(token: string, month?: string): Promise<DashboardSummaryResponse> {
+  return request<DashboardSummaryResponse>(
+    `/dashboard/summary${queryString({ month })}`,
+    {
+      method: "GET",
+      headers: authHeaders(token),
+    },
+    "Could not load dashboard.",
   );
 }
 

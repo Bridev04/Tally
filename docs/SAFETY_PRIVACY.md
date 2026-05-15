@@ -81,11 +81,34 @@ Tally must not use wording such as `cancel this`, `stop spending`, `bad habit`,
 Anomaly payloads omit raw transaction descriptions. Audit logs record detection
 counts, month, and refresh status, not private imported transaction contents.
 
+## Phase 8 Home Dashboard
+
+Phase 8 dashboard summaries are deterministic and protected. They do not use AI,
+LLMs, bank enrichment, external transaction APIs, Plaid, FinanceKit, card
+linking, or account linking.
+
+The dashboard only summarizes records owned by the logged-in user. It returns
+monthly totals, top categories, recent transaction display fields, active
+recurring payment previews, and anomaly counts. It does not return password
+hashes, raw upload contents, raw CSV or paste text, internal paths, SQL errors,
+or stack traces.
+
+Dashboard copy must remain neutral. Acceptable language includes:
+
+- `Here’s your financial pulse.`
+- `Based on imported transactions.`
+- `Detected pattern.`
+- `May be worth reviewing.`
+- `Needs review.`
+
+The dashboard must not tell users to cancel, invest, borrow, repay, or make a
+financial decision.
+
 ## Security Practices
 
 - Secrets are read from centralized settings and are never exposed to the mobile app.
 - Protected routes require authentication and current-user scoping.
-- Import, auth, transaction, subscription, and anomaly routes use rate limiting.
+- Import, auth, transaction, dashboard, subscription, and anomaly routes use rate limiting.
 - Request and upload sizes are limited.
 - Schemas reject unexpected fields to reduce mass-assignment risk.
 - ORM-safe queries are used for database access.

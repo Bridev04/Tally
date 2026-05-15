@@ -46,12 +46,27 @@ All Phase 7 API routes use `get_current_user`, per-user rate limiting, schema
 validation, ORM-safe queries, generic validation errors, and audit logs for
 manual detection runs.
 
+Phase 8 adds `DashboardService` in `app/services/dashboard.py` and
+`GET /dashboard/summary`.
+
+Responsibilities:
+
+- Select the requested month or the latest transaction month for the user.
+- Summarize income, expenses, net flow, recent transactions, top categories,
+  active recurring payments, anomaly counts, and needs-review rows.
+- Return a beautiful empty state contract when the user has no data.
+- Scope every query to the authenticated user's ID.
+- Avoid returning password hashes, raw upload contents, raw imported text, or
+  internal errors.
+
 ## Mobile
 
 The Expo app consumes backend transaction metadata directly. The Transactions
 screen shows category and confidence badges, exposes a Needs Review filter, and
-keeps category editing on the backend. The dashboard uses category summaries and
-shows a Needs Review count so review work is visible immediately.
+keeps category editing on the backend. The Home Dashboard consumes
+`/dashboard/summary` and follows the Tally Stitch design system: warm cream
+background, forest-green pulse card, soft rounded cards, upcoming charges, top
+categories, recent transactions, and neutral spending insight previews.
 
 The Budget Leaks tab consumes `/anomalies`, `/anomalies/summary`, and
 `/anomalies/detect`. It shows severity summary cards and anomaly cards with

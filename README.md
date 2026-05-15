@@ -90,6 +90,18 @@ transactions. It is not financial advice and does not connect to banks.
 Budget leaks are review prompts based only on imported or synthetic transaction
 data. Tally does not say what users should do financially.
 
+## Phase 8
+
+- Prototype-based Home Dashboard with the Tally Stitch financial pulse design
+- Protected `GET /dashboard/summary` endpoint scoped to the authenticated user
+- Deterministic dashboard aggregation over imported, manual, pasted, and synthetic transaction data only
+- Monthly totals for income, spending, net flow, transactions, needs review, top categories, recent transactions, recurring charges, and spending insights
+- Mobile Home tab with cream background, forest-green pulse card, soft rounded cards, upcoming charges, top categories, recent transactions, insight preview, and five-tab bottom navigation
+- Empty, loading, retry, and no-data states that avoid raw backend errors
+
+The dashboard is an informational overview of user-owned data. It does not
+connect to banks, use LLMs, or provide financial advice.
+
 ## Environment
 
 Copy `.env.example` to `.env` and set real values locally or in your host's
@@ -107,6 +119,9 @@ Required backend variables:
 - `IMPORT_RATE_LIMIT_WINDOW_SECONDS`
 - `TRANSACTION_RATE_LIMIT_REQUESTS`
 - `TRANSACTION_RATE_LIMIT_WINDOW_SECONDS`
+- `DASHBOARD_RATE_LIMIT_REQUESTS`
+- `DASHBOARD_RATE_LIMIT_WINDOW_SECONDS`
+- `DASHBOARD_LOW_CONFIDENCE_THRESHOLD`
 - `SUBSCRIPTION_RATE_LIMIT_REQUESTS`
 - `SUBSCRIPTION_RATE_LIMIT_WINDOW_SECONDS`
 - `ANOMALY_RATE_LIMIT_REQUESTS`

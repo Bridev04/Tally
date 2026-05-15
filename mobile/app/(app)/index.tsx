@@ -90,6 +90,21 @@ export default function HomeScreen() {
           <MetricCard label="Needs Review" value={String(needsReviewCount)} tone={needsReviewCount > 0 ? "warning" : "normal"} />
         </View>
 
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push("/(app)/budget-leaks" as never)}
+          style={({ pressed }) => [styles.insightLink, pressed && styles.pressed]}
+        >
+          <View style={styles.insightIcon}>
+            <Ionicons color="#256B5B" name="analytics-outline" size={20} />
+          </View>
+          <View style={styles.insightTextBlock}>
+            <Text style={styles.insightTitle}>Budget Leaks</Text>
+            <Text style={styles.insightCopy}>Review deterministic spending pattern changes from imported data.</Text>
+          </View>
+          <Ionicons color="#7A736C" name="chevron-forward" size={18} />
+        </Pressable>
+
         {topCategories.length > 0 ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Categories</Text>
@@ -219,6 +234,39 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "800",
     marginTop: 8,
+  },
+  insightLink: {
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    borderColor: "#D8D0C7",
+    borderRadius: 8,
+    borderWidth: 1,
+    flexDirection: "row",
+    gap: 12,
+    minHeight: 74,
+    padding: 14,
+  },
+  insightIcon: {
+    alignItems: "center",
+    backgroundColor: "#E7F1ED",
+    borderRadius: 8,
+    height: 40,
+    justifyContent: "center",
+    width: 40,
+  },
+  insightTextBlock: {
+    flex: 1,
+    gap: 3,
+  },
+  insightTitle: {
+    color: "#111816",
+    fontSize: 16,
+    fontWeight: "800",
+  },
+  insightCopy: {
+    color: "#5F6A63",
+    fontSize: 13,
+    lineHeight: 18,
   },
   section: {
     gap: 10,

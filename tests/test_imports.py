@@ -8,6 +8,7 @@ from sqlmodel import Session, select
 from app.api.routes.imports import get_import_rate_limiter
 from app.core.rate_limit import InMemoryRateLimiter
 from app.models import AuditLog, Transaction, TransactionUpload
+from app.services.demo_data import synthetic_transactions
 
 
 def register_user(test_client: TestClient, email: str = "importer@example.com") -> dict:
@@ -277,7 +278,7 @@ def test_demo_data_loads_for_current_user_only(client, session: Session) -> None
     second_transactions = session.exec(
         select(Transaction).where(Transaction.user_id == UUID(second_user["user"]["id"]))
     ).all()
-    assert len(first_transactions) == 21
+    assert len(first_transactions) == len(synthetic_transactions)
     assert second_transactions == []
     categories = {transaction.merchant_raw: transaction.category for transaction in first_transactions}
     assert categories["Netflix"] == "subscriptions"
@@ -294,8 +295,8 @@ def test_demo_data_deduplicates_without_overwrite(client, session: Session) -> N
 
     assert first.status_code == 201
     assert second.status_code == 201
-    assert second.json()["duplicate_rows"] == 21
-    assert len(session.exec(select(Transaction)).all()) == 21
+    assert second.json()["duplicate_rows"] == len(synthetic_transactions)
+    assert len(session.exec(select(Transaction)).all()) == len(synthetic_transactions)
 
 
 def test_unauthorized_users_cannot_access_import_routes(client) -> None:  # noqa: ANN001

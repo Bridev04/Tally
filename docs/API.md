@@ -130,3 +130,95 @@ Accepts only a status update and rejects mass-assignment fields:
 
 Allowed statuses are `active`, `paused`, and `cancelled`. Status changes are
 audit logged without raw transaction content.
+
+## Budget Leaks And Anomalies
+
+Budget leak detection is deterministic and protected. It analyzes only the
+current authenticated user's transaction records and does not use AI, LLMs,
+bank APIs, account linking, or external enrichment. Results are neutral review
+prompts based on imported data only.
+
+`POST /anomalies/detect`
+
+Runs detection for a month and upserts anomaly records without creating
+duplicates for the same user, month, type, category, and merchant.
+
+Request body:
+
+```json
+{
+  "month": "2026-05",
+  "force_refresh": false
+}
+```
+
+`month` is optional and must use `YYYY-MM`. If omitted, the backend uses the
+latest transaction month for the current user, or the current month when there
+are no transactions.
+
+Response:
+
+```json
+{
+  "month": "2026-05",
+  "detected_count": 2,
+  "anomalies": [
+    {
+      "id": "anomaly-uuid",
+      "anomaly_type": "CATEGORY_SPIKE",
+      "category": "food",
+      "merchant_name": null,
+      "amount_delta": "3500.00",
+      "percentage_change": 77.8,
+      "explanation": "Food spending increased by 78% compared with the previous month, based on imported transactions.",
+      "severity": "medium",
+      "period_start": "2026-05-01",
+      "period_end": "2026-05-31",
+      "baseline_period_start": "2026-04-01",
+      "baseline_period_end": "2026-04-30",
+      "transaction_count": 2,
+      "created_at": "2026-05-15T00:00:00"
+    }
+  ]
+}
+```
+
+Supported anomaly types:
+
+- `CATEGORY_SPIKE`
+- `MERCHANT_FREQUENCY_SPIKE`
+- `REPEATED_SMALL_PURCHASES`
+- `SUBSCRIPTION_PRICE_CHANGE`
+- `DUPLICATE_LIKE_TRANSACTIONS`
+- `NEEDS_REVIEW_CLUSTER`
+
+Severity values are `low`, `medium`, and `high`.
+
+`GET /anomalies`
+
+Lists the current user's anomalies only. Optional filters:
+
+- `month`: `YYYY-MM`
+- `severity`: `low`, `medium`, or `high`
+- `anomaly_type`: one supported anomaly type
+- `limit`: 1 to 100, default 50
+- `offset`: default 0
+
+`GET /anomalies/summary`
+
+Returns counts for the selected month:
+
+```json
+{
+  "total_anomalies": 3,
+  "high_count": 1,
+  "medium_count": 1,
+  "low_count": 1,
+  "top_categories": [{ "name": "food", "count": 1 }],
+  "top_merchants": [{ "name": "Grab", "count": 1 }],
+  "month": "2026-05"
+}
+```
+
+Anomaly responses intentionally omit raw transaction descriptions and other
+private imported text unless needed for a neutral explanation.

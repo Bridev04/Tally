@@ -56,11 +56,36 @@ Detected records are neutral spending patterns. Tally may show language such as
 user to cancel, keep, invest, borrow, repay, or make any other financial
 decision.
 
+## Phase 7 Budget Leaks
+
+Phase 7 budget leak and anomaly detection is deterministic and explainable. It
+does not use AI, LLMs, embeddings, bank enrichment, or external transaction APIs.
+
+The detector only analyzes transactions owned by the logged-in user. It compares
+current-month expenses with the previous month, checks merchant frequency,
+repeated small purchases, subscription price changes, duplicate-like rows, and
+clusters of low-confidence or `needs_review` categorization.
+
+Budget leaks are neutral observations based on imported or synthetic data only.
+Acceptable language includes:
+
+- `This category increased compared with your previous period.`
+- `This merchant appeared more frequently than usual.`
+- `This recurring charge changed amount.`
+- `This may be worth reviewing.`
+- `Detected from imported data only.`
+
+Tally must not use wording such as `cancel this`, `stop spending`, `bad habit`,
+`waste`, or tell users what they should do financially.
+
+Anomaly payloads omit raw transaction descriptions. Audit logs record detection
+counts, month, and refresh status, not private imported transaction contents.
+
 ## Security Practices
 
 - Secrets are read from centralized settings and are never exposed to the mobile app.
 - Protected routes require authentication and current-user scoping.
-- Import, auth, transaction, and subscription routes use rate limiting.
+- Import, auth, transaction, subscription, and anomaly routes use rate limiting.
 - Request and upload sizes are limited.
 - Schemas reject unexpected fields to reduce mass-assignment risk.
 - ORM-safe queries are used for database access.

@@ -48,3 +48,15 @@ def test_mobile_has_recurring_screen_and_detection_cta() -> None:
     assert "Detect recurring payments" in source
     assert "Pattern confidence" in source
     assert "No recurring payments detected yet." in source
+
+
+def test_mobile_has_budget_leaks_screen_and_neutral_copy() -> None:
+    source = read_mobile_source()
+
+    assert "Budget Leaks" in source
+    assert "Run detection" in source
+    assert "No budget leaks detected yet." in source
+    assert "Detected from imported data" in source
+    assert "bad spending" not in source.lower()
+    assert "overspending" not in source.lower()
+    assert "you should cancel" not in source.lower()

@@ -111,6 +111,54 @@ export type SubscriptionDetectionResponse = {
   updated_count: number;
 };
 
+export type SpendingAnomaly = {
+  id: string;
+  anomaly_type: string;
+  category: string | null;
+  merchant_name: string | null;
+  amount_delta: string | null;
+  percentage_change: number | null;
+  explanation: string;
+  severity: string;
+  period_start: string | null;
+  period_end: string | null;
+  baseline_period_start: string | null;
+  baseline_period_end: string | null;
+  transaction_count: number | null;
+  created_at: string;
+};
+
+export type AnomalyFilters = {
+  month?: string;
+  severity?: string;
+  anomaly_type?: string;
+  limit?: number;
+  offset?: number;
+};
+
+export type AnomalyListResponse = {
+  anomalies: SpendingAnomaly[];
+  limit: number;
+  offset: number;
+  count: number;
+};
+
+export type AnomalyDetectionResponse = {
+  anomalies: SpendingAnomaly[];
+  detected_count: number;
+  month: string;
+};
+
+export type AnomalySummaryResponse = {
+  total_anomalies: number;
+  high_count: number;
+  medium_count: number;
+  low_count: number;
+  top_categories: Array<{ name: string; count: number }>;
+  top_merchants: Array<{ name: string; count: number }>;
+  month: string;
+};
+
 export type ImportResult = {
   upload_id: string;
   total_rows: number;
@@ -313,6 +361,40 @@ export function detectSubscriptions(token: string): Promise<SubscriptionDetectio
       headers: authHeaders(token),
     },
     "Could not detect recurring payments.",
+  );
+}
+
+export function detectAnomalies(token: string, month?: string): Promise<AnomalyDetectionResponse> {
+  return request<AnomalyDetectionResponse>(
+    "/anomalies/detect",
+    {
+      method: "POST",
+      headers: authHeaders(token),
+      body: JSON.stringify({ month }),
+    },
+    "Could not run budget leak detection.",
+  );
+}
+
+export function getAnomalies(token: string, filters?: AnomalyFilters): Promise<AnomalyListResponse> {
+  return request<AnomalyListResponse>(
+    `/anomalies${queryString(filters)}`,
+    {
+      method: "GET",
+      headers: authHeaders(token),
+    },
+    "Could not load budget leaks.",
+  );
+}
+
+export function getAnomalySummary(token: string, month?: string): Promise<AnomalySummaryResponse> {
+  return request<AnomalySummaryResponse>(
+    `/anomalies/summary${queryString({ month })}`,
+    {
+      method: "GET",
+      headers: authHeaders(token),
+    },
+    "Could not load budget leak summary.",
   );
 }
 

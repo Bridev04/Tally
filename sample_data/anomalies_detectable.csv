@@ -1,7 +1,39 @@
 date,description,merchant,amount,currency
-2026-01-02,Coffee,Local Cafe,-180,PHP
-2026-01-03,Groceries,Supermart,-2400,PHP
-2026-01-05,Grab Ride,Grab,-210,PHP
-2026-01-08,Dinner,Restaurant,-1200,PHP
-2026-01-12,Electronics repair,Service Center,-18500,PHP
-2026-01-15,Groceries,Supermart,-2600,PHP
+2026-04-02,Groceries,Supermart,-2200,PHP
+2026-04-17,Meals,Neighborhood Cafe,-2300,PHP
+2026-05-12,Groceries,Supermart,-4300,PHP
+2026-05-19,Meals,Neighborhood Cafe,-3900,PHP
+2026-04-02,Grab Ride,Grab,-160,PHP
+2026-04-06,Grab Ride,Grab,-180,PHP
+2026-04-11,Grab Ride,Grab,-140,PHP
+2026-04-18,Grab Ride,Grab,-190,PHP
+2026-04-27,Grab Ride,Grab,-175,PHP
+2026-05-02,Grab Ride,Grab,-170,PHP
+2026-05-04,Grab Ride,Grab,-155,PHP
+2026-05-06,Grab Ride,Grab,-185,PHP
+2026-05-08,Grab Ride,Grab,-165,PHP
+2026-05-10,Grab Ride,Grab,-145,PHP
+2026-05-12,Grab Ride,Grab,-205,PHP
+2026-05-14,Grab Ride,Grab,-175,PHP
+2026-05-16,Grab Ride,Grab,-195,PHP
+2026-05-18,Grab Ride,Grab,-160,PHP
+2026-05-20,Grab Ride,Grab,-180,PHP
+2026-05-21,Coffee,Daily Brew,-180,PHP
+2026-05-22,Coffee,Daily Brew,-180,PHP
+2026-05-23,Coffee,Daily Brew,-180,PHP
+2026-05-24,Coffee,Daily Brew,-180,PHP
+2026-05-25,Coffee,Daily Brew,-180,PHP
+2026-05-26,Coffee,Daily Brew,-180,PHP
+2026-05-27,Coffee,Daily Brew,-180,PHP
+2026-05-03,Netflix charge,Netflix,-549,PHP
+2026-05-03,netflix charge,Netflix,-549,PHP
+2026-01-05,Spotify Premium,Spotify,-149,PHP
+2026-02-05,Spotify Premium,Spotify,-149,PHP
+2026-03-05,Spotify Premium,Spotify,-149,PHP
+2026-04-05,Spotify Premium,Spotify,-149,PHP
+2026-05-25,Spotify Premium,Spotify,-179,PHP
+2026-05-01,Imported row needs review,Unmapped Merchant 1,-95,PHP
+2026-05-02,Imported row needs review,Unmapped Merchant 2,-95,PHP
+2026-05-03,Imported row needs review,Unmapped Merchant 3,-95,PHP
+2026-05-04,Imported row needs review,Unmapped Merchant 4,-95,PHP
+2026-05-05,Imported row needs review,Unmapped Merchant 5,-95,PHP

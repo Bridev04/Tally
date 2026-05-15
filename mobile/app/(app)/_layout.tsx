@@ -57,6 +57,13 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
+        name="budget-leaks"
+        options={{
+          title: "Budget Leaks",
+          tabBarIcon: ({ color, size }) => <Ionicons color={color} name="analytics-outline" size={size} />,
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: "Settings",

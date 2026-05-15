@@ -76,6 +76,20 @@ not financial advice, investment advice, credit advice, or loan advice.
 Recurring detection is a neutral pattern-finding feature over imported
 transactions. It is not financial advice and does not connect to banks.
 
+## Phase 7
+
+- Deterministic budget leak and spending anomaly detection, with no AI or LLM calls
+- Current-user-only analysis over imported, pasted, manual, and synthetic transactions
+- Category spike, merchant frequency spike, repeated small purchase, subscription price change, duplicate-like transaction, and needs-review cluster rules
+- Idempotent `POST /anomalies/detect` with optional `month` and `force_refresh`
+- `GET /anomalies` filters for month, severity, type, and paginated results
+- `GET /anomalies/summary` for severity counts and top affected categories/merchants
+- Mobile Budget Leaks tab with summary cards, neutral anomaly cards, loading/error states, pull-to-refresh, and Run detection CTA
+- Synthetic anomaly demo data in `sample_data/anomalies_detectable.csv`
+
+Budget leaks are review prompts based only on imported or synthetic transaction
+data. Tally does not say what users should do financially.
+
 ## Environment
 
 Copy `.env.example` to `.env` and set real values locally or in your host's
@@ -95,6 +109,8 @@ Required backend variables:
 - `TRANSACTION_RATE_LIMIT_WINDOW_SECONDS`
 - `SUBSCRIPTION_RATE_LIMIT_REQUESTS`
 - `SUBSCRIPTION_RATE_LIMIT_WINDOW_SECONDS`
+- `ANOMALY_RATE_LIMIT_REQUESTS`
+- `ANOMALY_RATE_LIMIT_WINDOW_SECONDS`
 - `MAX_REQUEST_BODY_BYTES`
 - `MAX_UPLOAD_BYTES`
 

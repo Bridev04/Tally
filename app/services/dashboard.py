@@ -162,7 +162,9 @@ class DashboardService:
         ).all()
         return SubscriptionDashboardSummary(
             active_count=len(active_subscriptions),
-            estimated_monthly_total=self._money(sum((item.average_amount for item in active_subscriptions), Decimal("0"))),
+            estimated_monthly_total=self._money(
+                sum((self._monthly_subscription_amount(item) for item in active_subscriptions), Decimal("0"))
+            ),
             upcoming_items=[
                 SubscriptionDashboardItem.model_validate(item)
                 for item in sorted(
@@ -171,6 +173,15 @@ class DashboardService:
                 )[:3]
             ],
         )
+
+    def _monthly_subscription_amount(self, subscription: Subscription) -> Decimal:
+        multipliers = {
+            "weekly": Decimal("52") / Decimal("12"),
+            "biweekly": Decimal("26") / Decimal("12"),
+            "monthly": Decimal("1"),
+            "yearly": Decimal("1") / Decimal("12"),
+        }
+        return subscription.average_amount * multipliers.get(subscription.frequency, Decimal("1"))
 
     def _anomaly_summary(
         self,
@@ -241,4 +252,3 @@ class DashboardService:
         if total == 0:
             return Decimal("0.00")
         return ((value / total) * Decimal("100")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-

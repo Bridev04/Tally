@@ -203,6 +203,48 @@ def test_dashboard_service_summarizes_current_user_month_only(client, session: S
     assert summary.latest_upload.file_name == "dashboard-seed.csv"
 
 
+def test_dashboard_subscription_total_normalizes_frequency(client, session: Session) -> None:  # noqa: ANN001
+    test_client = TestClient(client)
+    user = register_user(test_client, "dashboard-recurring-total@example.com")
+    seed_dashboard_data(session, user["user"]["id"])
+    subscriptions = [
+        Subscription(
+            user_id=UUID(user["user"]["id"]),
+            merchant_name="Weekly Studio",
+            average_amount=Decimal("120.00"),
+            frequency="weekly",
+            first_seen=date(2026, 3, 1),
+            last_seen=date(2026, 5, 24),
+            next_expected_date=date(2026, 5, 31),
+            confidence_score=0.95,
+            status="active",
+        ),
+        Subscription(
+            user_id=UUID(user["user"]["id"]),
+            merchant_name="Yearly Cloud",
+            average_amount=Decimal("1200.00"),
+            frequency="yearly",
+            first_seen=date(2025, 5, 1),
+            last_seen=date(2026, 5, 1),
+            next_expected_date=date(2027, 5, 1),
+            confidence_score=0.95,
+            status="active",
+        ),
+    ]
+    session.add_all(subscriptions)
+    session.commit()
+
+    summary = DashboardService().summarize(
+        session=session,
+        user_id=UUID(user["user"]["id"]),
+        month="2026-05",
+        low_confidence_threshold=0.72,
+    )
+
+    assert summary.subscription_summary.active_count == 4
+    assert summary.subscription_summary.estimated_monthly_total == Decimal("1318.00")
+
+
 def test_dashboard_default_month_uses_latest_transaction_month(client, session: Session) -> None:  # noqa: ANN001
     test_client = TestClient(client)
     user = register_user(test_client)

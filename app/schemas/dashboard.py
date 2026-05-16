@@ -31,7 +31,6 @@ class RecentTransactionItem(BaseModel):
     id: uuid.UUID
     transaction_date: date
     merchant_normalized: str | None
-    description: str | None
     amount: Decimal
     currency: str
     category: str | None
@@ -104,4 +103,3 @@ class DashboardSummaryResponse(BaseModel):
     needs_review_count: int
     latest_upload: LatestUploadSummary | None
     has_data: bool
-

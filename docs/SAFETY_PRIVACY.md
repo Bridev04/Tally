@@ -104,11 +104,48 @@ Dashboard copy must remain neutral. Acceptable language includes:
 The dashboard must not tell users to cancel, invest, borrow, repay, or make a
 financial decision.
 
+## Phase 9 Monthly Reports
+
+Phase 9 monthly reports are deterministic first. The backend computes totals,
+top categories, recurring payment summaries, anomaly summaries, and needs-review
+counts before any optional LLM call.
+
+Allowed LLM input is aggregated report data only:
+
+- month
+- income, expense, net flow, and transaction totals
+- top category totals
+- active recurring payment summaries
+- anomaly summaries
+- needs-review counts
+
+Disallowed LLM input:
+
+- raw CSV contents
+- pasted import text
+- full transaction descriptions
+- passwords, tokens, API keys, or secrets
+- unrelated profile data
+
+The LLM is optional and may only generate neutral explanation text. If it is
+disabled, unavailable, or returns advice-like wording, Tally uses deterministic
+fallback copy. AI output is checked for phrases such as `you should`, `you must`,
+`cancel`, `stop spending`, `waste`, `invest`, `loan`, `credit card`,
+`guaranteed`, and `profit` before saving or returning it.
+
+Monthly report copy must remain neutral, for example:
+
+- `Based on your imported transactions...`
+- `This month's spending activity shows...`
+- `The largest category was...`
+- `Some transactions may be worth reviewing...`
+- `This is a neutral summary of imported data, not financial advice.`
+
 ## Security Practices
 
 - Secrets are read from centralized settings and are never exposed to the mobile app.
 - Protected routes require authentication and current-user scoping.
-- Import, auth, transaction, dashboard, subscription, and anomaly routes use rate limiting.
+- Import, auth, transaction, dashboard, subscription, anomaly, and report routes use rate limiting.
 - Request and upload sizes are limited.
 - Schemas reject unexpected fields to reduce mass-assignment risk.
 - ORM-safe queries are used for database access.

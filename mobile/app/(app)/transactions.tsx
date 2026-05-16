@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -63,6 +63,7 @@ type AmountMode = "all" | "expense" | "income";
 
 export default function TransactionsScreen() {
   const { token } = useAuth();
+  const params = useLocalSearchParams<{ category?: string }>();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [summary, setSummary] = useState<CategorySummaryResponse | null>(null);
   const [search, setSearch] = useState("");
@@ -80,6 +81,12 @@ export default function TransactionsScreen() {
   const [isSavingCategory, setIsSavingCategory] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [detailError, setDetailError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof params.category === "string" && categories.includes(params.category)) {
+      setCategory(params.category);
+    }
+  }, [params.category]);
 
   const filters = useMemo<TransactionFilters>(() => {
     const nextFilters: TransactionFilters = {

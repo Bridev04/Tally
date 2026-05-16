@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.routes import anomalies, auth, dashboard, imports, protected, subscriptions, transactions
+from app.api.routes import anomalies, auth, dashboard, imports, protected, reports, subscriptions, transactions
 
 
 api_router = APIRouter()
@@ -9,5 +9,6 @@ api_router.include_router(auth.router)
 api_router.include_router(dashboard.router)
 api_router.include_router(imports.router)
 api_router.include_router(protected.router)
+api_router.include_router(reports.router)
 api_router.include_router(subscriptions.router)
 api_router.include_router(transactions.router)

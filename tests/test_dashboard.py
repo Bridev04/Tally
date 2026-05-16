@@ -288,6 +288,8 @@ def test_dashboard_route_auth_validation_and_privacy(client, session: Session) -
     assert payload["has_data"] is True
     assert "password_hash" not in payload_text
     assert "raw" not in payload_text
+    assert "description" not in payload["recent_transactions"][0]
+    assert "imported demo row" not in payload_text
     assert "other netflix" not in payload_text
     assert "dashboard-route-other" not in payload_text
     assert "traceback" not in payload_text

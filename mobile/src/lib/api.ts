@@ -170,7 +170,6 @@ export type DashboardRecentTransaction = {
   id: string;
   transaction_date: string;
   merchant_normalized: string | null;
-  description: string | null;
   amount: string;
   currency: string;
   category: string | null;
@@ -229,6 +228,71 @@ export type DashboardSummaryResponse = {
     created_at: string;
   } | null;
   has_data: boolean;
+};
+
+export type MonthlyReportTopCategory = {
+  category: string;
+  total_amount: string;
+  transaction_count: number;
+  percentage_of_total_expenses: string;
+};
+
+export type MonthlyReportSubscription = {
+  merchant_name: string;
+  average_amount: string;
+  frequency: string;
+  next_expected_date: string | null;
+  confidence_score: number;
+};
+
+export type MonthlyReportAnomaly = {
+  anomaly_type: string;
+  severity: string;
+  explanation: string;
+  amount_delta: string | null;
+  percentage_change: number | null;
+};
+
+export type MonthlyInsightReport = {
+  id: string;
+  user_id: string;
+  month: string;
+  currency: string;
+  total_income: string;
+  total_expenses: string;
+  total_spend: string;
+  net_flow: string;
+  transaction_count: number;
+  top_categories: MonthlyReportTopCategory[];
+  detected_subscriptions: MonthlyReportSubscription[];
+  anomalies: MonthlyReportAnomaly[];
+  needs_review_count: number;
+  largest_merchant_total: {
+    merchant_name: string;
+    total_amount: string;
+    transaction_count: number;
+  } | null;
+  recurring_payment_count: number;
+  ai_summary: string;
+  generated_status: string;
+  generation_source: string;
+  safety_flags: string[];
+  has_data: boolean;
+  created_at: string;
+  updated_at: string | null;
+};
+
+export type MonthlyReportListResponse = {
+  reports: MonthlyInsightReport[];
+  limit: number;
+  offset: number;
+  count: number;
+};
+
+export type MonthlyReportFilters = {
+  month?: string;
+  limit?: number;
+  offset?: number;
 };
 
 export type ImportResult = {
@@ -478,6 +542,48 @@ export function getDashboardSummary(token: string, month?: string): Promise<Dash
       headers: authHeaders(token),
     },
     "Could not load dashboard.",
+  );
+}
+
+export function generateMonthlyReport(
+  token: string,
+  month: string,
+  useAi = true,
+  forceRefresh = false,
+): Promise<MonthlyInsightReport> {
+  return request<MonthlyInsightReport>(
+    "/reports/monthly/generate",
+    {
+      method: "POST",
+      headers: authHeaders(token),
+      body: JSON.stringify({ month, use_ai: useAi, force_refresh: forceRefresh }),
+    },
+    "Could not generate the monthly report.",
+  );
+}
+
+export function getMonthlyReports(
+  token: string,
+  filters?: MonthlyReportFilters,
+): Promise<MonthlyReportListResponse> {
+  return request<MonthlyReportListResponse>(
+    `/reports/monthly${queryString(filters)}`,
+    {
+      method: "GET",
+      headers: authHeaders(token),
+    },
+    "Could not load monthly reports.",
+  );
+}
+
+export function getMonthlyReportById(token: string, reportId: string): Promise<MonthlyInsightReport> {
+  return request<MonthlyInsightReport>(
+    `/reports/monthly/${reportId}`,
+    {
+      method: "GET",
+      headers: authHeaders(token),
+    },
+    "Could not load that monthly report.",
   );
 }
 

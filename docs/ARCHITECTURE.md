@@ -59,6 +59,22 @@ Responsibilities:
 - Avoid returning password hashes, raw upload contents, raw imported text, or
   internal errors.
 
+Phase 9 adds `MonthlyReportService` in `app/services/monthly_reports.py`,
+`/reports/monthly` API routes, and a small LLM abstraction in
+`app/services/llm`.
+
+Responsibilities:
+
+- Validate `YYYY-MM` report months and scope every query to the authenticated user.
+- Calculate income, expenses, net flow, top expense categories, active recurring
+  payments, anomaly summaries, needs-review count, and largest merchant total
+  deterministically before any AI step.
+- Persist aggregate report data in `MonthlyInsightReport`.
+- Send only aggregated facts to the optional LLM wording layer.
+- Validate LLM output for advice-like language before saving or returning it.
+- Fall back to deterministic neutral text when LLMs are disabled, unavailable,
+  or fail safety checks.
+
 ## Mobile
 
 The Expo app consumes backend transaction metadata directly. The Transactions
@@ -73,9 +89,16 @@ The Budget Leaks tab consumes `/anomalies`, `/anomalies/summary`, and
 neutral explanations. It does not provide recommendations, cancellation prompts,
 or financial advice.
 
+The Monthly Report screen consumes `/reports/monthly` and
+`/reports/monthly/generate`. It shows a neutral month-level report, top category
+progress bars, recurring payment previews, budget leak patterns, needs-review
+links, and empty/loading/error states in the same warm Tally design language.
+
 ## Boundaries
 
 Tally does not use AI or LLMs for categorization, subscription detection, or
-budget leak detection in this phase. It does not connect to banks, Plaid,
-FinanceKit, account linking, cards, or real financial accounts. Categorization
-and anomaly detection are transparent organization aids, not financial advice.
+budget leak detection. Phase 9 may use an LLM only for neutral explanation text
+after deterministic monthly aggregates are computed. It does not connect to
+banks, Plaid, FinanceKit, account linking, cards, or real financial accounts.
+Categorization, anomaly detection, and monthly reports are transparent
+organization aids, not financial advice.

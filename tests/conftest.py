@@ -13,6 +13,7 @@ from app.api.routes import anomalies as anomaly_routes  # noqa: E402
 from app.api.routes import auth as auth_routes  # noqa: E402
 from app.api.routes import dashboard as dashboard_routes  # noqa: E402
 from app.api.routes import imports as import_routes  # noqa: E402
+from app.api.routes import reports as report_routes  # noqa: E402
 from app.api.routes import subscriptions as subscription_routes  # noqa: E402
 from app.api.routes import transactions as transaction_routes  # noqa: E402
 from app.db.session import get_session  # noqa: E402
@@ -49,6 +50,7 @@ def client(session: Session):  # noqa: ANN201
 
     auth_routes.auth_rate_limiter = None
     import_routes.import_rate_limiter = None
+    report_routes.report_rate_limiter = None
     anomaly_routes.anomaly_rate_limiter = None
     dashboard_routes.dashboard_rate_limiter = None
     subscription_routes.subscription_rate_limiter = None
@@ -58,6 +60,7 @@ def client(session: Session):  # noqa: ANN201
     app.dependency_overrides.clear()
     auth_routes.auth_rate_limiter = None
     import_routes.import_rate_limiter = None
+    report_routes.report_rate_limiter = None
     anomaly_routes.anomaly_rate_limiter = None
     dashboard_routes.dashboard_rate_limiter = None
     subscription_routes.subscription_rate_limiter = None

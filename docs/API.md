@@ -276,3 +276,76 @@ Response shape:
 If the user has no transactions, the endpoint returns `has_data=false`, zeroed
 totals, and empty arrays. Dashboard responses omit password hashes, raw upload
 contents, raw imported file text, and other users' data.
+
+## Monthly Reports
+
+Monthly reports are protected, current-user-scoped summaries over imported,
+pasted, manual, or synthetic transactions only. They do not connect to banks.
+LLM use is optional and limited to neutral summary wording over aggregated facts.
+If LLMs are disabled, unavailable, or return unsafe wording, the backend uses a
+deterministic fallback summary.
+
+`POST /reports/monthly/generate`
+
+Request body:
+
+```json
+{
+  "month": "2026-05",
+  "use_ai": true,
+  "force_refresh": false
+}
+```
+
+Behavior:
+
+- `month` must use `YYYY-MM`.
+- `force_refresh=false` returns an existing report for that user and month.
+- `force_refresh=true` recalculates the persisted report.
+- `use_ai=false` always uses deterministic fallback text.
+- Raw CSV contents, pasted import text, and full transaction descriptions are not sent to the LLM.
+- AI summary text is safety-validated before saving or returning.
+
+Response shape:
+
+```json
+{
+  "id": "report-uuid",
+  "user_id": "user-uuid",
+  "month": "2026-05",
+  "currency": "PHP",
+  "total_income": "50000.00",
+  "total_expenses": "18420.00",
+  "total_spend": "18420.00",
+  "net_flow": "31580.00",
+  "transaction_count": 42,
+  "top_categories": [],
+  "detected_subscriptions": [],
+  "anomalies": [],
+  "needs_review_count": 4,
+  "largest_merchant_total": null,
+  "recurring_payment_count": 3,
+  "ai_summary": "Based on imported transactions...",
+  "generated_status": "complete",
+  "generation_source": "deterministic",
+  "safety_flags": [],
+  "has_data": true,
+  "created_at": "2026-05-16T00:00:00",
+  "updated_at": "2026-05-16T00:00:00"
+}
+```
+
+`GET /reports/monthly`
+
+Optional filters:
+
+- `month`: `YYYY-MM`
+- `limit`: 1 to 100, default 20
+- `offset`: default 0
+
+Returns only the current user's reports.
+
+`GET /reports/monthly/{report_id}`
+
+Returns one report owned by the current user. Returns 404 if the report does not
+exist or belongs to another user.

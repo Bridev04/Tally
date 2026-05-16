@@ -54,6 +54,16 @@ const categoryLabels: Record<string, string> = {
   needs_review: "Needs review",
 };
 
+function greetingForHour(hour: number) {
+  if (hour < 12) {
+    return "Good morning";
+  }
+  if (hour < 18) {
+    return "Good afternoon";
+  }
+  return "Good evening";
+}
+
 export default function HomeScreen() {
   const { token, user } = useAuth();
   const [summary, setSummary] = useState<DashboardSummaryResponse | null>(null);
@@ -113,27 +123,45 @@ export default function HomeScreen() {
     return emailName.split(/[._-]/)[0]?.replace(/^\w/, (value) => value.toUpperCase()) ?? "";
   }, [user?.email]);
 
+  const greeting = useMemo(() => greetingForHour(new Date().getHours()), []);
   const insight = summary?.anomaly_summary.latest_items[0] ?? null;
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl onRefresh={() => loadDashboard(true)} refreshing={isRefreshing} />}
+        refreshControl={
+          <RefreshControl
+            colors={[colors.primaryContainer]}
+            onRefresh={() => loadDashboard(true)}
+            refreshing={isRefreshing}
+            tintColor={colors.primaryContainer}
+          />
+        }
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.topBar}>
-          <Pressable accessibilityRole="button" onPress={() => router.push("/(app)/settings" as never)} style={styles.iconButton}>
+          <Pressable
+            accessibilityLabel="Open profile"
+            accessibilityRole="button"
+            onPress={() => router.push("/(app)/settings" as never)}
+            style={styles.iconButton}
+          >
             <Ionicons color={colors.primary} name="menu-outline" size={28} />
           </Pressable>
           <Text style={styles.brand}>Tally</Text>
-          <Pressable accessibilityRole="button" onPress={() => router.push("/(app)/budget-leaks" as never)} style={styles.iconButton}>
+          <Pressable
+            accessibilityLabel="Open insights"
+            accessibilityRole="button"
+            onPress={() => router.push("/(app)/budget-leaks" as never)}
+            style={styles.iconButton}
+          >
             <Ionicons color={colors.primary} name="notifications-outline" size={25} />
           </Pressable>
         </View>
 
         <View style={styles.greetingBlock}>
-          <Text style={styles.greeting}>{firstName ? `Good afternoon, ${firstName}` : "Good afternoon"}</Text>
+          <Text style={styles.greeting}>{firstName ? `${greeting}, ${firstName}` : greeting}</Text>
           <Text style={styles.greetingCopy}>Here’s your financial pulse.</Text>
         </View>
 
@@ -147,8 +175,9 @@ export default function HomeScreen() {
           <>
             <PulseCard summary={summary} />
             <InsightPreviewCard insight={insight} />
+            <MonthlyReportPreview summary={summary} />
             <SummaryGrid summary={summary} />
-            <UpcomingCharges items={summary.subscription_summary.upcoming_items} />
+            <UpcomingCharges currency={summary.currency} items={summary.subscription_summary.upcoming_items} />
             <TopCategories categories={summary.top_categories} currency={summary.currency} total={summary.total_expenses} />
             <RecentTransactions items={summary.recent_transactions} currency={summary.currency} />
             <SpendingInsights summary={summary} />
@@ -169,9 +198,12 @@ function PulseCard({ summary }: { summary: DashboardSummaryResponse }) {
       <View style={styles.waveOne} />
       <View style={styles.waveTwo} />
       <View style={styles.pulseHeader}>
-        <Text style={styles.pulseLabel}>TOTAL SPENDING THIS MONTH</Text>
+        <View>
+          <Text style={styles.pulseLabel}>TOTAL SPENDING</Text>
+          <Text style={styles.pulsePeriod}>{formatMonth(summary.month)}</Text>
+        </View>
         <View style={styles.pulseArrow}>
-          <Ionicons color="#bde7cd" name="arrow-up-outline" size={28} />
+          <Ionicons color="#bde7cd" name="trending-up-outline" size={28} />
         </View>
       </View>
       <Text adjustsFontSizeToFit numberOfLines={1} style={styles.pulseAmount}>
@@ -196,6 +228,27 @@ function InsightPreviewCard({ insight }: { insight: DashboardAnomalyItem | null 
         <Text style={styles.insightLabel}>INSIGHT</Text>
         <Text numberOfLines={2} style={styles.insightCopy}>
           {insight?.explanation ?? "No budget leaks detected for this period."}
+        </Text>
+      </View>
+      <Ionicons color="#748078" name="chevron-forward" size={28} />
+    </Pressable>
+  );
+}
+
+function MonthlyReportPreview({ summary }: { summary: DashboardSummaryResponse }) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={() => router.push("/(app)/reports" as never)}
+      style={({ pressed }) => [styles.reportPreview, pressed && styles.pressed]}
+    >
+      <View style={styles.reportPreviewIcon}>
+        <Ionicons color={colors.secondary} name="document-text-outline" size={24} />
+      </View>
+      <View style={styles.insightText}>
+        <Text style={styles.insightLabel}>MONTHLY REPORT</Text>
+        <Text numberOfLines={2} style={styles.insightCopy}>
+          Review {formatMonth(summary.month)} totals, recurring payments, and neutral spending patterns.
         </Text>
       </View>
       <Ionicons color="#748078" name="chevron-forward" size={28} />
@@ -238,7 +291,7 @@ function MetricCard({
   );
 }
 
-function UpcomingCharges({ items }: { items: DashboardSubscriptionItem[] }) {
+function UpcomingCharges({ currency, items }: { currency: string; items: DashboardSubscriptionItem[] }) {
   return (
     <View style={styles.section}>
       <SectionHeader action="See all" title="Upcoming charges" onPress={() => router.push("/(app)/recurring" as never)} />
@@ -262,7 +315,7 @@ function UpcomingCharges({ items }: { items: DashboardSubscriptionItem[] }) {
                 </Text>
                 <Text style={styles.rowMeta}>{formatDate(item.next_expected_date)}</Text>
               </View>
-              <Text style={styles.rowAmount}>{formatCurrency(item.average_amount, "PHP")}</Text>
+              <Text style={styles.rowAmount}>{formatCurrency(item.average_amount, currency)}</Text>
               <Ionicons color="#748078" name="chevron-forward" size={20} />
             </Pressable>
           ))}
@@ -342,7 +395,7 @@ function RecentTransactions({ currency, items }: { currency: string; items: Dash
               </View>
               <View style={styles.rowText}>
                 <Text numberOfLines={1} style={styles.rowTitle}>
-                  {item.merchant_normalized ?? item.description ?? "Imported transaction"}
+                  {item.merchant_normalized ?? "Imported transaction"}
                 </Text>
                 <Text style={styles.rowMeta}>
                   {formatShortDate(item.transaction_date)} • {labelForCategory(item.category ?? "needs_review")}
@@ -425,7 +478,7 @@ function EmptyDashboardState({
         style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
       >
         <Ionicons color="#ffffff" name="add-circle-outline" size={18} />
-        <Text style={styles.primaryButtonText}>Import Transactions</Text>
+        <Text style={styles.primaryButtonText}>Import transactions</Text>
       </Pressable>
       <Pressable
         accessibilityRole="button"
@@ -516,6 +569,14 @@ function formatShortDate(value: string) {
   return dateValue.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
+function formatMonth(value: string | null) {
+  if (!value) {
+    return "Latest month";
+  }
+  const dateValue = new Date(`${value}-01T00:00:00`);
+  return dateValue.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+}
+
 const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: colors.background,
@@ -604,6 +665,12 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     letterSpacing: 0,
   },
+  pulsePeriod: {
+    color: colors.sage,
+    fontSize: 15,
+    fontWeight: "800",
+    marginTop: 4,
+  },
   pulseArrow: {
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.07)",
@@ -633,6 +700,25 @@ const styles = StyleSheet.create({
     gap: 18,
     minHeight: 112,
     padding: 18,
+  },
+  reportPreview: {
+    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderColor: "#e6e8e2",
+    borderRadius: 22,
+    borderWidth: 1,
+    flexDirection: "row",
+    gap: 16,
+    minHeight: 104,
+    padding: 16,
+  },
+  reportPreviewIcon: {
+    alignItems: "center",
+    backgroundColor: "#eaf5ef",
+    borderRadius: 34,
+    height: 58,
+    justifyContent: "center",
+    width: 58,
   },
   insightIcon: {
     alignItems: "center",

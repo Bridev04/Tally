@@ -86,6 +86,7 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen name="transactions" options={{ href: null, title: "Transactions" }} />
+      <Tabs.Screen name="reports" options={{ href: null, title: "Monthly Report" }} />
       <Tabs.Screen name="add-transaction" options={{ href: null, title: "Add transaction" }} />
       <Tabs.Screen name="paste-import" options={{ href: null, title: "Paste transactions" }} />
     </Tabs>

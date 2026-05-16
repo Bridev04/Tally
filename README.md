@@ -102,6 +102,21 @@ data. Tally does not say what users should do financially.
 The dashboard is an informational overview of user-owned data. It does not
 connect to banks, use LLMs, or provide financial advice.
 
+## Phase 9
+
+- Monthly Insight Reports persisted per authenticated user and month
+- Protected `POST /reports/monthly/generate`, `GET /reports/monthly`, and `GET /reports/monthly/{id}` endpoints
+- Deterministic monthly calculations for income, expenses, net flow, top categories, recurring payments, anomalies, and needs-review counts
+- Optional LLM wording layer for neutral monthly explanation text only
+- Deterministic fallback summary when LLMs are disabled, unavailable, or fail safety validation
+- AI output validation before saving or returning summaries
+- Mobile Monthly Report screen with totals, neutral summary, top categories, recurring payments, budget leak patterns, needs-review links, and empty/loading/error states
+
+Monthly reports are based on imported, pasted, manual, or synthetic data only.
+Raw transaction files, pasted import text, and full transaction descriptions are
+not sent to the LLM. Tally still does not connect to banks and does not provide
+financial advice.
+
 ## Environment
 
 Copy `.env.example` to `.env` and set real values locally or in your host's
@@ -126,6 +141,12 @@ Required backend variables:
 - `SUBSCRIPTION_RATE_LIMIT_WINDOW_SECONDS`
 - `ANOMALY_RATE_LIMIT_REQUESTS`
 - `ANOMALY_RATE_LIMIT_WINDOW_SECONDS`
+- `REPORT_RATE_LIMIT_REQUESTS`
+- `REPORT_RATE_LIMIT_WINDOW_SECONDS`
+- `LLM_ENABLED`
+- `LLM_PROVIDER`
+- `LLM_API_KEY`
+- `LLM_MODEL`
 - `MAX_REQUEST_BODY_BYTES`
 - `MAX_UPLOAD_BYTES`
 

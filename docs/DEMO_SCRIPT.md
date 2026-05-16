@@ -101,3 +101,47 @@ Narration points:
 - The dashboard does not connect to banks and does not provide financial advice.
 - Language stays neutral: financial pulse, detected pattern, may be worth
   reviewing, and based on imported transactions.
+
+## Phase 9 Monthly Report
+
+1. Register or log in.
+2. Load synthetic demo data from the mobile app or `POST /demo/load-sample-data`.
+3. Run categorization, subscription detection, and anomaly detection if needed.
+4. Open Monthly Report from the Home dashboard.
+5. Tap Generate Report.
+6. Confirm the main report card shows monthly expenses, income, net flow, and
+   transaction count.
+7. Confirm Monthly Summary uses neutral wording based on imported data only.
+8. Confirm Top categories show amounts, percentages, counts, and rounded
+   progress bars.
+9. Confirm Recurring payments shows active count, estimated monthly total, and
+   links to Recurring.
+10. Confirm Budget leaks / patterns shows anomaly counts and links to Insights.
+11. Confirm Needs review links to Transactions filtered by `needs_review`.
+12. Create a fresh user with no transactions and confirm the empty state offers
+    Import Transactions and Try Demo Data.
+
+Backend smoke test:
+
+1. Start the backend.
+2. Register or log in a test user.
+3. Load demo data.
+4. Run categorization, subscription detection, and anomaly detection if needed.
+5. Call `POST /reports/monthly/generate` with `{"month":"2026-05","use_ai":false}`.
+6. Confirm deterministic report fields include total expenses, top categories,
+   detected subscriptions, anomalies, and a neutral summary.
+7. Call `GET /reports/monthly`.
+8. Call `GET /reports/monthly/{id}`.
+9. Call `POST /reports/monthly/generate` with `use_ai=true`; if no LLM is
+   configured, confirm fallback works.
+10. Confirm unauthenticated report requests return 401.
+11. Confirm a second user cannot access the first user's report.
+12. Confirm invalid month input returns the generic validation error.
+
+Narration points:
+
+- Monthly reports are based on imported, pasted, manual, or synthetic data only.
+- Tally does not connect to banks and does not provide financial advice.
+- LLMs are optional and limited to neutral monthly summary wording.
+- Raw files, pasted text, and full transaction descriptions are not sent to the LLM.
+- Unsafe AI output is rejected and replaced with deterministic fallback text.

@@ -46,6 +46,77 @@ or managed edge rate limiter so limits apply across all workers.
 JWTs are stored only with Expo SecureStore on mobile. Do not move them to
 AsyncStorage or frontend logs.
 
+## Phase 5
+
+- Deterministic transaction categorization service, with no AI or LLM calls
+- Merchant normalization for common payment prefixes, punctuation, and aliases
+- Explainable keyword rules for merchant and description matching
+- Category confidence scores from 0 to 1
+- `needs_review` fallback for unclear low-confidence transactions
+- Manual category corrections protected from automatic overwrites
+- `POST /transactions/categorize` for authenticated bulk categorization
+- Auto-categorization after CSV upload, paste confirm, manual entry without a category, and synthetic demo data
+- Mobile confidence badges, Needs Review filtering, and dashboard review count
+
+Tally remains an informational transaction organization app. Categories and
+confidence scores are editable aids for understanding imported data; they are
+not financial advice, investment advice, credit advice, or loan advice.
+
+## Phase 6
+
+- Deterministic recurring subscription and recurring payment detection, with no AI or LLM calls
+- Merchant-based grouping scoped to the authenticated user
+- Expense-only recurrence checks for weekly, biweekly, monthly, and yearly cadences
+- Confidence scores from occurrence count, amount consistency, interval consistency, and subscription category signals
+- Status calculation for active, paused, and cancelled patterns
+- `POST /subscriptions/detect`, `GET /subscriptions`, `GET /subscriptions/{id}`, and `PATCH /subscriptions/{id}/status`
+- Automatic detection after CSV upload, paste confirm, manual entry, and synthetic demo data
+- Mobile Recurring tab with status filters, confidence badges, and a detection CTA
+
+Recurring detection is a neutral pattern-finding feature over imported
+transactions. It is not financial advice and does not connect to banks.
+
+## Phase 7
+
+- Deterministic budget leak and spending anomaly detection, with no AI or LLM calls
+- Current-user-only analysis over imported, pasted, manual, and synthetic transactions
+- Category spike, merchant frequency spike, repeated small purchase, subscription price change, duplicate-like transaction, and needs-review cluster rules
+- Idempotent `POST /anomalies/detect` with optional `month` and `force_refresh`
+- `GET /anomalies` filters for month, severity, type, and paginated results
+- `GET /anomalies/summary` for severity counts and top affected categories/merchants
+- Mobile Budget Leaks tab with summary cards, neutral anomaly cards, loading/error states, pull-to-refresh, and Run detection CTA
+- Synthetic anomaly demo data in `sample_data/anomalies_detectable.csv`
+
+Budget leaks are review prompts based only on imported or synthetic transaction
+data. Tally does not say what users should do financially.
+
+## Phase 8
+
+- Prototype-based Home Dashboard with the Tally Stitch financial pulse design
+- Protected `GET /dashboard/summary` endpoint scoped to the authenticated user
+- Deterministic dashboard aggregation over imported, manual, pasted, and synthetic transaction data only
+- Monthly totals for income, spending, net flow, transactions, needs review, top categories, recent transactions, recurring charges, and spending insights
+- Mobile Home tab with cream background, forest-green pulse card, soft rounded cards, upcoming charges, top categories, recent transactions, insight preview, and five-tab bottom navigation
+- Empty, loading, retry, and no-data states that avoid raw backend errors
+
+The dashboard is an informational overview of user-owned data. It does not
+connect to banks, use LLMs, or provide financial advice.
+
+## Phase 9
+
+- Monthly Insight Reports persisted per authenticated user and month
+- Protected `POST /reports/monthly/generate`, `GET /reports/monthly`, and `GET /reports/monthly/{id}` endpoints
+- Deterministic monthly calculations for income, expenses, net flow, top categories, recurring payments, anomalies, and needs-review counts
+- Optional LLM wording layer for neutral monthly explanation text only
+- Deterministic fallback summary when LLMs are disabled, unavailable, or fail safety validation
+- AI output validation before saving or returning summaries
+- Mobile Monthly Report screen with totals, neutral summary, top categories, recurring payments, budget leak patterns, needs-review links, and empty/loading/error states
+
+Monthly reports are based on imported, pasted, manual, or synthetic data only.
+Raw transaction files, pasted import text, and full transaction descriptions are
+not sent to the LLM. Tally still does not connect to banks and does not provide
+financial advice.
+
 ## Environment
 
 Copy `.env.example` to `.env` and set real values locally or in your host's
@@ -59,6 +130,23 @@ Required backend variables:
 - `ACCESS_TOKEN_EXPIRE_MINUTES`
 - `AUTH_RATE_LIMIT_REQUESTS`
 - `AUTH_RATE_LIMIT_WINDOW_SECONDS`
+- `IMPORT_RATE_LIMIT_REQUESTS`
+- `IMPORT_RATE_LIMIT_WINDOW_SECONDS`
+- `TRANSACTION_RATE_LIMIT_REQUESTS`
+- `TRANSACTION_RATE_LIMIT_WINDOW_SECONDS`
+- `DASHBOARD_RATE_LIMIT_REQUESTS`
+- `DASHBOARD_RATE_LIMIT_WINDOW_SECONDS`
+- `DASHBOARD_LOW_CONFIDENCE_THRESHOLD`
+- `SUBSCRIPTION_RATE_LIMIT_REQUESTS`
+- `SUBSCRIPTION_RATE_LIMIT_WINDOW_SECONDS`
+- `ANOMALY_RATE_LIMIT_REQUESTS`
+- `ANOMALY_RATE_LIMIT_WINDOW_SECONDS`
+- `REPORT_RATE_LIMIT_REQUESTS`
+- `REPORT_RATE_LIMIT_WINDOW_SECONDS`
+- `LLM_ENABLED`
+- `LLM_PROVIDER`
+- `LLM_API_KEY`
+- `LLM_MODEL`
 - `MAX_REQUEST_BODY_BYTES`
 - `MAX_UPLOAD_BYTES`
 

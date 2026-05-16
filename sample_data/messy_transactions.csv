@@ -1,0 +1,5 @@
+date,description,merchant,amount,currency
+2026-01-01,  Netflix Subscription  , NETFLIX*PAYMENT ,-549,php
+2026-01-03,Grab ride home,Grab Philippines,-230.00,PHP
+2026-01-04,Salary deposit, Company Payroll ,35000.00,PHP
+2026-01-06,Water bill,Manila Water,-875.50,PHP

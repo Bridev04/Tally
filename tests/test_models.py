@@ -46,7 +46,7 @@ def test_core_models_can_be_created() -> None:
         upload = TransactionUpload(
             user_id=user.id,
             file_name="may-transactions.csv",
-            upload_status="processed",
+            upload_status="completed",
             total_rows=1,
             processed_rows=1,
         )
@@ -162,7 +162,7 @@ def test_upload_row_count_constraint_is_enforced() -> None:
             TransactionUpload(
                 user_id=user.id,
                 file_name="bad-counts.csv",
-                upload_status="processed",
+                upload_status="completed",
                 total_rows=1,
                 processed_rows=2,
             )

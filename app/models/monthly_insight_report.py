@@ -31,11 +31,21 @@ class MonthlyInsightReport(SQLModel, table=True):
     )
     month: date = Field(nullable=False, index=True)
     total_spend: Decimal = Field(sa_column=Column(Numeric(12, 2), nullable=False))
+    total_income: Decimal = Field(default=Decimal("0.00"), sa_column=Column(Numeric(12, 2), nullable=False))
+    net_flow: Decimal = Field(default=Decimal("0.00"), sa_column=Column(Numeric(12, 2), nullable=False))
+    transaction_count: int = Field(default=0, nullable=False)
     top_categories_json: dict = Field(default_factory=dict, sa_column=Column(JSON, nullable=False))
     detected_subscriptions_json: list = Field(default_factory=list, sa_column=Column(JSON, nullable=False))
     anomalies_json: list = Field(default_factory=list, sa_column=Column(JSON, nullable=False))
     ai_summary: str | None = Field(default=None, max_length=4000)
+    generated_status: str = Field(default="complete", nullable=False, max_length=50)
+    generation_source: str = Field(default="deterministic", nullable=False, max_length=50)
+    safety_flags_json: list = Field(default_factory=list, sa_column=Column(JSON, nullable=False))
     created_at: datetime = Field(
+        default_factory=utc_now,
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+    )
+    updated_at: datetime = Field(
         default_factory=utc_now,
         sa_column=Column(DateTime(timezone=True), nullable=False),
     )

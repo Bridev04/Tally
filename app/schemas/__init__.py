@@ -7,7 +7,18 @@ from app.schemas.monthly_insight_report import (
 )
 from app.schemas.spending_anomaly import SpendingAnomalyCreate, SpendingAnomalyRead
 from app.schemas.subscription import SubscriptionCreate, SubscriptionRead, SubscriptionUpdate
-from app.schemas.transaction import TransactionCreate, TransactionRead, TransactionUpdate
+from app.schemas.transaction import (
+    CategorySummaryItem,
+    CategorySummaryResponse,
+    MerchantSummaryItem,
+    MerchantSummaryResponse,
+    TransactionCategoryUpdate,
+    TransactionCreate,
+    TransactionFilterParams,
+    TransactionListResponse,
+    TransactionRead,
+    TransactionUpdate,
+)
 from app.schemas.transaction_upload import (
     TransactionUploadCreate,
     TransactionUploadRead,
@@ -28,7 +39,14 @@ __all__ = [
     "SubscriptionCreate",
     "SubscriptionRead",
     "SubscriptionUpdate",
+    "CategorySummaryItem",
+    "CategorySummaryResponse",
+    "MerchantSummaryItem",
+    "MerchantSummaryResponse",
+    "TransactionCategoryUpdate",
     "TransactionCreate",
+    "TransactionFilterParams",
+    "TransactionListResponse",
     "TransactionRead",
     "TransactionUpdate",
     "TransactionUploadCreate",

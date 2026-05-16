@@ -1,9 +1,9 @@
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 import uuid
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, Column, DateTime, Numeric
+from sqlalchemy import CheckConstraint, Column, DateTime, JSON, Numeric
 from sqlmodel import Field, Relationship, SQLModel
 
 from app.models.common import utc_now
@@ -35,6 +35,12 @@ class SpendingAnomaly(SQLModel, table=True):
     percentage_change: float | None = Field(default=None)
     explanation: str = Field(nullable=False, max_length=2000)
     severity: str = Field(default="medium", nullable=False, max_length=50)
+    period_start: date | None = Field(default=None, index=True)
+    period_end: date | None = Field(default=None, index=True)
+    baseline_period_start: date | None = Field(default=None)
+    baseline_period_end: date | None = Field(default=None)
+    transaction_count: int | None = Field(default=None)
+    metadata_json: dict = Field(default_factory=dict, sa_column=Column(JSON, nullable=False, default=dict))
     created_at: datetime = Field(
         default_factory=utc_now,
         sa_column=Column(DateTime(timezone=True), nullable=False),

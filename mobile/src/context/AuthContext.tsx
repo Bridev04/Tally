@@ -1,5 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
+import { Platform } from "react-native";
 
 import { getMe, login as loginRequest, register as registerRequest } from "@/lib/api";
 import type { User } from "@/types/auth";
@@ -8,6 +9,28 @@ const tokenKey = "tally.authToken";
 const secureStoreOptions: SecureStore.SecureStoreOptions = {
   keychainAccessible: SecureStore.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
 };
+const canUseSecureStore = Platform.OS !== "web";
+
+async function readStoredToken() {
+  if (!canUseSecureStore) {
+    return null;
+  }
+  return SecureStore.getItemAsync(tokenKey, secureStoreOptions);
+}
+
+async function writeStoredToken(nextToken: string) {
+  if (!canUseSecureStore) {
+    return;
+  }
+  await SecureStore.setItemAsync(tokenKey, nextToken, secureStoreOptions);
+}
+
+async function clearStoredToken() {
+  if (!canUseSecureStore) {
+    return;
+  }
+  await SecureStore.deleteItemAsync(tokenKey, secureStoreOptions);
+}
 
 type AuthContextValue = {
   isLoading: boolean;
@@ -30,7 +53,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     async function restoreSession() {
       try {
-        const storedToken = await SecureStore.getItemAsync(tokenKey, secureStoreOptions);
+        const storedToken = await readStoredToken();
         if (!storedToken) {
           return;
         }
@@ -40,7 +63,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           setUser(currentUser);
         }
       } catch {
-        await SecureStore.deleteItemAsync(tokenKey, secureStoreOptions);
+        await clearStoredToken();
       } finally {
         if (isMounted) {
           setIsLoading(false);
@@ -55,7 +78,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, []);
 
   async function persistSession(nextToken: string, nextUser: User) {
-    await SecureStore.setItemAsync(tokenKey, nextToken, secureStoreOptions);
+    await writeStoredToken(nextToken);
     setToken(nextToken);
     setUser(nextUser);
   }
@@ -71,7 +94,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }
 
   async function logout() {
-    await SecureStore.deleteItemAsync(tokenKey, secureStoreOptions);
+    await clearStoredToken();
     setToken(null);
     setUser(null);
   }

@@ -6,7 +6,7 @@ export default function LoginScreen() {
   const { login } = useAuth();
 
   return (
-    <Screen>
+    <Screen bottomInset={false} contentStyle={{ justifyContent: "center" }}>
       <AuthForm mode="login" onSubmit={login} />
     </Screen>
   );

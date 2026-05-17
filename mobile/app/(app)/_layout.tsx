@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 
 import { useAuth } from "@/context/AuthContext";
+import { colors, radius, shadows } from "@/theme";
 
 export default function AppLayout() {
   const { isLoading, token } = useAuth();
@@ -11,7 +12,7 @@ export default function AppLayout() {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color="#256B5B" />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -24,28 +25,25 @@ export default function AppLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#012d1d",
-        tabBarInactiveTintColor: "#858b86",
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.navInactive,
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "700",
         },
         tabBarStyle: {
-          backgroundColor: "rgba(250, 249, 244, 0.96)",
-          borderColor: "#dfe4dc",
-          borderRadius: 24,
+          backgroundColor: colors.navRaised,
+          borderColor: colors.border,
+          borderRadius: radius["2xl"],
           borderTopWidth: 1,
           bottom: 12,
-          elevation: 8,
           height: 72,
           left: 12,
           paddingBottom: 10,
           paddingTop: 8,
           position: "absolute",
           right: 12,
-          shadowColor: "#012d1d",
-          shadowOpacity: 0.08,
-          shadowRadius: 18,
+          ...shadows.card,
         },
       }}
     >
@@ -117,19 +115,19 @@ function AddTabButton({
 const styles = StyleSheet.create({
   centered: {
     alignItems: "center",
-    backgroundColor: "#F7F4EF",
+    backgroundColor: colors.background,
     flex: 1,
     justifyContent: "center",
   },
   addTabButton: {
     alignItems: "center",
-    backgroundColor: "#1b4332",
+    backgroundColor: colors.primaryStrong,
     borderRadius: 34,
     height: 68,
     justifyContent: "center",
     marginTop: -28,
-    shadowColor: "#012d1d",
-    shadowOpacity: 0.18,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.28,
     shadowRadius: 18,
     width: 68,
   },

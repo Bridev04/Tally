@@ -24,17 +24,20 @@ import {
 } from "@/lib/api";
 
 const colors = {
-  background: "#faf9f4",
-  primary: "#012d1d",
-  primaryContainer: "#1b4332",
-  secondary: "#2b694d",
+  background: "#050807",
+  primary: "#34d178",
+  primaryContainer: "#0a5a3a",
+  secondary: "#28b765",
   sage: "#b0f1cc",
-  amber: "#df982d",
-  text: "#1b1c19",
-  muted: "#414844",
-  outline: "#c1c8c2",
-  surface: "#ffffff",
-  softSurface: "#f5f4ef",
+  amber: "#f2a93b",
+  text: "#f4f7f5",
+  muted: "#a5ada8",
+  outline: "#26332e",
+  surface: "#101816",
+  surfaceRaised: "#16211e",
+  elevated: "#18231f",
+  softSurface: "#121c19",
+  glow: "rgba(52, 209, 120, 0.18)",
 };
 
 const categoryLabels: Record<string, string> = {
@@ -162,7 +165,7 @@ export default function HomeScreen() {
 
         <View style={styles.greetingBlock}>
           <Text style={styles.greeting}>{firstName ? `${greeting}, ${firstName}` : greeting}</Text>
-          <Text style={styles.greetingCopy}>Here’s your financial pulse.</Text>
+          <Text style={styles.greetingCopy}>Here's your financial pulse.</Text>
         </View>
 
         {isLoading ? <DashboardSkeleton /> : null}
@@ -230,7 +233,7 @@ function InsightPreviewCard({ insight }: { insight: DashboardAnomalyItem | null 
           {insight?.explanation ?? "No budget leaks detected for this period."}
         </Text>
       </View>
-      <Ionicons color="#748078" name="chevron-forward" size={28} />
+      <Ionicons color={colors.muted} name="chevron-forward" size={28} />
     </Pressable>
   );
 }
@@ -251,7 +254,7 @@ function MonthlyReportPreview({ summary }: { summary: DashboardSummaryResponse }
           Review {formatMonth(summary.month)} totals, recurring payments, and neutral spending patterns.
         </Text>
       </View>
-      <Ionicons color="#748078" name="chevron-forward" size={28} />
+      <Ionicons color={colors.muted} name="chevron-forward" size={28} />
     </Pressable>
   );
 }
@@ -316,7 +319,7 @@ function UpcomingCharges({ currency, items }: { currency: string; items: Dashboa
                 <Text style={styles.rowMeta}>{formatDate(item.next_expected_date)}</Text>
               </View>
               <Text style={styles.rowAmount}>{formatCurrency(item.average_amount, currency)}</Text>
-              <Ionicons color="#748078" name="chevron-forward" size={20} />
+              <Ionicons color={colors.muted} name="chevron-forward" size={20} />
             </Pressable>
           ))}
         </View>
@@ -704,7 +707,7 @@ const styles = StyleSheet.create({
   reportPreview: {
     alignItems: "center",
     backgroundColor: colors.surface,
-    borderColor: "#e6e8e2",
+    borderColor: colors.outline,
     borderRadius: 22,
     borderWidth: 1,
     flexDirection: "row",
@@ -714,7 +717,7 @@ const styles = StyleSheet.create({
   },
   reportPreviewIcon: {
     alignItems: "center",
-    backgroundColor: "#eaf5ef",
+    backgroundColor: colors.glow,
     borderRadius: 34,
     height: 58,
     justifyContent: "center",
@@ -751,7 +754,7 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     backgroundColor: colors.surface,
-    borderColor: "#e6e8e2",
+    borderColor: colors.outline,
     borderRadius: 18,
     borderWidth: 1,
     flexGrow: 1,
@@ -760,8 +763,8 @@ const styles = StyleSheet.create({
     width: "47%",
   },
   metricWatch: {
-    backgroundColor: "#fff8ec",
-    borderColor: "#efc37b",
+    backgroundColor: "rgba(242, 169, 59, 0.10)",
+    borderColor: "rgba(242, 169, 59, 0.38)",
   },
   metricTop: {
     alignItems: "center",
@@ -846,7 +849,7 @@ const styles = StyleSheet.create({
   },
   softPanel: {
     backgroundColor: colors.surface,
-    borderColor: "#e6e8e2",
+    borderColor: colors.outline,
     borderRadius: 22,
     borderWidth: 1,
     gap: 14,
@@ -880,7 +883,7 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
   progressTrack: {
-    backgroundColor: "#edf0eb",
+    backgroundColor: colors.elevated,
     borderRadius: 99,
     height: 9,
     overflow: "hidden",
@@ -903,7 +906,7 @@ const styles = StyleSheet.create({
   },
   transactionIcon: {
     alignItems: "center",
-    backgroundColor: "#eaf5ef",
+    backgroundColor: colors.glow,
     borderRadius: 14,
     height: 42,
     justifyContent: "center",
@@ -956,7 +959,7 @@ const styles = StyleSheet.create({
   emptyState: {
     alignItems: "flex-start",
     backgroundColor: colors.surface,
-    borderColor: "#e6e8e2",
+    borderColor: colors.outline,
     borderRadius: 28,
     borderWidth: 1,
     gap: 14,
@@ -964,7 +967,7 @@ const styles = StyleSheet.create({
   },
   emptyIcon: {
     alignItems: "center",
-    backgroundColor: "#eaf5ef",
+    backgroundColor: colors.glow,
     borderRadius: 28,
     height: 56,
     justifyContent: "center",
@@ -1016,7 +1019,7 @@ const styles = StyleSheet.create({
     gap: 18,
   },
   skeleton: {
-    backgroundColor: "#eceee8",
+    backgroundColor: colors.surfaceRaised,
     borderRadius: 24,
   },
   skeletonHero: {
@@ -1030,8 +1033,8 @@ const styles = StyleSheet.create({
     width: "47%",
   },
   errorPanel: {
-    backgroundColor: "#fff8ec",
-    borderColor: "#efc37b",
+    backgroundColor: "rgba(242, 169, 59, 0.10)",
+    borderColor: "rgba(242, 169, 59, 0.38)",
     borderRadius: 22,
     borderWidth: 1,
     gap: 12,

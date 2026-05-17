@@ -130,6 +130,21 @@ Privacy controls are about Tally app data only. Tally does not delete bank
 accounts, financial accounts, cards, or linked institutions because it never
 connects to them. Destructive actions require exact confirmation phrases.
 
+## Phase 11
+
+- Mobile dark mode polish using the Financial Organicism / Nature-Tech direction
+- Centralized mobile design tokens for dark colors, spacing, radii, typography, shadows, and gradients
+- Shared mobile UI primitives for screens, cards, buttons, badges, loading/empty/error states, section headers, and confirmation modals
+- Dark charcoal app shell with emerald accents, glassy cards, muted secondary text, and a floating bottom navigation
+- Polished Home, Import/Add, Transactions, Recurring, Insights, Monthly Report, and Settings / Privacy screens
+- Auth screens now use calm onboarding copy: no bank connection required, imported/demo data only, and not financial advice
+- Frontend static checks cover the dark visual system, shared UI components, neutral copy, and destructive confirmation phrases
+
+Phase 11 is frontend polish only. Tally still uses CSV upload, paste import,
+manual transaction entry, and synthetic demo data only. It does not connect to
+banks, use Plaid, use FinanceKit, link cards, link accounts, or provide
+financial advice.
+
 ## Environment
 
 Copy `.env.example` to `.env` and set real values locally or in your host's

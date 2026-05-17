@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/context/AuthContext";
 import { detectSubscriptions, listSubscriptions, loadDemoData, Subscription } from "@/lib/api";
+import { colors, radius, typography } from "@/theme";
 
 const filters = ["all", "active", "paused", "cancelled"] as const;
 type StatusFilter = (typeof filters)[number];
@@ -106,7 +107,7 @@ export default function RecurringScreen() {
             <Text style={styles.title}>Recurring</Text>
             <Text style={styles.subtitle}>{subscriptions.length} detected patterns</Text>
           </View>
-          {isLoading ? <ActivityIndicator color="#256B5B" /> : null}
+          {isLoading ? <ActivityIndicator color={colors.primary} /> : null}
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
@@ -140,7 +141,7 @@ export default function RecurringScreen() {
 
         {!isLoading && subscriptions.length === 0 ? (
           <View style={styles.emptyState}>
-            <Ionicons color="#256B5B" name="repeat-outline" size={28} />
+            <Ionicons color={colors.primary} name="repeat-outline" size={28} />
             <Text style={styles.emptyTitle}>No recurring payments detected yet.</Text>
             <Text style={styles.emptyCopy}>Import transactions or load demo data to find patterns.</Text>
             <Pressable
@@ -148,7 +149,7 @@ export default function RecurringScreen() {
               onPress={() => router.push("/(app)/import")}
               style={({ pressed }) => [styles.importButton, pressed && styles.pressed]}
             >
-              <Ionicons color="#256B5B" name="add-circle-outline" size={18} />
+              <Ionicons color={colors.primary} name="add-circle-outline" size={18} />
               <Text style={styles.importButtonText}>Import transactions</Text>
             </Pressable>
           </View>
@@ -168,6 +169,9 @@ function RecurringCard({ item }: { item: Subscription }) {
   return (
     <View style={styles.card}>
       <View style={styles.cardTop}>
+        <View style={styles.merchantMark}>
+          <Text style={styles.merchantInitial}>{item.merchant_name.slice(0, 1).toUpperCase()}</Text>
+        </View>
         <View style={styles.cardTitleBlock}>
           <Text numberOfLines={1} style={styles.merchant}>
             {item.merchant_name}
@@ -248,7 +252,7 @@ function ActionButton({
 }) {
   return (
     <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
-      {isLoading ? <ActivityIndicator color="#FFFFFF" /> : <Ionicons color="#FFFFFF" name={icon} size={18} />}
+      {isLoading ? <ActivityIndicator color={colors.white} /> : <Ionicons color={colors.white} name={icon} size={18} />}
       <Text style={styles.actionButtonText}>{label}</Text>
     </Pressable>
   );
@@ -271,7 +275,7 @@ function SecondaryButton({
       onPress={onPress}
       style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
     >
-      {isLoading ? <ActivityIndicator color="#256B5B" /> : <Ionicons color="#256B5B" name={icon} size={18} />}
+      {isLoading ? <ActivityIndicator color={colors.primary} /> : <Ionicons color={colors.primary} name={icon} size={18} />}
       <Text style={styles.secondaryButtonText}>{label}</Text>
     </Pressable>
   );
@@ -294,13 +298,13 @@ function formatDate(value: string | null) {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: "#F7F4EF",
+    backgroundColor: colors.background,
     flex: 1,
   },
   content: {
     gap: 16,
     padding: 20,
-    paddingBottom: 36,
+    paddingBottom: 116,
   },
   headerRow: {
     alignItems: "center",
@@ -308,12 +312,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   title: {
-    color: "#111816",
-    fontSize: 30,
-    fontWeight: "700",
+    color: colors.text,
+    ...typography.title,
   },
   subtitle: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 14,
     marginTop: 3,
   },
@@ -322,33 +325,33 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   chip: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.md,
     borderWidth: 1,
     justifyContent: "center",
     minHeight: 36,
     paddingHorizontal: 12,
   },
   chipSelected: {
-    backgroundColor: "#256B5B",
-    borderColor: "#256B5B",
+    backgroundColor: colors.primaryStrong,
+    borderColor: colors.primary,
   },
   chipText: {
-    color: "#38443E",
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: "700",
   },
   chipTextSelected: {
-    color: "#FFFFFF",
+    color: colors.white,
   },
   actions: {
     gap: 10,
   },
   actionButton: {
     alignItems: "center",
-    backgroundColor: "#256B5B",
-    borderRadius: 8,
+    backgroundColor: colors.primaryStrong,
+    borderRadius: radius.lg,
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
@@ -356,15 +359,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
   },
   actionButtonText: {
-    color: "#FFFFFF",
+    color: colors.white,
     fontSize: 15,
     fontWeight: "800",
   },
   secondaryButton: {
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderColor: "#B8D2CA",
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.lg,
     borderWidth: 1,
     flexDirection: "row",
     gap: 8,
@@ -373,43 +376,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
   },
   secondaryButtonText: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 15,
     fontWeight: "800",
   },
   error: {
-    color: "#A23B31",
+    color: colors.danger,
     fontSize: 14,
     lineHeight: 20,
   },
   message: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 14,
     lineHeight: 20,
   },
   emptyState: {
     alignItems: "flex-start",
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.xl,
     borderWidth: 1,
     gap: 12,
     padding: 18,
   },
   emptyTitle: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 18,
     fontWeight: "800",
   },
   emptyCopy: {
-    color: "#38443E",
+    color: colors.textSecondary,
     fontSize: 15,
     lineHeight: 22,
   },
   importButton: {
     alignItems: "center",
-    borderColor: "#B8D2CA",
-    borderRadius: 8,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.md,
     borderWidth: 1,
     flexDirection: "row",
     gap: 8,
@@ -417,7 +420,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   importButtonText: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 14,
     fontWeight: "800",
   },
@@ -425,9 +428,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   card: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.listSurface,
+    borderColor: colors.border,
+    borderRadius: radius.xl,
     borderWidth: 1,
     gap: 12,
     padding: 14,
@@ -438,21 +441,34 @@ const styles = StyleSheet.create({
     gap: 10,
     justifyContent: "space-between",
   },
+  merchantMark: {
+    alignItems: "center",
+    backgroundColor: colors.glow,
+    borderRadius: radius.lg,
+    height: 52,
+    justifyContent: "center",
+    width: 52,
+  },
+  merchantInitial: {
+    color: colors.primary,
+    fontSize: 21,
+    fontWeight: "900",
+  },
   cardTitleBlock: {
     flex: 1,
     gap: 4,
   },
   merchant: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 17,
     fontWeight: "800",
   },
   meta: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 13,
   },
   amount: {
-    color: "#256B5B",
+    color: colors.primary,
     flexShrink: 0,
     fontSize: 15,
     fontWeight: "800",
@@ -463,73 +479,73 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   statusBadge: {
-    backgroundColor: "#F1ECE5",
-    borderColor: "#D8D0C7",
-    borderRadius: 7,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.sm,
     borderWidth: 1,
     justifyContent: "center",
     minHeight: 28,
     paddingHorizontal: 9,
   },
   activeBadge: {
-    backgroundColor: "#E7F1ED",
-    borderColor: "#B8D2CA",
+    backgroundColor: "rgba(52, 209, 120, 0.12)",
+    borderColor: "rgba(52, 209, 120, 0.34)",
   },
   pausedBadge: {
-    backgroundColor: "#FFF7EA",
-    borderColor: "#E5B46D",
+    backgroundColor: "rgba(242, 169, 59, 0.12)",
+    borderColor: "rgba(242, 169, 59, 0.38)",
   },
   statusText: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 12,
     fontWeight: "800",
   },
   activeText: {
-    color: "#256B5B",
+    color: colors.primary,
   },
   pausedText: {
-    color: "#8F5A15",
+    color: colors.amber,
   },
   confidenceBadge: {
-    backgroundColor: "#E7F1ED",
-    borderColor: "#B8D2CA",
-    borderRadius: 7,
+    backgroundColor: "rgba(52, 209, 120, 0.12)",
+    borderColor: "rgba(52, 209, 120, 0.34)",
+    borderRadius: radius.sm,
     borderWidth: 1,
     justifyContent: "center",
     minHeight: 28,
     paddingHorizontal: 9,
   },
   mediumConfidence: {
-    backgroundColor: "#FFF7EA",
-    borderColor: "#E5B46D",
+    backgroundColor: "rgba(242, 169, 59, 0.12)",
+    borderColor: "rgba(242, 169, 59, 0.38)",
   },
   confidenceText: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 12,
     fontWeight: "800",
   },
   mediumConfidenceText: {
-    color: "#8F5A15",
+    color: colors.amber,
   },
   detailGrid: {
     flexDirection: "row",
     gap: 10,
   },
   detail: {
-    backgroundColor: "#F7F4EF",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
     flex: 1,
     gap: 4,
     minHeight: 62,
     padding: 10,
   },
   detailLabel: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 12,
     fontWeight: "700",
   },
   detailValue: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 14,
     fontWeight: "800",
   },

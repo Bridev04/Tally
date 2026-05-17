@@ -1,10 +1,11 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
+import { Card, Screen } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
 import { createManualTransaction } from "@/lib/api";
+import { colors, radius, spacing, typography } from "@/theme";
 
 const categories = [
   "food",
@@ -100,52 +101,55 @@ export default function AddTransactionScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+    <Screen scroll>
         <Text style={styles.title}>Add Transaction</Text>
-        <TextInput onChangeText={setMerchant} placeholder="Merchant" style={styles.input} value={merchant} />
-        <TextInput
-          keyboardType="decimal-pad"
-          onChangeText={setAmount}
-          placeholder="Amount"
-          style={styles.input}
-          value={amount}
-        />
-        <TextInput onChangeText={setDate} placeholder="Date YYYY-MM-DD" style={styles.input} value={date} />
-        <TextInput
-          autoCapitalize="characters"
-          maxLength={3}
-          onChangeText={setCurrency}
-          placeholder="Currency"
-          style={styles.input}
-          value={currency}
-        />
-        <TextInput onChangeText={setDescription} placeholder="Description" style={styles.input} value={description} />
-        <View style={styles.pickerBlock}>
-          <Text style={styles.sectionLabel}>Category optional</Text>
-          <View style={styles.categoryPicker}>
-            <CategoryChip isSelected={!category} label="Auto" onPress={() => setCategory("")} />
-            {categories.map((item) => (
-              <CategoryChip
-                key={item}
-                isSelected={category === item}
-                label={categoryLabels[item]}
-                onPress={() => setCategory(item)}
-              />
-            ))}
+        <Text style={styles.subtitle}>Save one transaction without connecting a bank.</Text>
+        <Card variant="elevated">
+          <TextInput onChangeText={setMerchant} placeholder="Merchant" placeholderTextColor={colors.textMuted} style={styles.input} value={merchant} />
+          <TextInput
+            keyboardType="decimal-pad"
+            onChangeText={setAmount}
+            placeholder="Amount"
+            placeholderTextColor={colors.textMuted}
+            style={styles.input}
+            value={amount}
+          />
+          <TextInput onChangeText={setDate} placeholder="Date YYYY-MM-DD" placeholderTextColor={colors.textMuted} style={styles.input} value={date} />
+          <TextInput
+            autoCapitalize="characters"
+            maxLength={3}
+            onChangeText={setCurrency}
+            placeholder="Currency"
+            placeholderTextColor={colors.textMuted}
+            style={styles.input}
+            value={currency}
+          />
+          <TextInput onChangeText={setDescription} placeholder="Description" placeholderTextColor={colors.textMuted} style={styles.input} value={description} />
+          <View style={styles.pickerBlock}>
+            <Text style={styles.sectionLabel}>Category optional</Text>
+            <View style={styles.categoryPicker}>
+              <CategoryChip isSelected={!category} label="Auto" onPress={() => setCategory("")} />
+              {categories.map((item) => (
+                <CategoryChip
+                  key={item}
+                  isSelected={category === item}
+                  label={categoryLabels[item]}
+                  onPress={() => setCategory(item)}
+                />
+              ))}
+            </View>
           </View>
-        </View>
-        {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Pressable
-          accessibilityRole="button"
-          disabled={isSaving}
-          onPress={handleSave}
-          style={({ pressed }) => [styles.button, (pressed || isSaving) && styles.buttonPressed]}
-        >
-          {isSaving ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.buttonText}>Save transaction</Text>}
-        </Pressable>
-      </ScrollView>
-    </SafeAreaView>
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+          <Pressable
+            accessibilityRole="button"
+            disabled={isSaving}
+            onPress={handleSave}
+            style={({ pressed }) => [styles.button, (pressed || isSaving) && styles.buttonPressed]}
+          >
+            {isSaving ? <ActivityIndicator color={colors.white} /> : <Text style={styles.buttonText}>Save transaction</Text>}
+          </Pressable>
+        </Card>
+    </Screen>
   );
 }
 
@@ -162,26 +166,20 @@ function CategoryChip({ isSelected, label, onPress }: { isSelected: boolean; lab
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    backgroundColor: "#F7F4EF",
-    flex: 1,
-  },
-  content: {
-    gap: 14,
-    padding: 24,
-  },
   title: {
-    color: "#111816",
-    fontSize: 28,
-    fontWeight: "700",
-    marginBottom: 6,
+    color: colors.text,
+    ...typography.title,
+  },
+  subtitle: {
+    color: colors.textSecondary,
+    ...typography.body,
   },
   input: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.backgroundRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.md,
     borderWidth: 1,
-    color: "#111816",
+    color: colors.text,
     fontSize: 16,
     minHeight: 52,
     paddingHorizontal: 14,
@@ -190,7 +188,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   sectionLabel: {
-    color: "#38443E",
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: "800",
   },
@@ -200,34 +198,34 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   chip: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.md,
     borderWidth: 1,
     minHeight: 36,
     justifyContent: "center",
     paddingHorizontal: 12,
   },
   chipSelected: {
-    backgroundColor: "#256B5B",
-    borderColor: "#256B5B",
+    backgroundColor: colors.primaryStrong,
+    borderColor: colors.primary,
   },
   chipText: {
-    color: "#38443E",
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: "700",
   },
   chipTextSelected: {
-    color: "#FFFFFF",
+    color: colors.white,
   },
   error: {
-    color: "#A23B31",
+    color: colors.danger,
     fontSize: 14,
   },
   button: {
     alignItems: "center",
-    backgroundColor: "#256B5B",
-    borderRadius: 8,
+    backgroundColor: colors.primaryStrong,
+    borderRadius: radius.lg,
     justifyContent: "center",
     minHeight: 52,
   },
@@ -235,7 +233,7 @@ const styles = StyleSheet.create({
     opacity: 0.82,
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: colors.white,
     fontSize: 16,
     fontWeight: "700",
   },

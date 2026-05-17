@@ -53,7 +53,8 @@ def test_mobile_has_recurring_screen_and_detection_cta() -> None:
 def test_mobile_has_budget_leaks_screen_and_neutral_copy() -> None:
     source = read_mobile_source()
 
-    assert "Budget Leaks" in source
+    assert "Insights" in source
+    assert "For you" in source
     assert "Run detection" in source
     assert "No budget leaks detected yet." in source
     assert "Detected from imported data" in source
@@ -65,7 +66,7 @@ def test_mobile_has_budget_leaks_screen_and_neutral_copy() -> None:
 def test_mobile_has_phase_8_home_dashboard_contract() -> None:
     source = read_mobile_source()
 
-    assert "Here’s your financial pulse." in source
+    assert "Here's your financial pulse." in source
     assert "Based on imported transactions" in source
     assert "Upcoming charges" in source
     assert "Top categories" in source
@@ -78,6 +79,19 @@ def test_mobile_has_phase_8_home_dashboard_contract() -> None:
     assert 'title: "Profile"' in source
     assert "cancel this" not in source.lower()
     assert "stop spending" not in source.lower()
+
+
+def test_mobile_has_phase_11_dark_theme_and_shared_ui() -> None:
+    source = read_mobile_source()
+
+    assert "#050807" in source
+    assert "#34d178" in source
+    assert "export { Screen }" in source
+    assert "ConfirmModal" in source
+    assert "No bank connection required" in source
+    assert "Spot spending patterns before they become habits." in source
+    assert "Upload a CSV file from iOS Files." in source
+    assert "Load safe synthetic data for demo mode." in source
 
 
 def test_mobile_has_monthly_report_screen_and_safe_copy() -> None:

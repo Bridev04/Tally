@@ -200,3 +200,38 @@ Narration points:
   financial accounts.
 - Destructive actions require explicit confirmation and use safe, neutral copy.
 - Tally does not provide financial advice.
+
+## Phase 11 Dark Mobile Polish
+
+1. Open Tally.
+2. Register or log in.
+3. Confirm the auth screens use the dark premium Tally style and say no bank
+   connection is required.
+4. Load demo data from Add / Import.
+5. View Home and confirm the financial pulse card, insight card, summary cards,
+   upcoming charges, top categories, recent transactions, and budget leak
+   preview render cleanly in dark mode.
+6. Open Add and confirm CSV upload, paste import, manual entry, and demo data
+   options are easy to scan.
+7. Open Transactions and confirm search, filters, category badges, confidence
+   badges, and transaction detail/category editing remain functional.
+8. Open Recurring and confirm detected recurring payments use calm, neutral
+   copy based on imported transactions.
+9. Open Insights and confirm anomaly cards, severity badges, and empty/loading
+   states avoid advice-like language.
+10. Open Monthly Report and confirm the summary is readable and includes
+    `Generated from imported data only. Not financial advice.`
+11. Open Profile / Settings and confirm export, clear demo data, delete app
+    data, and delete account controls are visible.
+12. Confirm delete app data requires `DELETE MY TALLY DATA` and delete account
+    requires `DELETE MY ACCOUNT`.
+
+Narration points:
+
+- Phase 11 adds a cohesive dark mobile design system; it does not change data
+  sources or backend security boundaries.
+- Tally remains CSV/manual/paste/demo-data only.
+- Tally does not use Plaid, FinanceKit, bank APIs, account linking, or card
+  linking.
+- Tally is not financial advice; language stays neutral and based on imported
+  or synthetic demo data.

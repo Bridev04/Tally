@@ -21,6 +21,7 @@ import {
   getPrivacySummary,
   type PrivacySummary,
 } from "@/lib/api";
+import { colors, radius, typography } from "@/theme";
 
 const deleteDataPhrase = "DELETE MY TALLY DATA";
 const deleteAccountPhrase = "DELETE MY ACCOUNT";
@@ -155,7 +156,7 @@ export default function SettingsScreen() {
             <Text style={styles.title}>Settings</Text>
           </View>
           <Pressable accessibilityRole="button" onPress={logout} style={styles.logoutButton}>
-            <Ionicons color="#256B5B" name="log-out-outline" size={18} />
+            <Ionicons color={colors.primary} name="log-out-outline" size={18} />
             <Text style={styles.logoutText}>Log out</Text>
           </Pressable>
         </View>
@@ -171,7 +172,7 @@ export default function SettingsScreen() {
         <View style={styles.card}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Privacy & Data</Text>
-            {isLoadingSummary ? <ActivityIndicator color="#256B5B" size="small" /> : null}
+            {isLoadingSummary ? <ActivityIndicator color={colors.primary} size="small" /> : null}
           </View>
           <Text style={styles.note}>Tally does not connect to your bank.</Text>
           <Text style={styles.bodyText}>Your insights are based only on imported/manual/demo transactions.</Text>
@@ -261,7 +262,7 @@ export default function SettingsScreen() {
                   editable={!isBusy}
                   onChangeText={setConfirmationText}
                   placeholder={requiredPhrase}
-                  placeholderTextColor="#9A8F7F"
+                  placeholderTextColor={colors.textMuted}
                   style={styles.confirmInput}
                   value={confirmationText}
                 />
@@ -277,7 +278,7 @@ export default function SettingsScreen() {
                 onPress={handleConfirmAction}
                 style={[styles.confirmButton, (!confirmEnabled || isBusy) && styles.disabledButton]}
               >
-                {isBusy ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.confirmText}>{modalConfirmText(confirmMode)}</Text>}
+                {isBusy ? <ActivityIndicator color={colors.white} /> : <Text style={styles.confirmText}>{modalConfirmText(confirmMode)}</Text>}
               </Pressable>
             </View>
           </View>
@@ -317,7 +318,7 @@ function ActionCard({
     <View style={styles.card}>
       <View style={styles.actionTitleRow}>
         <View style={[styles.iconBadge, destructive && styles.destructiveIconBadge]}>
-          <Ionicons color={destructive ? "#9B2C2C" : "#256B5B"} name={icon} size={18} />
+          <Ionicons color={destructive ? colors.danger : colors.primary} name={icon} size={18} />
         </View>
         <Text style={styles.sectionTitle}>{title}</Text>
       </View>
@@ -328,7 +329,7 @@ function ActionCard({
         onPress={onPress}
         style={[styles.primaryButton, destructive && styles.destructiveButton, isLoading && styles.disabledButton]}
       >
-        {isLoading ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.primaryButtonText}>{buttonText}</Text>}
+        {isLoading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.primaryButtonText}>{buttonText}</Text>}
       </Pressable>
     </View>
   );
@@ -363,7 +364,7 @@ function modalConfirmText(mode: ConfirmMode) {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: "#F7F4EF",
+    backgroundColor: colors.background,
     flex: 1,
   },
   content: {
@@ -377,22 +378,21 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   kicker: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: "700",
     textTransform: "uppercase",
   },
   title: {
-    color: "#111816",
-    fontSize: 30,
-    fontWeight: "800",
+    color: colors.text,
+    ...typography.title,
     marginTop: 4,
   },
   logoutButton: {
     alignItems: "center",
-    backgroundColor: "#EEF3EA",
-    borderColor: "#D8E2D5",
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.md,
     borderWidth: 1,
     flexDirection: "row",
     gap: 6,
@@ -400,22 +400,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   logoutText: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 14,
     fontWeight: "800",
   },
   card: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#E6DED2",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.xl,
     borderWidth: 1,
     gap: 12,
     padding: 16,
   },
   previewCard: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#E6DED2",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.xl,
     borderWidth: 1,
     gap: 12,
     padding: 16,
@@ -426,33 +426,33 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   sectionTitle: {
-    color: "#12241D",
+    color: colors.text,
     fontSize: 18,
     fontWeight: "800",
   },
   label: {
-    color: "#6A6F68",
+    color: colors.textSecondary,
     fontSize: 12,
     fontWeight: "800",
     textTransform: "uppercase",
   },
   value: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 16,
     fontWeight: "700",
   },
   note: {
-    color: "#123D2E",
+    color: colors.primary,
     fontSize: 16,
     fontWeight: "800",
   },
   bodyText: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
   },
   errorText: {
-    color: "#9B2C2C",
+    color: colors.danger,
     fontSize: 14,
     fontWeight: "700",
   },
@@ -462,18 +462,18 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   metric: {
-    backgroundColor: "#F7F4EF",
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderRadius: radius.md,
     minWidth: 96,
     padding: 12,
   },
   metricValue: {
-    color: "#123D2E",
+    color: colors.primary,
     fontSize: 20,
     fontWeight: "900",
   },
   metricLabel: {
-    color: "#6A6F68",
+    color: colors.textSecondary,
     fontSize: 12,
     fontWeight: "700",
     marginTop: 4,
@@ -484,13 +484,13 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sourcePill: {
-    backgroundColor: "#EEF3EA",
-    borderRadius: 8,
+    backgroundColor: colors.glow,
+    borderRadius: radius.md,
     paddingHorizontal: 10,
     paddingVertical: 7,
   },
   sourceText: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 12,
     fontWeight: "800",
   },
@@ -501,27 +501,27 @@ const styles = StyleSheet.create({
   },
   iconBadge: {
     alignItems: "center",
-    backgroundColor: "#EEF3EA",
-    borderRadius: 8,
+    backgroundColor: colors.glow,
+    borderRadius: radius.md,
     height: 34,
     justifyContent: "center",
     width: 34,
   },
   destructiveIconBadge: {
-    backgroundColor: "#F8EAEA",
+    backgroundColor: "rgba(255, 95, 87, 0.12)",
   },
   primaryButton: {
     alignItems: "center",
-    backgroundColor: "#256B5B",
-    borderRadius: 8,
+    backgroundColor: colors.primaryStrong,
+    borderRadius: radius.lg,
     justifyContent: "center",
     minHeight: 48,
   },
   destructiveButton: {
-    backgroundColor: "#9B2C2C",
+    backgroundColor: colors.danger,
   },
   primaryButtonText: {
-    color: "#FFFFFF",
+    color: colors.white,
     fontSize: 15,
     fontWeight: "800",
   },
@@ -529,44 +529,46 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   previewBox: {
-    backgroundColor: "#12241D",
-    borderRadius: 8,
+    backgroundColor: colors.backgroundRaised,
+    borderRadius: radius.md,
     maxHeight: 260,
     padding: 12,
   },
   previewText: {
-    color: "#F7F4EF",
+    color: colors.text,
     fontFamily: "Courier",
     fontSize: 12,
     lineHeight: 17,
   },
   statusText: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 14,
     fontWeight: "800",
     textAlign: "center",
   },
   modalBackdrop: {
     alignItems: "center",
-    backgroundColor: "rgba(17, 24, 22, 0.44)",
+    backgroundColor: "rgba(0, 0, 0, 0.64)",
     flex: 1,
     justifyContent: "center",
     padding: 20,
   },
   modalCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 8,
+    backgroundColor: colors.elevated,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.xl,
+    borderWidth: 1,
     gap: 14,
     padding: 18,
     width: "100%",
   },
   modalTitle: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 20,
     fontWeight: "900",
   },
   modalBody: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 15,
     lineHeight: 22,
   },
@@ -574,15 +576,16 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   confirmLabel: {
-    color: "#6A6F68",
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: "800",
   },
   confirmInput: {
-    borderColor: "#D8E2D5",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.md,
     borderWidth: 1,
-    color: "#111816",
+    color: colors.text,
     fontSize: 15,
     minHeight: 48,
     paddingHorizontal: 12,
@@ -593,27 +596,27 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     alignItems: "center",
-    backgroundColor: "#EEF3EA",
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderRadius: radius.lg,
     flex: 1,
     justifyContent: "center",
     minHeight: 48,
   },
   cancelText: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 15,
     fontWeight: "800",
   },
   confirmButton: {
     alignItems: "center",
-    backgroundColor: "#9B2C2C",
-    borderRadius: 8,
+    backgroundColor: colors.danger,
+    borderRadius: radius.lg,
     flex: 1,
     justifyContent: "center",
     minHeight: 48,
   },
   confirmText: {
-    color: "#FFFFFF",
+    color: colors.white,
     fontSize: 15,
     fontWeight: "800",
   },

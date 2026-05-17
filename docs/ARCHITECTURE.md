@@ -119,6 +119,19 @@ offers a JSON export preview, and requires confirmation modals for destructive
 actions. Account deletion clears SecureStore through the existing logout flow and
 returns the user to auth navigation.
 
+Phase 11 adds a mobile dark-mode visual system in `mobile/src/theme.ts` and
+shared primitives under `mobile/src/components/ui`. The theme centralizes
+charcoal backgrounds, emerald accents, elevated card surfaces, spacing, radii,
+typography, shadows, and gradient references. Screens use these primitives for
+consistent safe-area padding, bottom-navigation clearance, card treatment,
+buttons, badges, loading states, empty states, error states, and destructive
+confirmation UX.
+
+The polished mobile screens keep the same Expo Router paths and backend API
+calls. Phase 11 changes presentation and copy only; it does not introduce bank
+connections, Plaid, FinanceKit, account linking, card linking, or advice-like
+recommendations.
+
 ## Boundaries
 
 Tally does not use AI or LLMs for categorization, subscription detection, or

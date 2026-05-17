@@ -176,6 +176,24 @@ Tally still uses only CSV upload, manual transaction entry, paste import, and
 synthetic demo data. It does not use Plaid, FinanceKit, bank APIs, card linking,
 or account linking.
 
+## Phase 11 Frontend Polish
+
+Phase 11 is a mobile presentation layer update. It adds a dark visual system,
+shared UI components, calmer empty/error/loading states, and consistent
+destructive confirmation UI.
+
+Safety expectations remain unchanged:
+
+- No bank connection, Plaid, FinanceKit, bank API, card-linking, or
+  account-linking copy.
+- No financial advice, recommendations, shame-based language, or fear-based
+  prompts.
+- Expenses remain visually neutral; red is reserved for destructive actions and
+  true error states.
+- Amber is reserved for review/watch states.
+- Privacy controls continue to explain that export and deletion apply only to
+  Tally app data.
+
 ## Security Practices
 
 - Secrets are read from centralized settings and are never exposed to the mobile app.

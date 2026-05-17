@@ -96,3 +96,28 @@ def test_mobile_has_monthly_report_screen_and_safe_copy() -> None:
     assert "you should" not in source.lower()
     assert "bad spending" not in source.lower()
     assert "stop spending" not in source.lower()
+
+
+def test_mobile_has_privacy_settings_controls_and_confirmations() -> None:
+    source = read_mobile_source()
+
+    assert "Tally does not connect to your bank." in source
+    assert "Your insights are based only on imported/manual/demo transactions." in source
+    assert "Export my Tally data" in source
+    assert "Clear demo data" in source
+    assert "Delete app data" in source
+    assert "Delete account" in source
+    assert "DELETE MY TALLY DATA" in source
+    assert "DELETE MY ACCOUNT" in source
+    assert "Confirmation text does not match." in source
+    assert "getPrivacySummary" in source
+    assert "exportUserData" in source
+    assert "clearDemoData" in source
+    assert "deleteAppData" in source
+    assert "deleteAccount" in source
+    assert "/settings/privacy/summary" in source
+    assert "/settings/privacy/export" in source
+    assert "/settings/privacy/clear-demo-data" in source
+    assert "/settings/privacy/delete-app-data" in source
+    assert "/settings/privacy/delete-account" in source
+    assert "We couldn't delete your data. Please try again." in source

@@ -117,6 +117,19 @@ Raw transaction files, pasted import text, and full transaction descriptions are
 not sent to the LLM. Tally still does not connect to banks and does not provide
 financial advice.
 
+## Phase 10
+
+- Protected privacy summary, JSON export, demo-data clearing, imported app-data deletion, and account deletion endpoints
+- Mobile Settings / Privacy controls with calm copy and confirmation flows for destructive actions
+- JSON export scoped to the current user, with passwords, tokens, secrets, raw CSV contents, and raw pasted import text excluded
+- Demo-data clearing uses the internal `synthetic-demo-data` upload marker and does not guess when records are not marked as demo data
+- Delete app data removes uploads, transactions, recurring detections, budget leaks, and monthly reports while preserving the login account
+- Delete account removes the Tally profile and associated app data; existing JWTs are not server-stored, but future requests fail after the user row is removed
+
+Privacy controls are about Tally app data only. Tally does not delete bank
+accounts, financial accounts, cards, or linked institutions because it never
+connects to them. Destructive actions require exact confirmation phrases.
+
 ## Environment
 
 Copy `.env.example` to `.env` and set real values locally or in your host's
@@ -143,12 +156,16 @@ Required backend variables:
 - `ANOMALY_RATE_LIMIT_WINDOW_SECONDS`
 - `REPORT_RATE_LIMIT_REQUESTS`
 - `REPORT_RATE_LIMIT_WINDOW_SECONDS`
+- `PRIVACY_RATE_LIMIT_REQUESTS`
+- `PRIVACY_RATE_LIMIT_WINDOW_SECONDS`
 - `LLM_ENABLED`
 - `LLM_PROVIDER`
 - `LLM_API_KEY`
 - `LLM_MODEL`
 - `MAX_REQUEST_BODY_BYTES`
 - `MAX_UPLOAD_BYTES`
+- `MAX_IMPORT_ROWS`
+- `MAX_PASTE_IMPORT_BYTES`
 
 Optional mobile variable:
 

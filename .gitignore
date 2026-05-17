@@ -9,3 +9,5 @@ venv/
 !.env.example
 node_modules/
 .expo/
+.codex-run/
+*.db

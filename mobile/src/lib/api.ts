@@ -325,6 +325,70 @@ export type ManualTransactionPayload = {
   category?: string;
 };
 
+export type PrivacySummary = {
+  user_email: string;
+  transaction_count: number;
+  upload_count: number;
+  subscription_count: number;
+  anomaly_count: number;
+  monthly_report_count: number;
+  has_demo_data: boolean;
+  latest_upload_date: string | null;
+  latest_report_date: string | null;
+  data_sources_used: {
+    csv_upload: boolean;
+    manual_entry: boolean;
+    paste_import: boolean;
+    demo_data: boolean;
+  };
+  privacy_notes: string[];
+};
+
+export type DeletedCounts = {
+  transactions: number;
+  uploads: number;
+  subscriptions: number;
+  anomalies: number;
+  monthly_reports: number;
+  audit_logs: number;
+  user: number;
+};
+
+export type DataExport = {
+  metadata: {
+    exported_at: string;
+    app: "Tally";
+    scope: "current_user";
+    notice: string;
+  };
+  user: {
+    id: string;
+    email: string;
+    created_at: string;
+  };
+  uploads: unknown[];
+  transactions: unknown[];
+  subscriptions: unknown[];
+  anomalies: unknown[];
+  monthly_reports: unknown[];
+};
+
+export type ClearDemoDataResponse = {
+  message: string;
+  deleted_counts: DeletedCounts;
+};
+
+export type DeleteAppDataResponse = {
+  message: string;
+  deleted_counts: DeletedCounts;
+};
+
+export type DeleteAccountResponse = {
+  message: string;
+  deleted_counts: DeletedCounts;
+  session_notice: string;
+};
+
 const fallbackMessage = "Something went wrong. Please try again.";
 
 function safeErrorMessage(payload: ApiErrorPayload, fallback = fallbackMessage): string {
@@ -647,5 +711,62 @@ export async function uploadCsv(token: string, formData: FormData): Promise<Impo
       body: formData,
     },
     "Could not upload the CSV file.",
+  );
+}
+
+export function getPrivacySummary(token: string): Promise<PrivacySummary> {
+  return request<PrivacySummary>(
+    "/settings/privacy/summary",
+    {
+      method: "GET",
+      headers: authHeaders(token),
+    },
+    "We couldn't load your privacy summary. Please try again.",
+  );
+}
+
+export function exportUserData(token: string): Promise<DataExport> {
+  return request<DataExport>(
+    "/settings/privacy/export",
+    {
+      method: "GET",
+      headers: authHeaders(token),
+    },
+    "We couldn't export your data. Please try again.",
+  );
+}
+
+export function clearDemoData(token: string): Promise<ClearDemoDataResponse> {
+  return request<ClearDemoDataResponse>(
+    "/settings/privacy/clear-demo-data",
+    {
+      method: "POST",
+      headers: authHeaders(token),
+    },
+    "We couldn't clear demo data. Please try again.",
+  );
+}
+
+export function deleteAppData(token: string, confirmation: string): Promise<DeleteAppDataResponse> {
+  return request<DeleteAppDataResponse>(
+    "/settings/privacy/delete-app-data",
+    {
+      method: "POST",
+      headers: authHeaders(token),
+      body: JSON.stringify({ confirmation }),
+    },
+    "We couldn't delete your data. Please try again.",
+  );
+}
+
+export function deleteAccount(token: string, confirmation: string): Promise<DeleteAccountResponse> {
+  return request<DeleteAccountResponse>(
+    "/settings/privacy/delete-account",
+    {
+      method: "POST",
+      headers: authHeaders(token),
+      body: JSON.stringify({ confirmation }),
+    },
+    "We couldn't delete your account. Please try again.",
   );
 }

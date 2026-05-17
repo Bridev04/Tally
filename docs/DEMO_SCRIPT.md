@@ -145,3 +145,58 @@ Narration points:
 - LLMs are optional and limited to neutral monthly summary wording.
 - Raw files, pasted text, and full transaction descriptions are not sent to the LLM.
 - Unsafe AI output is rejected and replaced with deterministic fallback text.
+
+## Phase 10 Settings Privacy Controls
+
+1. Register or log in.
+2. Open Profile / Settings.
+3. Confirm the Privacy & Data section says Tally does not connect to your bank.
+4. Confirm counts load for transactions, uploads, recurring patterns, budget
+   leaks, and monthly reports.
+5. Tap Export my Tally data.
+6. Confirm the JSON preview appears and includes only Tally app records.
+7. Tap Clear demo data.
+8. Confirm the modal says this removes sample data and keeps the account.
+9. Tap Delete app data.
+10. Confirm the button stays disabled until typing `DELETE MY TALLY DATA`.
+11. Tap Delete account.
+12. Confirm the button stays disabled until typing `DELETE MY ACCOUNT`.
+
+Backend smoke test:
+
+1. Start the backend.
+2. Register or log in a test user.
+3. Load demo data.
+4. Generate subscriptions, anomalies, and a monthly report if needed.
+5. Call `GET /settings/privacy/summary`.
+6. Confirm counts appear and privacy notes mention no bank connection and no
+   financial advice.
+7. Call `GET /settings/privacy/export`.
+8. Confirm the JSON export returns only current-user data and excludes
+   password hashes, tokens, secrets, raw CSV contents, and raw pasted import
+   text.
+9. Call `POST /settings/privacy/clear-demo-data`.
+10. Confirm only records tied to the safe demo marker are cleared.
+11. Create non-demo data.
+12. Call `POST /settings/privacy/delete-app-data` with a wrong confirmation and
+    confirm it fails safely.
+13. Call it again with `DELETE MY TALLY DATA` and confirm the app data is
+    deleted while the account remains.
+14. Create a second user and confirm they cannot access or delete the first
+    user's data.
+15. Call `POST /settings/privacy/delete-account` with a wrong confirmation and
+    confirm it fails safely.
+16. Call it again with `DELETE MY ACCOUNT` and confirm the Tally account and
+    associated app data are deleted. Existing JWTs are not server-stored, but
+    future requests fail because the user no longer exists.
+
+Narration points:
+
+- Tally uses CSV upload, manual entry, paste import, and synthetic demo data
+  only.
+- Tally does not use Plaid, FinanceKit, bank APIs, card linking, or account
+  linking.
+- Export and delete controls manage Tally app data, not bank accounts or
+  financial accounts.
+- Destructive actions require explicit confirmation and use safe, neutral copy.
+- Tally does not provide financial advice.

@@ -141,11 +141,46 @@ Monthly report copy must remain neutral, for example:
 - `Some transactions may be worth reviewing...`
 - `This is a neutral summary of imported data, not financial advice.`
 
+## Phase 10 Settings Privacy Controls
+
+Phase 10 privacy controls help users understand, export, clear, and delete
+their Tally app data. These controls do not imply bank account deletion,
+financial account deletion, automatic bank sync, regulatory-grade compliance, or
+financial advice.
+
+Settings copy should stay clear and calm:
+
+- `Tally does not connect to your bank.`
+- `Your reports are based only on data you imported.`
+- `Export a copy of your Tally data.`
+- `Clear demo data without deleting your account.`
+- `Delete imported transactions and generated insights.`
+- `Deleting your account removes your Tally profile and associated app data.`
+
+Privacy API behavior:
+
+- Summary responses include counts, source flags, and privacy notes only.
+- JSON export is scoped to the current user.
+- Export excludes passwords, password hashes, tokens, secrets, raw CSV contents,
+  and raw pasted import text.
+- Demo data is cleared only when safely identifiable by the
+  `synthetic-demo-data` upload marker.
+- Delete app data requires `DELETE MY TALLY DATA` and preserves the user
+  account.
+- Delete account requires `DELETE MY ACCOUNT` and removes the Tally profile and
+  associated app data.
+- Destructive actions use database transactions, ownership checks, safe errors,
+  rate limits, and count-only audit logs.
+
+Tally still uses only CSV upload, manual transaction entry, paste import, and
+synthetic demo data. It does not use Plaid, FinanceKit, bank APIs, card linking,
+or account linking.
+
 ## Security Practices
 
 - Secrets are read from centralized settings and are never exposed to the mobile app.
 - Protected routes require authentication and current-user scoping.
-- Import, auth, transaction, dashboard, subscription, anomaly, and report routes use rate limiting.
+- Import, auth, transaction, dashboard, subscription, anomaly, report, and privacy routes use rate limiting.
 - Request and upload sizes are limited.
 - Schemas reject unexpected fields to reduce mass-assignment risk.
 - ORM-safe queries are used for database access.

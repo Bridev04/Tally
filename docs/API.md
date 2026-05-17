@@ -349,3 +349,83 @@ Returns only the current user's reports.
 
 Returns one report owned by the current user. Returns 404 if the report does not
 exist or belongs to another user.
+
+## Settings Privacy
+
+Privacy routes are protected, current-user scoped, and rate limited. They manage
+Tally app data only. Tally does not connect to banks, does not use Plaid,
+FinanceKit, bank APIs, card linking, or account linking, and does not provide
+financial advice.
+
+`GET /settings/privacy/summary`
+
+Returns a safe summary of what Tally stores for the current user:
+
+```json
+{
+  "user_email": "user@example.com",
+  "transaction_count": 42,
+  "upload_count": 3,
+  "subscription_count": 4,
+  "anomaly_count": 2,
+  "monthly_report_count": 1,
+  "has_demo_data": true,
+  "latest_upload_date": "2026-05-17T00:00:00Z",
+  "latest_report_date": "2026-05-17T00:00:00Z",
+  "data_sources_used": {
+    "csv_upload": true,
+    "manual_entry": true,
+    "paste_import": false,
+    "demo_data": true
+  },
+  "privacy_notes": [
+    "Tally does not connect to banks.",
+    "Tally does not use Plaid or FinanceKit.",
+    "Tally does not provide financial advice.",
+    "Data is based on imported, manual, pasted, or synthetic demo entries only."
+  ]
+}
+```
+
+`GET /settings/privacy/export?format=json`
+
+Returns a JSON export with metadata, user profile fields, uploads,
+transactions, subscriptions, anomalies, and monthly reports for the current user
+only. The export excludes password hashes, access tokens, refresh tokens,
+secrets, raw CSV contents, and raw pasted import text. The backend records a safe
+audit event with counts only.
+
+`POST /settings/privacy/clear-demo-data`
+
+Clears synthetic demo data only when it is safely identifiable by the internal
+`synthetic-demo-data` upload marker. It preserves the user account and
+non-demo/manual/imported/pasted transactions. Derived subscriptions, anomalies,
+and monthly reports are cleared after demo rows are removed because those records
+may have been generated from demo data and can be regenerated.
+
+`POST /settings/privacy/delete-app-data`
+
+Deletes uploads, transactions, subscriptions, anomalies, and monthly reports for
+the current user while preserving the account and audit history. Requires the
+exact confirmation phrase:
+
+```json
+{
+  "confirmation": "DELETE MY TALLY DATA"
+}
+```
+
+`POST /settings/privacy/delete-account`
+
+Deletes the current user's Tally profile and associated app data. Requires the
+exact confirmation phrase:
+
+```json
+{
+  "confirmation": "DELETE MY ACCOUNT"
+}
+```
+
+The auth model does not store server-side sessions for token revocation. After
+account deletion, existing tokens fail because the referenced user no longer
+exists.

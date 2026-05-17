@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     anomaly_rate_limit_window_seconds: int = Field(default=60, gt=0)
     report_rate_limit_requests: int = Field(default=20, gt=0)
     report_rate_limit_window_seconds: int = Field(default=60, gt=0)
+    privacy_rate_limit_requests: int = Field(default=20, gt=0)
+    privacy_rate_limit_window_seconds: int = Field(default=60, gt=0)
     llm_enabled: bool = False
     llm_provider: Literal["fake", "openai"] = "fake"
     llm_api_key: SecretStr | None = None

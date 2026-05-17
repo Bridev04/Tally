@@ -75,6 +75,23 @@ Responsibilities:
 - Fall back to deterministic neutral text when LLMs are disabled, unavailable,
   or fail safety checks.
 
+Phase 10 adds `PrivacyService` in `app/services/privacy.py` and
+`/settings/privacy` API routes.
+
+Responsibilities:
+
+- Summarize stored data counts and data sources for the authenticated user.
+- Export normalized app records as JSON for the current user only.
+- Exclude password hashes, tokens, secrets, raw CSV contents, and raw pasted
+  import text from exports.
+- Clear demo data only when records are tied to the internal
+  `synthetic-demo-data` upload marker.
+- Delete imported app data while preserving the user account and audit history.
+- Delete the Tally account and associated app data when the exact confirmation
+  phrase is supplied.
+- Use per-user rate limiting, schema validation, ORM-safe queries, safe errors,
+  and count-only audit metadata.
+
 ## Mobile
 
 The Expo app consumes backend transaction metadata directly. The Transactions
@@ -93,6 +110,14 @@ The Monthly Report screen consumes `/reports/monthly` and
 `/reports/monthly/generate`. It shows a neutral month-level report, top category
 progress bars, recurring payment previews, budget leak patterns, needs-review
 links, and empty/loading/error states in the same warm Tally design language.
+
+The Settings/Profile screen consumes `/settings/privacy/summary`,
+`/settings/privacy/export`, `/settings/privacy/clear-demo-data`,
+`/settings/privacy/delete-app-data`, and `/settings/privacy/delete-account`.
+It explains that Tally does not connect to banks, shows stored-data counts,
+offers a JSON export preview, and requires confirmation modals for destructive
+actions. Account deletion clears SecureStore through the existing logout flow and
+returns the user to auth navigation.
 
 ## Boundaries
 

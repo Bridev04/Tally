@@ -187,7 +187,7 @@ export default function BudgetLeaksScreen() {
             <Ionicons color={colors.primary} name="analytics-outline" size={28} />
             <Text style={styles.emptyTitle}>No budget leaks detected yet.</Text>
             <Text style={styles.emptyCopy}>
-              Import transactions or run detection to review spending patterns.
+              Import transactions or load synthetic demo data to review spending patterns.
             </Text>
             <Pressable
               accessibilityRole="button"

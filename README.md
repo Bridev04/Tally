@@ -145,6 +145,28 @@ manual transaction entry, and synthetic demo data only. It does not connect to
 banks, use Plaid, use FinanceKit, link cards, link accounts, or provide
 financial advice.
 
+## Phase 12
+
+- Scenario-based synthetic demo datasets for Basic, Subscription Creep, Budget
+  Leaks, Needs Review, and Full Portfolio demos
+- Sample CSVs in `sample_data/` for portfolio walkthroughs and import testing
+- Protected demo endpoints for scenario discovery, reset/reload, duplicate-safe
+  loading, and optional downstream processing
+- Demo records are marked with backend-controlled `source`, `is_demo`, and
+  `demo_scenario` fields for reliable clearing and export provenance
+- Full Portfolio Demo is the default mobile demo flow and supports dashboard,
+  transactions, recurring payments, budget leaks, monthly reports, and privacy
+  counts
+- Mobile Import includes a polished Try demo data card with scenario selection;
+  empty states offer demo CTAs without implying bank connection
+- Backend tests cover demo scenarios, ownership boundaries, duplicate handling,
+  reset behavior, privacy clearing, and processing hooks
+
+Phase 12 demo data is synthetic only. It never comes from real bank accounts,
+Plaid, FinanceKit, bank APIs, cards, account linking, or real user financial
+data. Demo data can be reset and reloaded safely without deleting non-demo
+transactions.
+
 ## Environment
 
 Copy `.env.example` to `.env` and set real values locally or in your host's

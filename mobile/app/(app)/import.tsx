@@ -6,16 +6,24 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-nati
 
 import { Badge, Card, Screen } from "@/components/ui";
 import { useAuth } from "@/context/AuthContext";
-import { loadDemoData, uploadCsv } from "@/lib/api";
+import { DemoScenario, loadDemoData, uploadCsv } from "@/lib/api";
 import { colors, radius, spacing, typography } from "@/theme";
 
 const sampleCsv = "date,description,merchant,amount,currency\n2026-01-01,Netflix Subscription,Netflix,-549,PHP";
+const demoScenarios: Array<{ key: DemoScenario; label: string }> = [
+  { key: "full_portfolio", label: "Full Portfolio Demo" },
+  { key: "basic", label: "Basic Demo" },
+  { key: "subscriptions", label: "Subscription Creep" },
+  { key: "budget_leaks", label: "Budget Leaks" },
+  { key: "needs_review", label: "Needs Review" },
+];
 
 export default function ImportScreen() {
   const { token } = useAuth();
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isWorking, setIsWorking] = useState(false);
+  const [demoScenario, setDemoScenario] = useState<DemoScenario>("full_portfolio");
 
   async function handleCsvUpload() {
     if (!token || isWorking) {
@@ -60,8 +68,8 @@ export default function ImportScreen() {
     setMessage(null);
     setIsWorking(true);
     try {
-      await loadDemoData(token);
-      setMessage("Synthetic sample data loaded.");
+      await loadDemoData(token, demoScenario, true, true);
+      setMessage("Demo data loaded. You can now explore your dashboard.");
       router.push("/(app)");
     } catch {
       setError("We could not load demo data. Please try again.");
@@ -89,6 +97,42 @@ export default function ImportScreen() {
         {error ? <Text style={styles.error}>{error}</Text> : null}
         {message ? <Text style={styles.message}>{message}</Text> : null}
 
+        <Card variant="list">
+          <View style={styles.demoCardHeader}>
+            <View style={styles.optionIcon}>
+              <Ionicons color={colors.primary} name="sparkles-outline" size={24} />
+            </View>
+            <View style={styles.optionText}>
+              <Text style={styles.optionLabel}>Try demo data</Text>
+              <Text style={styles.optionDescription}>Load synthetic transactions to explore Tally.</Text>
+            </View>
+          </View>
+          <View style={styles.scenarioGrid}>
+            {demoScenarios.map((item) => (
+              <Pressable
+                accessibilityRole="button"
+                key={item.key}
+                onPress={() => setDemoScenario(item.key)}
+                style={[styles.scenarioChip, demoScenario === item.key && styles.scenarioChipSelected]}
+              >
+                <Text style={[styles.scenarioChipText, demoScenario === item.key && styles.scenarioChipTextSelected]}>
+                  {item.label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            disabled={isWorking}
+            onPress={handleDemoData}
+            style={({ pressed }) => [styles.loadDemoButton, (pressed || isWorking) && styles.optionPressed]}
+          >
+            {isWorking ? <ActivityIndicator color="#ffffff" /> : <Ionicons color="#ffffff" name="sparkles-outline" size={18} />}
+            <Text style={styles.loadDemoButtonText}>Load demo data</Text>
+          </Pressable>
+          <Text style={styles.demoNote}>Synthetic sample data. For portfolio preview only.</Text>
+        </Card>
+
         <View style={styles.options}>
           <OptionButton
             description="Upload a CSV file from iOS Files."
@@ -110,13 +154,6 @@ export default function ImportScreen() {
             isDisabled={isWorking}
             label="Add manually"
             onPress={() => router.push("/(app)/add-transaction")}
-          />
-          <OptionButton
-            description="Load safe synthetic data for demo mode."
-            icon="sparkles-outline"
-            isDisabled={isWorking}
-            label="Try demo data"
-            onPress={handleDemoData}
           />
         </View>
 
@@ -191,6 +228,58 @@ const styles = StyleSheet.create({
   },
   options: {
     gap: 12,
+  },
+  demoCardHeader: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 12,
+  },
+  scenarioGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: spacing.md,
+  },
+  scenarioChip: {
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.border,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+  },
+  scenarioChipSelected: {
+    backgroundColor: colors.glow,
+    borderColor: colors.primary,
+  },
+  scenarioChipText: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    fontWeight: "800",
+  },
+  scenarioChipTextSelected: {
+    color: colors.primary,
+  },
+  loadDemoButton: {
+    alignItems: "center",
+    backgroundColor: colors.emeraldMid,
+    borderRadius: radius.lg,
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "center",
+    marginTop: spacing.md,
+    minHeight: 52,
+    paddingHorizontal: 16,
+  },
+  loadDemoButtonText: {
+    color: "#ffffff",
+    fontSize: 15,
+    fontWeight: "900",
+  },
+  demoNote: {
+    color: colors.textMuted,
+    fontSize: 12,
+    marginTop: spacing.sm,
   },
   option: {
     alignItems: "center",

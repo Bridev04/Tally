@@ -303,6 +303,26 @@ export type ImportResult = {
   invalid_rows: Array<{ row_number: number; reason: string }>;
 };
 
+export type DemoScenario = "basic" | "subscriptions" | "budget_leaks" | "needs_review" | "full_portfolio";
+
+export type DemoScenarioInfo = {
+  key: DemoScenario;
+  title: string;
+  description: string;
+};
+
+export type DemoLoadResult = ImportResult & {
+  scenario: DemoScenario;
+  transactions_created: number;
+  uploads_created: number;
+  subscriptions_detected: number;
+  anomalies_detected: number;
+  reports_generated: number;
+  reset_existing_demo: boolean;
+  run_processing: boolean;
+  message: string;
+};
+
 export type PastePreview = {
   valid_rows: Array<{
     row_number: number;
@@ -690,15 +710,51 @@ export function confirmPasteImport(token: string, text: string): Promise<ImportR
   );
 }
 
-export function loadDemoData(token: string): Promise<ImportResult> {
-  return request<ImportResult>(
+export function getDemoScenarios(token: string): Promise<{ scenarios: DemoScenarioInfo[] }> {
+  return request<{ scenarios: DemoScenarioInfo[] }>(
+    "/demo/scenarios",
+    {
+      method: "GET",
+      headers: authHeaders(token),
+    },
+    "Could not load demo scenarios.",
+  );
+}
+
+export function loadDemoData(
+  token: string,
+  scenario: DemoScenario = "full_portfolio",
+  resetExistingDemo = false,
+  runProcessing = true,
+): Promise<DemoLoadResult> {
+  return request<DemoLoadResult>(
     "/demo/load-sample-data",
     {
       method: "POST",
       headers: authHeaders(token),
-      body: JSON.stringify({ allow_overwrite: false }),
+      body: JSON.stringify({
+        scenario,
+        reset_existing_demo: resetExistingDemo,
+        run_processing: runProcessing,
+      }),
     },
     "Could not load demo data.",
+  );
+}
+
+export function resetDemoData(
+  token: string,
+  scenario: DemoScenario = "full_portfolio",
+  runProcessing = true,
+): Promise<DemoLoadResult> {
+  return request<DemoLoadResult>(
+    "/demo/reset",
+    {
+      method: "POST",
+      headers: authHeaders(token),
+      body: JSON.stringify({ scenario, run_processing: runProcessing }),
+    },
+    "Could not reset demo data.",
   );
 }
 

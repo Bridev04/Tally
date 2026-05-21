@@ -52,6 +52,9 @@ class ExportUpload(BaseModel):
     upload_status: str
     total_rows: int
     processed_rows: int
+    source: str
+    is_demo: bool
+    demo_scenario: str | None
     created_at: datetime
     updated_at: datetime
 
@@ -73,6 +76,9 @@ class ExportTransaction(BaseModel):
     categorization_rule: str | None
     payment_type: str | None
     is_recurring_candidate: bool
+    source: str
+    is_demo: bool
+    demo_scenario: str | None
     created_at: datetime
     updated_at: datetime
 

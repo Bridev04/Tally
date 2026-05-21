@@ -1,0 +1,16 @@
+date,description,merchant,amount,currency
+2026-03-01,Netflix monthly subscription,Netflix,-549.00,PHP
+2026-04-01,Netflix monthly subscription,Netflix,-549.00,PHP
+2026-05-01,Netflix monthly subscription,Netflix,-549.00,PHP
+2026-03-05,Spotify Premium,Spotify,-149.00,PHP
+2026-04-05,Spotify Premium,Spotify,-149.00,PHP
+2026-05-05,Spotify Premium,Spotify,-149.00,PHP
+2026-03-09,Canva Pro subscription,Canva,-299.00,PHP
+2026-04-09,Canva Pro subscription,Canva,-299.00,PHP
+2026-05-09,Canva Pro subscription,Canva,-299.00,PHP
+2026-03-14,YouTube Premium subscription,YouTube Premium,-159.00,PHP
+2026-04-14,YouTube Premium subscription,YouTube Premium,-159.00,PHP
+2026-05-14,YouTube Premium subscription,YouTube Premium,-199.00,PHP
+2026-03-18,Apple iCloud storage,Apple iCloud,-49.00,PHP
+2026-04-18,Apple iCloud storage,Apple iCloud,-49.00,PHP
+2026-05-18,Apple iCloud storage,Apple iCloud,-49.00,PHP

@@ -194,6 +194,28 @@ Safety expectations remain unchanged:
 - Privacy controls continue to explain that export and deletion apply only to
   Tally app data.
 
+## Phase 12 Demo Data / Testing Support
+
+Phase 12 demo mode is synthetic-only and exists for portfolio walkthroughs,
+local testing, screenshots, and smoke tests. It does not use real user financial
+data, real bank exports, Plaid, FinanceKit, bank APIs, account linking, card
+linking, or connected accounts.
+
+Safety expectations:
+
+- Demo scenarios must be clearly synthetic and safe for portfolio presentation.
+- Demo routes require authentication, per-user scoping, schema validation, and
+  rate limiting.
+- Demo uploads and transactions are marked with backend-controlled `source`,
+  `is_demo`, and `demo_scenario` fields.
+- Users cannot mass-assign demo marker fields through manual, CSV, paste, or
+  category-edit endpoints.
+- Demo reset and privacy clear-demo operations preserve non-demo transactions.
+- Derived subscriptions, anomalies, and monthly reports may be cleared when demo
+  rows are removed because those records can be generated from demo data.
+- Demo and report copy remains neutral and based only on imported or synthetic
+  data. It must not include advice, shame language, or recommendations.
+
 ## Security Practices
 
 - Secrets are read from centralized settings and are never exposed to the mobile app.

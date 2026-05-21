@@ -235,3 +235,51 @@ Narration points:
   linking.
 - Tally is not financial advice; language stays neutral and based on imported
   or synthetic demo data.
+
+## Phase 12 Portfolio Demo Flow
+
+1. Open Tally.
+2. Register or log in.
+3. Open Add / Import.
+4. Confirm the Try demo data card says synthetic transactions are used.
+5. Choose Full Portfolio Demo.
+6. Tap Load demo data.
+7. Confirm the success message says demo data is loaded.
+8. View Home Dashboard and show income, spending, net flow, recent
+   transactions, recurring previews, and budget leak previews.
+9. Open Transactions and show search, filters, categories, needs-review rows,
+   and category editing.
+10. Open Recurring and show detected Netflix, Spotify, Canva, YouTube Premium,
+    Apple iCloud, or Google One patterns.
+11. Open Insights and show category, merchant frequency, repeated small
+    purchase, duplicate-like, and needs-review patterns.
+12. Open Monthly Report and show the neutral deterministic summary for the demo
+    month.
+13. Open Settings / Privacy and show stored-data counts, export, clear demo
+    data, delete app data, and delete account controls.
+14. Tap Clear demo data and confirm non-demo transactions would be preserved.
+
+Backend smoke test:
+
+1. Start the backend.
+2. Register or log in a test user.
+3. Call `GET /demo/scenarios`.
+4. Call `POST /demo/load-sample-data` with `scenario=full_portfolio`,
+   `reset_existing_demo=true`, and `run_processing=true`.
+5. Confirm transactions, subscriptions, anomalies, and one monthly report are
+   created for that user.
+6. Call dashboard, transactions, subscriptions, anomalies, monthly report, and
+   privacy summary routes.
+7. Call `POST /settings/privacy/clear-demo-data`.
+8. Confirm demo rows are removed and any non-demo rows are preserved.
+9. Create a second user and confirm they cannot access the first user's data.
+10. Send an invalid scenario and confirm the response is a safe validation
+    error.
+
+Narration points:
+
+- Demo data is synthetic and labeled for portfolio preview.
+- Tally uses imported or synthetic data only.
+- Tally does not connect to banks or use Plaid, FinanceKit, bank APIs, card
+  linking, or account linking.
+- Tally is not financial advice.

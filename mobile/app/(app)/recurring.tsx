@@ -143,7 +143,7 @@ export default function RecurringScreen() {
           <View style={styles.emptyState}>
             <Ionicons color={colors.primary} name="repeat-outline" size={28} />
             <Text style={styles.emptyTitle}>No recurring payments detected yet.</Text>
-            <Text style={styles.emptyCopy}>Import transactions or load demo data to find patterns.</Text>
+            <Text style={styles.emptyCopy}>Import transactions or load synthetic demo data to find patterns.</Text>
             <Pressable
               accessibilityRole="button"
               onPress={() => router.push("/(app)/import")}

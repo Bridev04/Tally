@@ -91,7 +91,16 @@ def test_mobile_has_phase_11_dark_theme_and_shared_ui() -> None:
     assert "No bank connection required" in source
     assert "Spot spending patterns before they become habits." in source
     assert "Upload a CSV file from iOS Files." in source
-    assert "Load safe synthetic data for demo mode." in source
+    assert "Load synthetic transactions to explore Tally." in source
+    assert "Full Portfolio Demo" in source
+    assert "Subscription Creep" in source
+    assert "Budget Leaks" in source
+    assert "Needs Review" in source
+    assert "Demo data loaded. You can now explore your dashboard." in source
+    assert "Synthetic sample data. For portfolio preview only." in source
+    assert "/demo/scenarios" in source
+    assert "/demo/reset" in source
+    assert "reset_existing_demo" in source
 
 
 def test_mobile_has_monthly_report_screen_and_safe_copy() -> None:

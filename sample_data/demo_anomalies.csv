@@ -1,0 +1,25 @@
+date,description,merchant,amount,currency
+2026-04-01,Synthetic monthly payroll,Company Payroll,35000.00,PHP
+2026-05-01,Synthetic monthly payroll,Company Payroll,35000.00,PHP
+2026-04-03,Food delivery,Foodpanda,-380.00,PHP
+2026-04-12,Food delivery,Foodpanda,-410.00,PHP
+2026-04-20,Food delivery,Foodpanda,-390.00,PHP
+2026-04-08,Coffee,Starbucks,-180.00,PHP
+2026-04-22,Coffee,Starbucks,-175.00,PHP
+2026-05-02,Food delivery,Foodpanda,-455.00,PHP
+2026-05-04,Food delivery,Foodpanda,-455.00,PHP
+2026-05-06,Food delivery,Foodpanda,-455.00,PHP
+2026-05-08,Food delivery,Foodpanda,-455.00,PHP
+2026-05-10,Food delivery,Foodpanda,-455.00,PHP
+2026-05-12,Food delivery,Foodpanda,-455.00,PHP
+2026-05-14,Food delivery,Foodpanda,-455.00,PHP
+2026-05-16,Food delivery,Foodpanda,-455.00,PHP
+2026-05-03,Coffee,Starbucks,-185.00,PHP
+2026-05-05,Coffee,Starbucks,-185.00,PHP
+2026-05-07,Coffee,Starbucks,-185.00,PHP
+2026-05-09,Coffee,Starbucks,-185.00,PHP
+2026-05-11,Coffee,Starbucks,-185.00,PHP
+2026-05-13,Coffee,Starbucks,-185.00,PHP
+2026-05-15,Coffee,Starbucks,-185.00,PHP
+2026-05-20,Synthetic checkout,Shopee,-1290.00,PHP
+2026-05-20,synthetic checkout,Shopee,-1290.00,PHP

@@ -317,7 +317,7 @@ export default function TransactionsScreen() {
             <Text style={styles.emptyTitle}>
               {hasActiveFilters
                 ? "No matching transactions."
-                : "No transactions yet. Import transactions to see your spending patterns."}
+                : "No transactions yet. Import transactions or load synthetic demo data to explore Tally."}
             </Text>
             {!hasActiveFilters ? (
               <View style={styles.emptyActions}>

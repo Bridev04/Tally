@@ -1,0 +1,27 @@
+date,description,merchant,amount,currency
+2026-03-01,Synthetic monthly payroll,Company Payroll,35000.00,PHP
+2026-04-01,Synthetic monthly payroll,Company Payroll,35000.00,PHP
+2026-05-01,Synthetic monthly payroll,Company Payroll,35000.00,PHP
+2026-03-01,Netflix monthly subscription,Netflix,-549.00,PHP
+2026-04-01,Netflix monthly subscription,Netflix,-549.00,PHP
+2026-05-01,Netflix monthly subscription,Netflix,-549.00,PHP
+2026-03-05,Spotify Premium,Spotify,-149.00,PHP
+2026-04-05,Spotify Premium,Spotify,-149.00,PHP
+2026-05-05,Spotify Premium,Spotify,-149.00,PHP
+2026-03-09,Canva Pro subscription,Canva,-299.00,PHP
+2026-04-09,Canva Pro subscription,Canva,-299.00,PHP
+2026-05-09,Canva Pro subscription,Canva,-299.00,PHP
+2026-03-14,YouTube Premium subscription,YouTube Premium,-159.00,PHP
+2026-04-14,YouTube Premium subscription,YouTube Premium,-159.00,PHP
+2026-05-14,YouTube Premium subscription,YouTube Premium,-199.00,PHP
+2026-03-03,Synthetic electric bill,Meralco,-2980.00,PHP
+2026-04-03,Synthetic electric bill,Meralco,-3060.00,PHP
+2026-05-03,Synthetic electric bill,Meralco,-3180.00,PHP
+2026-05-12,Synthetic online shopping,Lazada,-1890.00,PHP
+2026-05-16,Synthetic online shopping,Shopee,-1390.00,PHP
+2026-05-20,Synthetic checkout,Shopee,-1290.00,PHP
+2026-05-20,synthetic checkout,Shopee,-1290.00,PHP
+2026-05-02,Imported row needs review,Blue Note 12X,-215.00,PHP
+2026-05-03,Imported row needs review,Packet REF 71,-640.00,PHP
+2026-05-04,Imported row needs review,Campus Kiosk B,-120.00,PHP
+2026-05-05,Imported row needs review,MNL POS 8842,-810.00,PHP

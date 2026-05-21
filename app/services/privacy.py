@@ -1,7 +1,7 @@
 from typing import Any
 import uuid
 
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from sqlmodel import Session, select
 
 from app.models import MonthlyInsightReport, SpendingAnomaly, Subscription, Transaction, TransactionUpload, User
@@ -93,6 +93,9 @@ class PrivacyService:
                     upload_status=item.upload_status,
                     total_rows=item.total_rows,
                     processed_rows=item.processed_rows,
+                    source=item.source,
+                    is_demo=item.is_demo,
+                    demo_scenario=item.demo_scenario,
                     created_at=item.created_at,
                     updated_at=item.updated_at,
                 )
@@ -116,6 +119,9 @@ class PrivacyService:
                     categorization_rule=item.categorization_rule,
                     payment_type=item.payment_type,
                     is_recurring_candidate=item.is_recurring_candidate,
+                    source=item.source,
+                    is_demo=item.is_demo,
+                    demo_scenario=item.demo_scenario,
                     created_at=item.created_at,
                     updated_at=item.updated_at,
                 )
@@ -182,7 +188,7 @@ class PrivacyService:
         demo_uploads = session.exec(
             select(TransactionUpload).where(
                 TransactionUpload.user_id == current_user.id,
-                TransactionUpload.file_name == DEMO_UPLOAD_FILE_NAME,
+                or_(TransactionUpload.is_demo.is_(True), TransactionUpload.file_name == DEMO_UPLOAD_FILE_NAME),
             )
         ).all()
         if not demo_uploads:
@@ -252,10 +258,11 @@ class PrivacyService:
     def _data_sources_from_uploads(self, uploads: list[TransactionUpload]) -> DataSourcesUsed:
         source_names = {upload.file_name for upload in uploads}
         return DataSourcesUsed(
-            csv_upload=any(name not in {MANUAL_UPLOAD_FILE_NAME, PASTE_UPLOAD_FILE_NAME, DEMO_UPLOAD_FILE_NAME} for name in source_names),
-            manual_entry=MANUAL_UPLOAD_FILE_NAME in source_names,
-            paste_import=PASTE_UPLOAD_FILE_NAME in source_names,
-            demo_data=DEMO_UPLOAD_FILE_NAME in source_names,
+            csv_upload=any(upload.source == "csv" for upload in uploads)
+            or any(name not in {MANUAL_UPLOAD_FILE_NAME, PASTE_UPLOAD_FILE_NAME, DEMO_UPLOAD_FILE_NAME} for name in source_names),
+            manual_entry=any(upload.source == "manual" for upload in uploads) or MANUAL_UPLOAD_FILE_NAME in source_names,
+            paste_import=any(upload.source == "paste" for upload in uploads) or PASTE_UPLOAD_FILE_NAME in source_names,
+            demo_data=any(upload.is_demo or upload.file_name == DEMO_UPLOAD_FILE_NAME for upload in uploads),
         )
 
     def _count(self, *, session: Session, model: Any, user_id: uuid.UUID) -> int:

@@ -92,6 +92,23 @@ Responsibilities:
 - Use per-user rate limiting, schema validation, ORM-safe queries, safe errors,
   and count-only audit metadata.
 
+Phase 12 adds scenario-based demo support in `app/services/demo_data.py` and
+the protected `/demo/scenarios`, `/demo/load-sample-data`, and `/demo/reset`
+routes.
+
+Responsibilities:
+
+- Load synthetic-only scenario data for the current user.
+- Support Basic, Subscription Creep, Budget Leaks, Needs Review, and Full
+  Portfolio demos.
+- Mark demo uploads and transactions with backend-controlled `source`,
+  `is_demo`, and `demo_scenario` fields.
+- Avoid duplicate demo inserts unless the caller explicitly resets existing demo
+  rows first.
+- Reset or clear only current-user demo rows while preserving non-demo data.
+- Optionally run categorization, recurring detection, anomaly detection, and a
+  deterministic monthly report after loading.
+
 ## Mobile
 
 The Expo app consumes backend transaction metadata directly. The Transactions
@@ -118,6 +135,44 @@ It explains that Tally does not connect to banks, shows stored-data counts,
 offers a JSON export preview, and requires confirmation modals for destructive
 actions. Account deletion clears SecureStore through the existing logout flow and
 returns the user to auth navigation.
+
+Phase 11 adds a mobile dark-mode visual system in `mobile/src/theme.ts` and
+shared primitives under `mobile/src/components/ui`. The theme centralizes
+charcoal backgrounds, emerald accents, elevated card surfaces, spacing, radii,
+typography, shadows, and gradient references. Screens use these primitives for
+consistent safe-area padding, bottom-navigation clearance, card treatment,
+buttons, badges, loading states, empty states, error states, and destructive
+confirmation UX.
+
+The polished mobile screens keep the same Expo Router paths and backend API
+calls. Phase 11 changes presentation and copy only; it does not introduce bank
+connections, Plaid, FinanceKit, account linking, card linking, or advice-like
+recommendations.
+
+Phase 12 adds demo support to the mobile Import screen and empty states. The
+default flow loads the Full Portfolio Demo, while a compact selector exposes the
+other scenarios. Empty dashboard, transaction, recurring, insight, and report
+states point users to import transactions or load synthetic demo data without
+implying bank access.
+
+## Deployment Configuration
+
+Phase 13 keeps deployment configuration explicit and centralized. Backend
+settings live in `app/core/config.py` and include environment, debug mode,
+database URL, JWT settings, CORS origins, rate limits, request/upload limits,
+and optional LLM settings. `app/main.py` reads CORS from those settings instead
+of hardcoding deployment behavior.
+
+In production, settings validation rejects SQLite databases, wildcard CORS,
+debug mode, empty CORS origins, and weak or test JWT secrets. Local development
+keeps the default Expo dev origins and local API URL fallback.
+
+The mobile app reads only public runtime values, currently
+`EXPO_PUBLIC_API_URL`, and normalizes the base URL before API calls. Auth tokens
+remain in Expo SecureStore and are not logged.
+
+Deployment notes, migration commands, EAS build profiles, icon/splash asset
+requirements, and smoke-test steps live in `docs/DEPLOYMENT.md`.
 
 ## Boundaries
 

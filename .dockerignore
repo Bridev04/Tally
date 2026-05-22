@@ -1,0 +1,14 @@
+.git
+.github
+.pytest_cache
+.venv
+venv
+__pycache__
+*.pyc
+*.db
+.env
+.env.*
+!.env.example
+.codex-run
+mobile/node_modules
+mobile/.expo

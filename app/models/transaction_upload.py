@@ -22,6 +22,10 @@ class TransactionUpload(TimestampMixin, table=True):
             "total_rows >= 0 AND processed_rows >= 0 AND processed_rows <= total_rows",
             name="ck_transaction_uploads_row_counts",
         ),
+        CheckConstraint(
+            "source IN ('csv', 'manual', 'paste', 'demo')",
+            name="ck_transaction_uploads_source",
+        ),
     )
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
@@ -36,6 +40,9 @@ class TransactionUpload(TimestampMixin, table=True):
     total_rows: int = Field(default=0, nullable=False)
     processed_rows: int = Field(default=0, nullable=False)
     error_message: str | None = Field(default=None, max_length=2000)
+    source: str = Field(default="csv", nullable=False, index=True, max_length=20)
+    is_demo: bool = Field(default=False, nullable=False, index=True)
+    demo_scenario: str | None = Field(default=None, index=True, max_length=50)
 
     user: "User" = Relationship(back_populates="uploads")
     transactions: list["Transaction"] = Relationship(

@@ -24,6 +24,7 @@ import {
   TransactionFilters,
   updateTransactionCategory,
 } from "@/lib/api";
+import { colors, radius, typography } from "@/theme";
 
 const categories = [
   "food",
@@ -217,7 +218,7 @@ export default function TransactionsScreen() {
             <Text style={styles.title}>Transactions</Text>
             <Text style={styles.subtitle}>{summary?.transaction_count ?? transactions.length} transactions</Text>
           </View>
-          {isLoading ? <ActivityIndicator color="#256B5B" /> : null}
+          {isLoading ? <ActivityIndicator color={colors.primary} /> : null}
         </View>
 
         <View style={styles.summaryRow}>
@@ -240,12 +241,12 @@ export default function TransactionsScreen() {
 
         <View style={styles.filters}>
           <View style={styles.searchBox}>
-            <Ionicons color="#7A736C" name="search" size={18} />
+            <Ionicons color={colors.textMuted} name="search" size={18} />
             <TextInput
               autoCapitalize="none"
               onChangeText={setSearch}
               placeholder="Search merchant or description"
-              placeholderTextColor="#7A736C"
+              placeholderTextColor={colors.textMuted}
               style={styles.searchInput}
               value={search}
             />
@@ -285,7 +286,7 @@ export default function TransactionsScreen() {
               autoCapitalize="none"
               onChangeText={setMerchant}
               placeholder="Merchant"
-              placeholderTextColor="#7A736C"
+              placeholderTextColor={colors.textMuted}
               style={styles.filterInput}
               value={merchant}
             />
@@ -293,7 +294,7 @@ export default function TransactionsScreen() {
               autoCapitalize="none"
               onChangeText={setDateFrom}
               placeholder="From YYYY-MM-DD"
-              placeholderTextColor="#7A736C"
+              placeholderTextColor={colors.textMuted}
               style={styles.filterInput}
               value={dateFrom}
             />
@@ -301,7 +302,7 @@ export default function TransactionsScreen() {
               autoCapitalize="none"
               onChangeText={setDateTo}
               placeholder="To YYYY-MM-DD"
-              placeholderTextColor="#7A736C"
+              placeholderTextColor={colors.textMuted}
               style={styles.filterInput}
               value={dateTo}
             />
@@ -312,11 +313,11 @@ export default function TransactionsScreen() {
 
         {!isLoading && transactions.length === 0 ? (
           <View style={styles.emptyState}>
-            <Ionicons color="#256B5B" name="receipt-outline" size={28} />
+            <Ionicons color={colors.primary} name="receipt-outline" size={28} />
             <Text style={styles.emptyTitle}>
               {hasActiveFilters
                 ? "No matching transactions."
-                : "No transactions yet. Import transactions to see your spending patterns."}
+                : "No transactions yet. Import transactions or load synthetic demo data to explore Tally."}
             </Text>
             {!hasActiveFilters ? (
               <View style={styles.emptyActions}>
@@ -363,11 +364,11 @@ export default function TransactionsScreen() {
                     onPress={() => setSelectedTransaction(null)}
                     style={styles.iconButton}
                   >
-                    <Ionicons color="#38443E" name="close" size={22} />
+                    <Ionicons color={colors.text} name="close" size={22} />
                   </Pressable>
                 </View>
 
-                {isDetailLoading ? <ActivityIndicator color="#256B5B" /> : null}
+                {isDetailLoading ? <ActivityIndicator color={colors.primary} /> : null}
                 {detailError ? <Text style={styles.error}>{detailError}</Text> : null}
                 {saveMessage ? <Text style={styles.message}>{saveMessage}</Text> : null}
 
@@ -412,10 +413,10 @@ export default function TransactionsScreen() {
                   ]}
                 >
                   {isSavingCategory ? (
-                    <ActivityIndicator color="#FFFFFF" />
+                    <ActivityIndicator color={colors.white} />
                   ) : (
                     <>
-                      <Ionicons color="#FFFFFF" name="checkmark" size={18} />
+                      <Ionicons color={colors.white} name="checkmark" size={18} />
                       <Text style={styles.saveButtonText}>Save category</Text>
                     </>
                   )}
@@ -452,7 +453,7 @@ function TransactionRow({ item, onPress }: { item: Transaction; onPress: () => v
           <ConfidenceBadge transaction={item} />
         </View>
       </View>
-      <Ionicons color="#7A736C" name="chevron-forward" size={18} />
+      <Ionicons color={colors.textMuted} name="chevron-forward" size={18} />
     </Pressable>
   );
 }
@@ -513,7 +514,7 @@ function ActionButton({
 }) {
   return (
     <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
-      {isLoading ? <ActivityIndicator color="#FFFFFF" /> : <Ionicons color="#FFFFFF" name={icon} size={18} />}
+      {isLoading ? <ActivityIndicator color={colors.white} /> : <Ionicons color={colors.white} name={icon} size={18} />}
       <Text style={styles.actionButtonText}>{label}</Text>
     </Pressable>
   );
@@ -584,13 +585,13 @@ function formatSignedAmount(amount: string, currency: string) {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: "#F7F4EF",
+    backgroundColor: colors.background,
     flex: 1,
   },
   content: {
     gap: 16,
     padding: 20,
-    paddingBottom: 36,
+    paddingBottom: 116,
   },
   headerRow: {
     alignItems: "center",
@@ -598,12 +599,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   title: {
-    color: "#111816",
-    fontSize: 30,
-    fontWeight: "700",
+    color: colors.text,
+    ...typography.title,
   },
   subtitle: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 14,
     marginTop: 3,
   },
@@ -612,20 +612,20 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   summaryCard: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     borderWidth: 1,
     flex: 1,
     minHeight: 82,
     padding: 14,
   },
   summaryLabel: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 13,
   },
   summaryValue: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 20,
     fontWeight: "700",
     marginTop: 8,
@@ -635,26 +635,26 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   categorySummary: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     borderWidth: 1,
     minWidth: 150,
     padding: 12,
   },
   categorySummaryLabel: {
-    color: "#38443E",
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: "700",
   },
   categorySummaryAmount: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 17,
     fontWeight: "700",
     marginTop: 6,
   },
   categorySummaryMeta: {
-    color: "#5F6A63",
+    color: colors.textMuted,
     fontSize: 12,
     marginTop: 3,
   },
@@ -663,9 +663,9 @@ const styles = StyleSheet.create({
   },
   searchBox: {
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.lg,
     borderWidth: 1,
     flexDirection: "row",
     gap: 8,
@@ -673,7 +673,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   searchInput: {
-    color: "#111816",
+    color: colors.text,
     flex: 1,
     fontSize: 15,
   },
@@ -682,29 +682,29 @@ const styles = StyleSheet.create({
     paddingRight: 20,
   },
   chip: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.md,
     borderWidth: 1,
     minHeight: 36,
     justifyContent: "center",
     paddingHorizontal: 12,
   },
   chipSelected: {
-    backgroundColor: "#256B5B",
-    borderColor: "#256B5B",
+    backgroundColor: colors.primaryStrong,
+    borderColor: colors.primary,
   },
   chipText: {
-    color: "#38443E",
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: "600",
   },
   chipTextSelected: {
-    color: "#FFFFFF",
+    color: colors.white,
   },
   segmented: {
-    backgroundColor: "#E9E2DA",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
     flexDirection: "row",
     gap: 4,
     padding: 4,
@@ -717,36 +717,36 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   segmentSelected: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.surfaceRaised,
   },
   segmentText: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: "700",
   },
   segmentTextSelected: {
-    color: "#111816",
+    color: colors.primary,
   },
   filterGrid: {
     gap: 8,
   },
   filterInput: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.md,
     borderWidth: 1,
-    color: "#111816",
+    color: colors.text,
     fontSize: 14,
     minHeight: 44,
     paddingHorizontal: 12,
   },
   error: {
-    color: "#A23B31",
+    color: colors.danger,
     fontSize: 14,
     lineHeight: 20,
   },
   message: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 14,
   },
   list: {
@@ -754,9 +754,9 @@ const styles = StyleSheet.create({
   },
   row: {
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.listSurface,
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     borderWidth: 1,
     flexDirection: "row",
     gap: 10,
@@ -777,7 +777,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   merchant: {
-    color: "#111816",
+    color: colors.text,
     flex: 1,
     fontSize: 16,
     fontWeight: "700",
@@ -788,13 +788,13 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   expense: {
-    color: "#8F3F36",
+    color: colors.text,
   },
   income: {
-    color: "#256B5B",
+    color: colors.primary,
   },
   description: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 14,
   },
   rowMeta: {
@@ -804,50 +804,50 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   date: {
-    color: "#7A736C",
+    color: colors.textMuted,
     fontSize: 12,
   },
   dot: {
-    color: "#B3AAA0",
+    color: colors.textMuted,
     fontSize: 12,
   },
   category: {
-    color: "#38443E",
+    color: colors.textSecondary,
     fontSize: 12,
     fontWeight: "700",
   },
   confidenceBadge: {
-    backgroundColor: "#E7F1ED",
-    borderColor: "#B8D2CA",
-    borderRadius: 7,
+    backgroundColor: "rgba(52, 209, 120, 0.12)",
+    borderColor: "rgba(52, 209, 120, 0.34)",
+    borderRadius: radius.sm,
     borderWidth: 1,
     minHeight: 24,
     justifyContent: "center",
     paddingHorizontal: 8,
   },
   confidenceBadgeText: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 11,
     fontWeight: "800",
   },
   needsReviewBadge: {
-    backgroundColor: "#FFF0E0",
-    borderColor: "#E5B46D",
+    backgroundColor: "rgba(242, 169, 59, 0.12)",
+    borderColor: "rgba(242, 169, 59, 0.38)",
   },
   needsReviewBadgeText: {
-    color: "#8F5A15",
+    color: colors.amber,
   },
   emptyState: {
     alignItems: "flex-start",
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.xl,
     borderWidth: 1,
     gap: 14,
     padding: 18,
   },
   emptyTitle: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 17,
     fontWeight: "700",
     lineHeight: 24,
@@ -858,8 +858,8 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     alignItems: "center",
-    backgroundColor: "#256B5B",
-    borderRadius: 8,
+    backgroundColor: colors.primaryStrong,
+    borderRadius: radius.lg,
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
@@ -867,19 +867,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
   },
   actionButtonText: {
-    color: "#FFFFFF",
+    color: colors.white,
     fontSize: 15,
     fontWeight: "800",
   },
   modalBackdrop: {
-    backgroundColor: "rgba(17, 24, 22, 0.36)",
+    backgroundColor: "rgba(0, 0, 0, 0.64)",
     flex: 1,
     justifyContent: "flex-end",
   },
   sheet: {
-    backgroundColor: "#F7F4EF",
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
+    backgroundColor: colors.background,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
     maxHeight: "88%",
   },
   sheetContent: {
@@ -897,20 +897,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sheetMerchant: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 22,
     fontWeight: "800",
   },
   sheetDate: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 13,
     marginTop: 4,
   },
   iconButton: {
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.md,
     borderWidth: 1,
     height: 40,
     justifyContent: "center",
@@ -921,20 +921,20 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   detailRow: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.md,
     borderWidth: 1,
     gap: 4,
     padding: 12,
   },
   detailLabel: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 12,
     fontWeight: "700",
   },
   detailValue: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 15,
     lineHeight: 21,
   },
@@ -942,7 +942,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   sectionLabel: {
-    color: "#38443E",
+    color: colors.textSecondary,
     fontSize: 14,
     fontWeight: "800",
   },
@@ -953,18 +953,18 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     alignItems: "center",
-    backgroundColor: "#256B5B",
-    borderRadius: 8,
+    backgroundColor: colors.primaryStrong,
+    borderRadius: radius.lg,
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
     minHeight: 48,
   },
   disabledButton: {
-    backgroundColor: "#9BA59E",
+    backgroundColor: colors.textMuted,
   },
   saveButtonText: {
-    color: "#FFFFFF",
+    color: colors.white,
     fontSize: 16,
     fontWeight: "800",
   },

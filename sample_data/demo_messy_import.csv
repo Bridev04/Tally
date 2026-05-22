@@ -1,0 +1,6 @@
+date,description,merchant,amount,currency
+2026-05-01,Synthetic monthly payroll,Company Payroll,"35,000.00",PHP
+2026-05-03, Netflix monthly subscription , Netflix ,-549.00,PHP
+2026-05-04,Grab ride,Grab,-220.00,PHP
+2026-05-05,Imported row needs review,Packet REF 71,-640.00,PHP
+2026-05-06,Coffee,Starbucks,-185.00,PHP

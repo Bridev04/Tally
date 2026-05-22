@@ -6,7 +6,7 @@ export default function RegisterScreen() {
   const { register } = useAuth();
 
   return (
-    <Screen>
+    <Screen bottomInset={false} contentStyle={{ justifyContent: "center" }}>
       <AuthForm mode="register" onSubmit={register} />
     </Screen>
   );

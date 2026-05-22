@@ -12,6 +12,10 @@ from app.db.session import get_session
 from app.models import TransactionUpload, User
 from app.schemas.imports import (
     DemoLoadRequest,
+    DemoLoadResponse,
+    DemoResetRequest,
+    DemoScenarioListResponse,
+    DemoScenarioRead,
     ImportErrorRow,
     ImportResultResponse,
     PasteConfirmRequest,
@@ -177,34 +181,117 @@ def confirm_paste_import(
     )
 
 
-@router.post("/demo/load-sample-data", response_model=ImportResultResponse, status_code=status.HTTP_201_CREATED)
+@router.get("/demo/scenarios", response_model=DemoScenarioListResponse)
+def list_demo_scenarios(
+    current_user: CurrentImportUser,
+) -> DemoScenarioListResponse:
+    del current_user
+    return DemoScenarioListResponse(
+        scenarios=[DemoScenarioRead(**item.__dict__) for item in DemoDataService().scenarios()]
+    )
+
+
+@router.post("/demo/load-sample-data", response_model=DemoLoadResponse, status_code=status.HTTP_201_CREATED)
 def load_sample_data(
     payload: DemoLoadRequest,
     current_user: CurrentImportUser,
     session: Annotated[Session, Depends(get_session)],
-) -> ImportResultResponse:
-    # TODO: Disable or restrict this demo endpoint in production environments.
-    upload, processed_rows, duplicate_rows = DemoDataService().load(
-        session=session,
-        user_id=current_user.id,
-        allow_overwrite=payload.allow_overwrite,
-    )
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> DemoLoadResponse:
+    service = DemoDataService()
+    try:
+        result = service.load(
+            session=session,
+            user_id=current_user.id,
+            scenario=payload.scenario,
+            reset_existing_demo=payload.should_reset_demo,
+            run_processing=payload.run_processing,
+            current_user=current_user,
+            settings=settings,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail="Invalid request payload.") from exc
     create_audit_log(
         session=session,
         user_id=current_user.id,
         action="transaction_import.demo_data_loaded",
         metadata={
-            "upload_id": str(upload.id),
-            "processed_rows": processed_rows,
-            "duplicate_rows": duplicate_rows,
-            "allow_overwrite": payload.allow_overwrite,
+            "upload_id": str(result.upload.id) if result.upload is not None else None,
+            "scenario": result.scenario,
+            "processed_rows": result.processed_rows,
+            "duplicate_rows": result.duplicate_rows,
+            "reset_existing_demo": result.reset_existing_demo,
+            "run_processing": result.run_processing,
+            "subscriptions_detected": result.subscriptions_detected,
+            "anomalies_detected": result.anomalies_detected,
+            "reports_generated": result.reports_generated,
         },
     )
-    SubscriptionDetectionService().detect_and_upsert(session=session, user_id=current_user.id)
     session.commit()
-    return ImportResultResponse(
-        upload_id=upload.id,
-        total_rows=upload.total_rows,
-        processed_rows=processed_rows,
-        duplicate_rows=duplicate_rows,
+    return DemoLoadResponse(
+        upload_id=result.upload.id,
+        total_rows=result.total_rows,
+        processed_rows=result.processed_rows,
+        duplicate_rows=result.duplicate_rows,
+        scenario=result.scenario,
+        transactions_created=result.processed_rows,
+        uploads_created=result.uploads_created,
+        subscriptions_detected=result.subscriptions_detected,
+        anomalies_detected=result.anomalies_detected,
+        reports_generated=result.reports_generated,
+        reset_existing_demo=result.reset_existing_demo,
+        run_processing=result.run_processing,
+        message="Demo data loaded. You can now explore your dashboard.",
+    )
+
+
+@router.post("/demo/reset", response_model=DemoLoadResponse)
+def reset_demo_data(
+    payload: DemoResetRequest,
+    current_user: CurrentImportUser,
+    session: Annotated[Session, Depends(get_session)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> DemoLoadResponse:
+    service = DemoDataService()
+    try:
+        result = service.reset(
+            session=session,
+            user_id=current_user.id,
+            scenario=payload.scenario,
+            run_processing=payload.run_processing,
+            current_user=current_user,
+            settings=settings,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail="Invalid request payload.") from exc
+    create_audit_log(
+        session=session,
+        user_id=current_user.id,
+        action="transaction_import.demo_data_reset",
+        metadata={
+            "upload_id": str(result.upload.id) if result.upload is not None else None,
+            "scenario": result.scenario,
+            "processed_rows": result.processed_rows,
+            "run_processing": result.run_processing,
+        },
+    )
+    session.commit()
+    return DemoLoadResponse(
+        upload_id=result.upload.id if result.upload is not None else uuid.uuid4(),
+        total_rows=result.total_rows,
+        processed_rows=result.processed_rows,
+        duplicate_rows=result.duplicate_rows,
+        scenario=result.scenario,
+        transactions_created=result.processed_rows,
+        uploads_created=result.uploads_created,
+        subscriptions_detected=result.subscriptions_detected,
+        anomalies_detected=result.anomalies_detected,
+        reports_generated=result.reports_generated,
+        reset_existing_demo=True,
+        run_processing=result.run_processing,
+        message=(
+            "Demo data reset and reloaded. You can now explore your dashboard."
+            if result.upload is not None
+            else "Demo data reset."
+        ),
     )

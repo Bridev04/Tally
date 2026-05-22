@@ -22,17 +22,18 @@ import {
 } from "@/lib/api";
 
 const colors = {
-  background: "#faf9f4",
-  primary: "#012d1d",
-  primaryContainer: "#1b4332",
-  secondary: "#256b5b",
+  background: "#050807",
+  primary: "#34d178",
+  primaryContainer: "#0a5a3a",
+  secondary: "#28b765",
   sage: "#b0f1cc",
-  amber: "#df982d",
-  text: "#1b1c19",
-  muted: "#4f5a53",
-  border: "#dfe4dc",
-  surface: "#ffffff",
-  soft: "#f5f4ef",
+  amber: "#f2a93b",
+  text: "#f4f7f5",
+  muted: "#a5ada8",
+  border: "#26332e",
+  surface: "#101816",
+  soft: "#16211e",
+  white: "#ffffff",
 };
 
 const categoryLabels: Record<string, string> = {
@@ -431,7 +432,7 @@ function PrimaryButton({
 }) {
   return (
     <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}>
-      {isLoading ? <ActivityIndicator color="#ffffff" /> : <Ionicons color="#ffffff" name={icon} size={18} />}
+      {isLoading ? <ActivityIndicator color={colors.white} /> : <Ionicons color={colors.white} name={icon} size={18} />}
       <Text style={styles.primaryButtonText}>{label}</Text>
     </Pressable>
   );
@@ -731,7 +732,7 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
   progressTrack: {
-    backgroundColor: "#edf0eb",
+    backgroundColor: colors.soft,
     borderRadius: 99,
     height: 9,
     overflow: "hidden",
@@ -771,7 +772,7 @@ const styles = StyleSheet.create({
   },
   rowIcon: {
     alignItems: "center",
-    backgroundColor: "#eaf5ef",
+    backgroundColor: "rgba(52, 209, 120, 0.18)",
     borderRadius: 14,
     height: 42,
     justifyContent: "center",
@@ -876,7 +877,7 @@ const styles = StyleSheet.create({
   },
   emptyIcon: {
     alignItems: "center",
-    backgroundColor: "#eaf5ef",
+    backgroundColor: "rgba(52, 209, 120, 0.18)",
     borderRadius: 28,
     height: 56,
     justifyContent: "center",
@@ -893,8 +894,8 @@ const styles = StyleSheet.create({
     lineHeight: 23,
   },
   errorPanel: {
-    backgroundColor: "#fff8ec",
-    borderColor: "#efc37b",
+    backgroundColor: "rgba(242, 169, 59, 0.10)",
+    borderColor: "rgba(242, 169, 59, 0.38)",
     borderRadius: 20,
     borderWidth: 1,
     gap: 12,
@@ -909,7 +910,7 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   skeleton: {
-    backgroundColor: "#eceee8",
+    backgroundColor: colors.soft,
     borderRadius: 24,
   },
   skeletonHero: {

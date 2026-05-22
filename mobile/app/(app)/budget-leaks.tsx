@@ -21,6 +21,7 @@ import {
   loadDemoData,
   SpendingAnomaly,
 } from "@/lib/api";
+import { colors, radius, typography } from "@/theme";
 
 const typeLabels: Record<string, string> = {
   CATEGORY_SPIKE: "Category change",
@@ -36,6 +37,8 @@ const severityLabels: Record<string, string> = {
   medium: "Medium priority",
   low: "Review",
 };
+
+const insightFilters = ["For you", "Spending", "Income", "Savings"];
 
 const categoryLabels: Record<string, string> = {
   food: "Food",
@@ -148,13 +151,21 @@ export default function BudgetLeaksScreen() {
       >
         <View style={styles.headerRow}>
           <View>
-            <Text style={styles.title}>Budget Leaks</Text>
+            <Text style={styles.title}>Insights</Text>
             <Text style={styles.subtitle}>
               {summary?.month ? `Detected from imported data for ${summary.month}` : "Detected from imported data only"}
             </Text>
           </View>
-          {isLoading ? <ActivityIndicator color="#256B5B" /> : null}
+          {isLoading ? <ActivityIndicator color={colors.primary} /> : null}
         </View>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
+          {insightFilters.map((item, index) => (
+            <View key={item} style={[styles.chip, index === 0 && styles.chipSelected]}>
+              <Text style={[styles.chipText, index === 0 && styles.chipTextSelected]}>{item}</Text>
+            </View>
+          ))}
+        </ScrollView>
 
         <View style={styles.metricsGrid}>
           <MetricCard label="Total budget leaks" value={String(summary?.total_anomalies ?? anomalies.length)} />
@@ -173,17 +184,17 @@ export default function BudgetLeaksScreen() {
 
         {!isLoading && anomalies.length === 0 ? (
           <View style={styles.emptyState}>
-            <Ionicons color="#256B5B" name="analytics-outline" size={28} />
+            <Ionicons color={colors.primary} name="analytics-outline" size={28} />
             <Text style={styles.emptyTitle}>No budget leaks detected yet.</Text>
             <Text style={styles.emptyCopy}>
-              Import transactions or run detection to review spending patterns.
+              Import transactions or load synthetic demo data to review spending patterns.
             </Text>
             <Pressable
               accessibilityRole="button"
               onPress={() => router.push("/(app)/import")}
               style={({ pressed }) => [styles.importButton, pressed && styles.pressed]}
             >
-              <Ionicons color="#256B5B" name="add-circle-outline" size={18} />
+              <Ionicons color={colors.primary} name="add-circle-outline" size={18} />
               <Text style={styles.importButtonText}>Import transactions</Text>
             </Pressable>
           </View>
@@ -273,7 +284,7 @@ function ActionButton({
 }) {
   return (
     <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
-      {isLoading ? <ActivityIndicator color="#FFFFFF" /> : <Ionicons color="#FFFFFF" name={icon} size={18} />}
+      {isLoading ? <ActivityIndicator color={colors.white} /> : <Ionicons color={colors.white} name={icon} size={18} />}
       <Text style={styles.actionButtonText}>{label}</Text>
     </Pressable>
   );
@@ -296,7 +307,7 @@ function SecondaryButton({
       onPress={onPress}
       style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
     >
-      {isLoading ? <ActivityIndicator color="#256B5B" /> : <Ionicons color="#256B5B" name={icon} size={18} />}
+      {isLoading ? <ActivityIndicator color={colors.primary} /> : <Ionicons color={colors.primary} name={icon} size={18} />}
       <Text style={styles.secondaryButtonText}>{label}</Text>
     </Pressable>
   );
@@ -317,13 +328,13 @@ function formatAmount(amount: string) {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: "#F7F4EF",
+    backgroundColor: colors.background,
     flex: 1,
   },
   content: {
     gap: 16,
     padding: 20,
-    paddingBottom: 36,
+    paddingBottom: 116,
   },
   headerRow: {
     alignItems: "center",
@@ -331,12 +342,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   title: {
-    color: "#111816",
-    fontSize: 30,
-    fontWeight: "700",
+    color: colors.text,
+    ...typography.title,
   },
   subtitle: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 14,
     marginTop: 3,
   },
@@ -345,33 +355,58 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 10,
   },
+  chips: {
+    gap: 8,
+    paddingRight: 20,
+  },
+  chip: {
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    justifyContent: "center",
+    minHeight: 36,
+    paddingHorizontal: 12,
+  },
+  chipSelected: {
+    backgroundColor: colors.primaryStrong,
+    borderColor: colors.primary,
+  },
+  chipText: {
+    color: colors.textSecondary,
+    fontSize: 13,
+    fontWeight: "800",
+  },
+  chipTextSelected: {
+    color: colors.white,
+  },
   metricCard: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     borderWidth: 1,
     minHeight: 86,
     padding: 14,
     width: "48%",
   },
   highCard: {
-    backgroundColor: "#FDEDEA",
-    borderColor: "#E1A098",
+    backgroundColor: "rgba(255, 95, 87, 0.10)",
+    borderColor: "rgba(255, 95, 87, 0.32)",
   },
   mediumCard: {
-    backgroundColor: "#FFF7EA",
-    borderColor: "#E5B46D",
+    backgroundColor: "rgba(242, 169, 59, 0.10)",
+    borderColor: "rgba(242, 169, 59, 0.34)",
   },
   reviewCard: {
-    backgroundColor: "#E7F1ED",
-    borderColor: "#B8D2CA",
+    backgroundColor: "rgba(52, 209, 120, 0.10)",
+    borderColor: "rgba(52, 209, 120, 0.34)",
   },
   metricLabel: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 13,
   },
   metricValue: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 20,
     fontWeight: "800",
     marginTop: 8,
@@ -381,8 +416,8 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     alignItems: "center",
-    backgroundColor: "#256B5B",
-    borderRadius: 8,
+    backgroundColor: colors.primaryStrong,
+    borderRadius: radius.lg,
     flexDirection: "row",
     gap: 8,
     justifyContent: "center",
@@ -390,15 +425,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
   },
   actionButtonText: {
-    color: "#FFFFFF",
+    color: colors.white,
     fontSize: 15,
     fontWeight: "800",
   },
   secondaryButton: {
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderColor: "#B8D2CA",
-    borderRadius: 8,
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.lg,
     borderWidth: 1,
     flexDirection: "row",
     gap: 8,
@@ -407,43 +442,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
   },
   secondaryButtonText: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 15,
     fontWeight: "800",
   },
   error: {
-    color: "#A23B31",
+    color: colors.danger,
     fontSize: 14,
     lineHeight: 20,
   },
   message: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 14,
     lineHeight: 20,
   },
   emptyState: {
     alignItems: "flex-start",
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderRadius: radius.xl,
     borderWidth: 1,
     gap: 12,
     padding: 18,
   },
   emptyTitle: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 18,
     fontWeight: "800",
   },
   emptyCopy: {
-    color: "#38443E",
+    color: colors.textSecondary,
     fontSize: 15,
     lineHeight: 22,
   },
   importButton: {
     alignItems: "center",
-    borderColor: "#B8D2CA",
-    borderRadius: 8,
+    borderColor: colors.borderStrong,
+    borderRadius: radius.md,
     borderWidth: 1,
     flexDirection: "row",
     gap: 8,
@@ -451,7 +486,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   importButtonText: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 14,
     fontWeight: "800",
   },
@@ -459,9 +494,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   card: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#D8D0C7",
-    borderRadius: 8,
+    backgroundColor: colors.listSurface,
+    borderColor: colors.border,
+    borderRadius: radius.xl,
     borderWidth: 1,
     gap: 12,
     padding: 14,
@@ -477,46 +512,46 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   typeLabel: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 12,
     fontWeight: "800",
     textTransform: "uppercase",
   },
   subject: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 17,
     fontWeight: "800",
   },
   severityBadge: {
-    backgroundColor: "#E7F1ED",
-    borderColor: "#B8D2CA",
-    borderRadius: 7,
+    backgroundColor: "rgba(52, 209, 120, 0.12)",
+    borderColor: "rgba(52, 209, 120, 0.34)",
+    borderRadius: radius.sm,
     borderWidth: 1,
     justifyContent: "center",
     minHeight: 28,
     paddingHorizontal: 9,
   },
   highBadge: {
-    backgroundColor: "#FDEDEA",
-    borderColor: "#E1A098",
+    backgroundColor: "rgba(255, 95, 87, 0.12)",
+    borderColor: "rgba(255, 95, 87, 0.38)",
   },
   mediumBadge: {
-    backgroundColor: "#FFF7EA",
-    borderColor: "#E5B46D",
+    backgroundColor: "rgba(242, 169, 59, 0.12)",
+    borderColor: "rgba(242, 169, 59, 0.38)",
   },
   severityText: {
-    color: "#256B5B",
+    color: colors.primary,
     fontSize: 12,
     fontWeight: "800",
   },
   highText: {
-    color: "#8F3F36",
+    color: colors.danger,
   },
   mediumText: {
-    color: "#8F5A15",
+    color: colors.amber,
   },
   explanation: {
-    color: "#38443E",
+    color: colors.textSecondary,
     fontSize: 15,
     lineHeight: 22,
   },
@@ -526,19 +561,19 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   detail: {
-    backgroundColor: "#F7F4EF",
-    borderRadius: 8,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
     gap: 3,
     minWidth: 88,
     padding: 9,
   },
   detailLabel: {
-    color: "#5F6A63",
+    color: colors.textSecondary,
     fontSize: 11,
     fontWeight: "700",
   },
   detailValue: {
-    color: "#111816",
+    color: colors.text,
     fontSize: 14,
     fontWeight: "800",
   },

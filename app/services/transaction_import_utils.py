@@ -82,6 +82,9 @@ def create_upload_batch(
     file_name: str,
     total_rows: int = 0,
     status: str = "processing",
+    source: str = "csv",
+    is_demo: bool = False,
+    demo_scenario: str | None = None,
 ) -> TransactionUpload:
     upload = TransactionUpload(
         user_id=user_id,
@@ -89,6 +92,9 @@ def create_upload_batch(
         upload_status=status,
         total_rows=total_rows,
         processed_rows=0,
+        source=source,
+        is_demo=is_demo,
+        demo_scenario=demo_scenario,
     )
     session.add(upload)
     session.flush()
@@ -107,6 +113,9 @@ def build_transaction(
     currency: str,
     category: str | None = None,
     category_source: str | None = None,
+    source: str = "csv",
+    is_demo: bool = False,
+    demo_scenario: str | None = None,
 ) -> Transaction:
     transaction = Transaction(
         user_id=user_id,
@@ -118,6 +127,9 @@ def build_transaction(
         amount=amount,
         currency=currency,
         category=category,
+        source=source,
+        is_demo=is_demo,
+        demo_scenario=demo_scenario,
     )
     categorizer = TransactionCategorizerService()
     if category is None:

@@ -29,6 +29,8 @@ def test_mobile_has_form_validation_and_safe_errors() -> None:
     assert "emailPattern" in source
     assert "Password must be at least 8 characters." in source
     assert "fallbackMessage" in source
+    assert "normalizeApiBaseUrl" in source
+    assert 'trimmed.replace(/\\/+$/, "")' in source
     assert "console.log" not in source
     assert "console.error" not in source
 
@@ -53,7 +55,8 @@ def test_mobile_has_recurring_screen_and_detection_cta() -> None:
 def test_mobile_has_budget_leaks_screen_and_neutral_copy() -> None:
     source = read_mobile_source()
 
-    assert "Budget Leaks" in source
+    assert "Insights" in source
+    assert "For you" in source
     assert "Run detection" in source
     assert "No budget leaks detected yet." in source
     assert "Detected from imported data" in source
@@ -65,7 +68,7 @@ def test_mobile_has_budget_leaks_screen_and_neutral_copy() -> None:
 def test_mobile_has_phase_8_home_dashboard_contract() -> None:
     source = read_mobile_source()
 
-    assert "Here’s your financial pulse." in source
+    assert "Here's your financial pulse." in source
     assert "Based on imported transactions" in source
     assert "Upcoming charges" in source
     assert "Top categories" in source
@@ -78,6 +81,28 @@ def test_mobile_has_phase_8_home_dashboard_contract() -> None:
     assert 'title: "Profile"' in source
     assert "cancel this" not in source.lower()
     assert "stop spending" not in source.lower()
+
+
+def test_mobile_has_phase_11_dark_theme_and_shared_ui() -> None:
+    source = read_mobile_source()
+
+    assert "#050807" in source
+    assert "#34d178" in source
+    assert "export { Screen }" in source
+    assert "ConfirmModal" in source
+    assert "No bank connection required" in source
+    assert "Spot spending patterns before they become habits." in source
+    assert "Upload a CSV file from iOS Files." in source
+    assert "Load synthetic transactions to explore Tally." in source
+    assert "Full Portfolio Demo" in source
+    assert "Subscription Creep" in source
+    assert "Budget Leaks" in source
+    assert "Needs Review" in source
+    assert "Demo data loaded. You can now explore your dashboard." in source
+    assert "Synthetic sample data. For portfolio preview only." in source
+    assert "/demo/scenarios" in source
+    assert "/demo/reset" in source
+    assert "reset_existing_demo" in source
 
 
 def test_mobile_has_monthly_report_screen_and_safe_copy() -> None:

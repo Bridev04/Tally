@@ -24,6 +24,10 @@ class Transaction(TimestampMixin, table=True):
             "category_source IN ('auto', 'manual', 'imported', 'unknown')",
             name="ck_transactions_category_source",
         ),
+        CheckConstraint(
+            "source IN ('csv', 'manual', 'paste', 'demo')",
+            name="ck_transactions_source",
+        ),
         CheckConstraint("length(currency) = 3", name="ck_transactions_currency_length"),
     )
 
@@ -54,6 +58,9 @@ class Transaction(TimestampMixin, table=True):
     categorization_rule: str | None = Field(default=None, max_length=255)
     payment_type: str | None = Field(default=None, max_length=100)
     is_recurring_candidate: bool = Field(default=False, nullable=False)
+    source: str = Field(default="csv", nullable=False, index=True, max_length=20)
+    is_demo: bool = Field(default=False, nullable=False, index=True)
+    demo_scenario: str | None = Field(default=None, index=True, max_length=50)
 
     user: "User" = Relationship(back_populates="transactions")
     upload: "TransactionUpload" = Relationship(back_populates="transactions")

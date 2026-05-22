@@ -176,6 +176,67 @@ Tally still uses only CSV upload, manual transaction entry, paste import, and
 synthetic demo data. It does not use Plaid, FinanceKit, bank APIs, card linking,
 or account linking.
 
+## Phase 11 Frontend Polish
+
+Phase 11 is a mobile presentation layer update. It adds a dark visual system,
+shared UI components, calmer empty/error/loading states, and consistent
+destructive confirmation UI.
+
+Safety expectations remain unchanged:
+
+- No bank connection, Plaid, FinanceKit, bank API, card-linking, or
+  account-linking copy.
+- No financial advice, recommendations, shame-based language, or fear-based
+  prompts.
+- Expenses remain visually neutral; red is reserved for destructive actions and
+  true error states.
+- Amber is reserved for review/watch states.
+- Privacy controls continue to explain that export and deletion apply only to
+  Tally app data.
+
+## Phase 12 Demo Data / Testing Support
+
+Phase 12 demo mode is synthetic-only and exists for portfolio walkthroughs,
+local testing, screenshots, and smoke tests. It does not use real user financial
+data, real bank exports, Plaid, FinanceKit, bank APIs, account linking, card
+linking, or connected accounts.
+
+Safety expectations:
+
+- Demo scenarios must be clearly synthetic and safe for portfolio presentation.
+- Demo routes require authentication, per-user scoping, schema validation, and
+  rate limiting.
+- Demo uploads and transactions are marked with backend-controlled `source`,
+  `is_demo`, and `demo_scenario` fields.
+- Users cannot mass-assign demo marker fields through manual, CSV, paste, or
+  category-edit endpoints.
+- Demo reset and privacy clear-demo operations preserve non-demo transactions.
+- Derived subscriptions, anomalies, and monthly reports may be cleared when demo
+  rows are removed because those records can be generated from demo data.
+- Demo and report copy remains neutral and based only on imported or synthetic
+  data. It must not include advice, shame language, or recommendations.
+
+## Phase 13 Deployment Readiness
+
+Phase 13 prepares configuration for portfolio demos and future deployment
+without deploying automatically.
+
+Safety expectations:
+
+- Real secrets live only in local `.env` files or deployment secret managers.
+- `.env` files, production database URLs, JWT secrets, LLM API keys, and tokens
+  must not be committed.
+- Backend production mode rejects wildcard CORS, debug mode, SQLite databases,
+  and weak/test JWT secrets.
+- Mobile uses only public `EXPO_PUBLIC_*` values; secrets must never be exposed
+  to Expo runtime config.
+- Backend CORS origins come from centralized settings.
+- Health checks return safe status only.
+- Deployment smoke tests must use synthetic demo data or a controlled test user,
+  never real bank-linked data.
+- App icon and splash assets may be added later, but missing asset paths must
+  not be referenced in config.
+
 ## Security Practices
 
 - Secrets are read from centralized settings and are never exposed to the mobile app.

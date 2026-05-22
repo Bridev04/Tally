@@ -96,6 +96,7 @@ class PasteImportService:
             user_id=user_id,
             file_name="paste-import",
             total_rows=len(preview.valid_rows) + len(preview.invalid_rows),
+            source="paste",
         )
         processed_rows = 0
         duplicate_rows = 0
@@ -121,6 +122,7 @@ class PasteImportService:
                     description=row.description,
                     amount=row.amount,
                     currency=row.currency,
+                    source="paste",
                 )
             )
             processed_rows += 1

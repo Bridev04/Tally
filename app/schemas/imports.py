@@ -2,6 +2,8 @@ from datetime import date, datetime
 from decimal import Decimal
 import uuid
 
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.schemas.transaction import TransactionCategory, TransactionRead
@@ -43,8 +45,33 @@ class PasteConfirmRequest(PastePreviewRequest):
     pass
 
 
+DemoScenario = Literal["basic", "subscriptions", "budget_leaks", "needs_review", "full_portfolio"]
+
+
 class DemoLoadRequest(StrictSchema):
-    allow_overwrite: bool = False
+    scenario: DemoScenario = "full_portfolio"
+    reset_existing_demo: bool = False
+    run_processing: bool = True
+    allow_overwrite: bool | None = None
+
+    @property
+    def should_reset_demo(self) -> bool:
+        return self.reset_existing_demo or bool(self.allow_overwrite)
+
+
+class DemoResetRequest(StrictSchema):
+    scenario: DemoScenario | None = "full_portfolio"
+    run_processing: bool = True
+
+
+class DemoScenarioRead(BaseModel):
+    key: DemoScenario
+    title: str
+    description: str
+
+
+class DemoScenarioListResponse(BaseModel):
+    scenarios: list[DemoScenarioRead]
 
 
 class UploadRead(BaseModel):
@@ -86,6 +113,18 @@ class ImportResultResponse(BaseModel):
     processed_rows: int
     duplicate_rows: int
     invalid_rows: list[ImportErrorRow] = []
+
+
+class DemoLoadResponse(ImportResultResponse):
+    scenario: DemoScenario
+    transactions_created: int
+    uploads_created: int
+    subscriptions_detected: int
+    anomalies_detected: int
+    reports_generated: int
+    reset_existing_demo: bool
+    run_processing: bool
+    message: str
 
 
 class ManualTransactionResponse(BaseModel):

@@ -3,6 +3,36 @@
 Tally exposes protected transaction APIs for imported, pasted, demo, and manual
 transactions only. It does not connect to real banks or provide financial advice.
 
+## Health And Deployment
+
+`GET /health`
+
+Returns a minimal safe status payload:
+
+```json
+{
+  "status": "ok"
+}
+```
+
+The response must not include secrets, database URLs, JWT settings, internal
+paths, stack traces, or deployment config.
+
+`GET /health/db`
+
+Checks database reachability:
+
+```json
+{
+  "status": "ok",
+  "database": "reachable"
+}
+```
+
+Production CORS is controlled by `CORS_ALLOWED_ORIGINS` in centralized backend
+settings. Use explicit origins for Expo web/dev previews or any future web
+surface; do not use wildcard CORS in production.
+
 ## Transaction Categorization
 
 `POST /transactions/categorize`
@@ -63,6 +93,79 @@ Allowed categories are `food`, `transportation`, `rent`, `subscriptions`,
 `PATCH /transactions/{id}/category` accepts only `category` and marks the record
 as manual. It does not accept amount, user, merchant, or other mass-assignment
 fields.
+
+## Demo Data
+
+Demo routes are protected, current-user scoped, and rate limited. They load
+synthetic portfolio data only. Demo data is never real bank data and does not
+use Plaid, FinanceKit, bank APIs, card linking, or account linking.
+
+`GET /demo/scenarios`
+
+Returns available synthetic scenarios:
+
+```json
+{
+  "scenarios": [
+    {
+      "key": "full_portfolio",
+      "title": "Full Portfolio Demo",
+      "description": "Three months of synthetic data for screenshots, walkthroughs, reports, and privacy controls."
+    }
+  ]
+}
+```
+
+Allowed scenario keys are `basic`, `subscriptions`, `budget_leaks`,
+`needs_review`, and `full_portfolio`.
+
+`POST /demo/load-sample-data`
+
+```json
+{
+  "scenario": "full_portfolio",
+  "reset_existing_demo": true,
+  "run_processing": true
+}
+```
+
+When `reset_existing_demo=true`, only current-user demo records are removed
+before the selected scenario is loaded. Non-demo imported, pasted, and manual
+transactions are preserved. When `run_processing=true`, the backend runs
+categorization, recurring detection, budget leak detection, and a deterministic
+monthly report for the latest demo month.
+
+Response:
+
+```json
+{
+  "upload_id": "upload-uuid",
+  "total_rows": 48,
+  "processed_rows": 48,
+  "duplicate_rows": 0,
+  "scenario": "full_portfolio",
+  "transactions_created": 48,
+  "uploads_created": 1,
+  "subscriptions_detected": 5,
+  "anomalies_detected": 5,
+  "reports_generated": 1,
+  "reset_existing_demo": true,
+  "run_processing": true,
+  "message": "Demo data loaded. You can now explore your dashboard."
+}
+```
+
+`POST /demo/reset`
+
+```json
+{
+  "scenario": "full_portfolio",
+  "run_processing": true
+}
+```
+
+Clears current-user demo data and reloads the selected synthetic scenario. It
+never deletes another user's data or non-demo transactions for the current user.
 
 ## Recurring Subscriptions
 
@@ -397,11 +500,12 @@ audit event with counts only.
 
 `POST /settings/privacy/clear-demo-data`
 
-Clears synthetic demo data only when it is safely identifiable by the internal
+Clears synthetic demo data only when it is safely identifiable by backend demo
+markers (`source=demo`, `is_demo=true`, `demo_scenario`) or the legacy internal
 `synthetic-demo-data` upload marker. It preserves the user account and
 non-demo/manual/imported/pasted transactions. Derived subscriptions, anomalies,
-and monthly reports are cleared after demo rows are removed because those records
-may have been generated from demo data and can be regenerated.
+and monthly reports are cleared after demo rows are removed because those
+records may have been generated from demo data and can be regenerated.
 
 `POST /settings/privacy/delete-app-data`
 

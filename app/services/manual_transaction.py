@@ -46,6 +46,7 @@ class ManualTransactionService:
             user_id=user_id,
             file_name="manual-entry",
             total_rows=1,
+            source="manual",
         )
         transaction = build_transaction(
             user_id=user_id,
@@ -58,6 +59,7 @@ class ManualTransactionService:
             currency=payload.currency,
             category=payload.category.value if payload.category is not None else None,
             category_source="manual" if payload.category is not None else None,
+            source="manual",
         )
         session.add(transaction)
         upload.processed_rows = 1

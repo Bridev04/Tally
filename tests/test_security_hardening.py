@@ -66,6 +66,53 @@ def test_settings_reject_placeholder_or_short_jwt_secret() -> None:
         Settings(database_url="sqlite://", jwt_secret="short")
 
 
+def test_settings_parse_cors_origins_from_comma_separated_env() -> None:
+    settings = Settings(
+        database_url="sqlite://",
+        jwt_secret="test-only-jwt-secret-with-enough-length",
+        cors_allowed_origins="http://localhost:8081, https://tally.example.com/",
+    )
+
+    assert settings.cors_origins == ("http://localhost:8081", "https://tally.example.com")
+
+
+def test_production_settings_reject_wildcard_cors_and_weak_secret() -> None:
+    with pytest.raises(ValidationError):
+        Settings(
+            environment="production",
+            database_url="postgresql+psycopg://user:pass@db.example.com/tally",
+            jwt_secret="test-only-jwt-secret-with-enough-length",
+            cors_allowed_origins="https://tally.example.com",
+        )
+
+    with pytest.raises(ValidationError):
+        Settings(
+            environment="production",
+            database_url="postgresql+psycopg://user:pass@db.example.com/tally",
+            jwt_secret="production-secret-with-enough-random-length-for-tests",
+            cors_allowed_origins="*",
+        )
+
+
+def test_production_settings_reject_debug_and_sqlite_database() -> None:
+    with pytest.raises(ValidationError):
+        Settings(
+            environment="production",
+            debug=True,
+            database_url="postgresql+psycopg://user:pass@db.example.com/tally",
+            jwt_secret="production-secret-with-enough-random-length-for-tests",
+            cors_allowed_origins="https://tally.example.com",
+        )
+
+    with pytest.raises(ValidationError):
+        Settings(
+            environment="production",
+            database_url="sqlite:///prod.db",
+            jwt_secret="production-secret-with-enough-random-length-for-tests",
+            cors_allowed_origins="https://tally.example.com",
+        )
+
+
 def test_allowed_import_sources_are_csv_manual_paste_or_synthetic_only() -> None:
     assert ALLOWED_IMPORT_SOURCES == (
         "csv_upload",

@@ -200,3 +200,115 @@ Narration points:
   financial accounts.
 - Destructive actions require explicit confirmation and use safe, neutral copy.
 - Tally does not provide financial advice.
+
+## Phase 11 Dark Mobile Polish
+
+1. Open Tally.
+2. Register or log in.
+3. Confirm the auth screens use the dark premium Tally style and say no bank
+   connection is required.
+4. Load demo data from Add / Import.
+5. View Home and confirm the financial pulse card, insight card, summary cards,
+   upcoming charges, top categories, recent transactions, and budget leak
+   preview render cleanly in dark mode.
+6. Open Add and confirm CSV upload, paste import, manual entry, and demo data
+   options are easy to scan.
+7. Open Transactions and confirm search, filters, category badges, confidence
+   badges, and transaction detail/category editing remain functional.
+8. Open Recurring and confirm detected recurring payments use calm, neutral
+   copy based on imported transactions.
+9. Open Insights and confirm anomaly cards, severity badges, and empty/loading
+   states avoid advice-like language.
+10. Open Monthly Report and confirm the summary is readable and includes
+    `Generated from imported data only. Not financial advice.`
+11. Open Profile / Settings and confirm export, clear demo data, delete app
+    data, and delete account controls are visible.
+12. Confirm delete app data requires `DELETE MY TALLY DATA` and delete account
+    requires `DELETE MY ACCOUNT`.
+
+Narration points:
+
+- Phase 11 adds a cohesive dark mobile design system; it does not change data
+  sources or backend security boundaries.
+- Tally remains CSV/manual/paste/demo-data only.
+- Tally does not use Plaid, FinanceKit, bank APIs, account linking, or card
+  linking.
+- Tally is not financial advice; language stays neutral and based on imported
+  or synthetic demo data.
+
+## Phase 12 Portfolio Demo Flow
+
+1. Open Tally.
+2. Register or log in.
+3. Open Add / Import.
+4. Confirm the Try demo data card says synthetic transactions are used.
+5. Choose Full Portfolio Demo.
+6. Tap Load demo data.
+7. Confirm the success message says demo data is loaded.
+8. View Home Dashboard and show income, spending, net flow, recent
+   transactions, recurring previews, and budget leak previews.
+9. Open Transactions and show search, filters, categories, needs-review rows,
+   and category editing.
+10. Open Recurring and show detected Netflix, Spotify, Canva, YouTube Premium,
+    Apple iCloud, or Google One patterns.
+11. Open Insights and show category, merchant frequency, repeated small
+    purchase, duplicate-like, and needs-review patterns.
+12. Open Monthly Report and show the neutral deterministic summary for the demo
+    month.
+13. Open Settings / Privacy and show stored-data counts, export, clear demo
+    data, delete app data, and delete account controls.
+14. Tap Clear demo data and confirm non-demo transactions would be preserved.
+
+Backend smoke test:
+
+1. Start the backend.
+2. Register or log in a test user.
+3. Call `GET /demo/scenarios`.
+4. Call `POST /demo/load-sample-data` with `scenario=full_portfolio`,
+   `reset_existing_demo=true`, and `run_processing=true`.
+5. Confirm transactions, subscriptions, anomalies, and one monthly report are
+   created for that user.
+6. Call dashboard, transactions, subscriptions, anomalies, monthly report, and
+   privacy summary routes.
+7. Call `POST /settings/privacy/clear-demo-data`.
+8. Confirm demo rows are removed and any non-demo rows are preserved.
+9. Create a second user and confirm they cannot access the first user's data.
+10. Send an invalid scenario and confirm the response is a safe validation
+    error.
+
+Narration points:
+
+- Demo data is synthetic and labeled for portfolio preview.
+- Tally uses imported or synthetic data only.
+- Tally does not connect to banks or use Plaid, FinanceKit, bank APIs, card
+  linking, or account linking.
+- Tally is not financial advice.
+
+## Phase 13 Deployment Readiness
+
+1. Confirm `.env.example` and `mobile/.env.example` contain placeholders only.
+2. Confirm no real `.env` files are tracked.
+3. Open `mobile/app.json` and confirm Tally name, slug, scheme, placeholder
+   bundle IDs, splash background, and version are present.
+4. Open `mobile/eas.json` and confirm development, preview, and production
+   build profiles exist.
+5. Confirm `EXPO_PUBLIC_API_URL` is documented for local and production builds.
+6. Confirm backend config exposes `ENVIRONMENT`, `DEBUG`,
+   `CORS_ALLOWED_ORIGINS`, `DATABASE_URL`, JWT settings, rate limits, upload
+   limits, and optional LLM settings.
+7. Confirm production config rejects wildcard CORS, weak JWT secrets, debug
+   mode, and SQLite.
+8. Run backend tests.
+9. Run mobile typecheck and auth safety check.
+10. Run `npx expo doctor` when the local Expo environment is available.
+
+Portfolio smoke test:
+
+1. Start the backend with local env values.
+2. Call `GET /health`.
+3. Register a test user.
+4. Load Full Portfolio Demo synthetic data.
+5. Visit Home, Transactions, Recurring, Insights, Monthly Report, and
+   Profile/Settings.
+6. Confirm the app remains CSV/manual/paste/synthetic only and all copy stays
+   neutral.

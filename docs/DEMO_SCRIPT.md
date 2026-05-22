@@ -283,3 +283,32 @@ Narration points:
 - Tally does not connect to banks or use Plaid, FinanceKit, bank APIs, card
   linking, or account linking.
 - Tally is not financial advice.
+
+## Phase 13 Deployment Readiness
+
+1. Confirm `.env.example` and `mobile/.env.example` contain placeholders only.
+2. Confirm no real `.env` files are tracked.
+3. Open `mobile/app.json` and confirm Tally name, slug, scheme, placeholder
+   bundle IDs, splash background, and version are present.
+4. Open `mobile/eas.json` and confirm development, preview, and production
+   build profiles exist.
+5. Confirm `EXPO_PUBLIC_API_URL` is documented for local and production builds.
+6. Confirm backend config exposes `ENVIRONMENT`, `DEBUG`,
+   `CORS_ALLOWED_ORIGINS`, `DATABASE_URL`, JWT settings, rate limits, upload
+   limits, and optional LLM settings.
+7. Confirm production config rejects wildcard CORS, weak JWT secrets, debug
+   mode, and SQLite.
+8. Run backend tests.
+9. Run mobile typecheck and auth safety check.
+10. Run `npx expo doctor` when the local Expo environment is available.
+
+Portfolio smoke test:
+
+1. Start the backend with local env values.
+2. Call `GET /health`.
+3. Register a test user.
+4. Load Full Portfolio Demo synthetic data.
+5. Visit Home, Transactions, Recurring, Insights, Monthly Report, and
+   Profile/Settings.
+6. Confirm the app remains CSV/manual/paste/synthetic only and all copy stays
+   neutral.

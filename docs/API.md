@@ -3,6 +3,36 @@
 Tally exposes protected transaction APIs for imported, pasted, demo, and manual
 transactions only. It does not connect to real banks or provide financial advice.
 
+## Health And Deployment
+
+`GET /health`
+
+Returns a minimal safe status payload:
+
+```json
+{
+  "status": "ok"
+}
+```
+
+The response must not include secrets, database URLs, JWT settings, internal
+paths, stack traces, or deployment config.
+
+`GET /health/db`
+
+Checks database reachability:
+
+```json
+{
+  "status": "ok",
+  "database": "reachable"
+}
+```
+
+Production CORS is controlled by `CORS_ALLOWED_ORIGINS` in centralized backend
+settings. Use explicit origins for Expo web/dev previews or any future web
+surface; do not use wildcard CORS in production.
+
 ## Transaction Categorization
 
 `POST /transactions/categorize`

@@ -155,6 +155,25 @@ other scenarios. Empty dashboard, transaction, recurring, insight, and report
 states point users to import transactions or load synthetic demo data without
 implying bank access.
 
+## Deployment Configuration
+
+Phase 13 keeps deployment configuration explicit and centralized. Backend
+settings live in `app/core/config.py` and include environment, debug mode,
+database URL, JWT settings, CORS origins, rate limits, request/upload limits,
+and optional LLM settings. `app/main.py` reads CORS from those settings instead
+of hardcoding deployment behavior.
+
+In production, settings validation rejects SQLite databases, wildcard CORS,
+debug mode, empty CORS origins, and weak or test JWT secrets. Local development
+keeps the default Expo dev origins and local API URL fallback.
+
+The mobile app reads only public runtime values, currently
+`EXPO_PUBLIC_API_URL`, and normalizes the base URL before API calls. Auth tokens
+remain in Expo SecureStore and are not logged.
+
+Deployment notes, migration commands, EAS build profiles, icon/splash asset
+requirements, and smoke-test steps live in `docs/DEPLOYMENT.md`.
+
 ## Boundaries
 
 Tally does not use AI or LLMs for categorization, subscription detection, or

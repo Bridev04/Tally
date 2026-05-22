@@ -216,6 +216,27 @@ Safety expectations:
 - Demo and report copy remains neutral and based only on imported or synthetic
   data. It must not include advice, shame language, or recommendations.
 
+## Phase 13 Deployment Readiness
+
+Phase 13 prepares configuration for portfolio demos and future deployment
+without deploying automatically.
+
+Safety expectations:
+
+- Real secrets live only in local `.env` files or deployment secret managers.
+- `.env` files, production database URLs, JWT secrets, LLM API keys, and tokens
+  must not be committed.
+- Backend production mode rejects wildcard CORS, debug mode, SQLite databases,
+  and weak/test JWT secrets.
+- Mobile uses only public `EXPO_PUBLIC_*` values; secrets must never be exposed
+  to Expo runtime config.
+- Backend CORS origins come from centralized settings.
+- Health checks return safe status only.
+- Deployment smoke tests must use synthetic demo data or a controlled test user,
+  never real bank-linked data.
+- App icon and splash assets may be added later, but missing asset paths must
+  not be referenced in config.
+
 ## Security Practices
 
 - Secrets are read from centralized settings and are never exposed to the mobile app.

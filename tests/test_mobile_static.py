@@ -29,6 +29,8 @@ def test_mobile_has_form_validation_and_safe_errors() -> None:
     assert "emailPattern" in source
     assert "Password must be at least 8 characters." in source
     assert "fallbackMessage" in source
+    assert "normalizeApiBaseUrl" in source
+    assert 'trimmed.replace(/\\/+$/, "")' in source
     assert "console.log" not in source
     assert "console.error" not in source
 

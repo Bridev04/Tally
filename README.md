@@ -167,6 +167,22 @@ Plaid, FinanceKit, bank APIs, cards, account linking, or real user financial
 data. Demo data can be reset and reloaded safely without deleting non-demo
 transactions.
 
+## Phase 13
+
+- Expo app metadata for Tally name, slug, scheme, version, placeholder bundle
+  identifiers, splash background, and EAS build profiles
+- Mobile API URL normalization through `EXPO_PUBLIC_API_URL`
+- Backend production settings for `ENVIRONMENT`, `DEBUG`, and
+  `CORS_ALLOWED_ORIGINS`
+- Production startup validation for weak JWT secrets, wildcard CORS, debug mode,
+  and SQLite production databases
+- Dockerfile and `.dockerignore` for secret-safe backend container builds
+- Deployment, database migration, EAS, icon/splash, CORS, and smoke-test docs
+
+Phase 13 does not deploy automatically and does not add secrets. Production
+values belong in the deployment host secret manager and mobile build
+environment, not in git.
+
 ## Environment
 
 Copy `.env.example` to `.env` and set real values locally or in your host's
@@ -174,9 +190,12 @@ secret manager. Keep `.env` out of git.
 
 Required backend variables:
 
+- `ENVIRONMENT`
+- `DEBUG`
 - `DATABASE_URL`
 - `JWT_SECRET`
 - `JWT_ALGORITHM`
+- `CORS_ALLOWED_ORIGINS`
 - `ACCESS_TOKEN_EXPIRE_MINUTES`
 - `AUTH_RATE_LIMIT_REQUESTS`
 - `AUTH_RATE_LIMIT_WINDOW_SECONDS`
@@ -208,6 +227,11 @@ Optional mobile variable:
 
 - `EXPO_PUBLIC_API_URL`
 
+Use `EXPO_PUBLIC_API_URL=http://localhost:8000` for local development. Use a
+deployed backend URL, such as `https://your-backend.example.com`, for preview or
+production builds. `EXPO_PUBLIC_*` values are public and must never contain
+secrets.
+
 ## Local test
 
 ```powershell
@@ -221,10 +245,36 @@ pytest
 uvicorn app.main:app --reload
 ```
 
+## Migrations
+
+```powershell
+alembic upgrade head
+```
+
+Use Postgres when validating the full Alembic chain; SQLite is used by the test
+suite for fast isolated tests. Back up production data before running
+migrations against a hosted database.
+
 ## Run Mobile
 
 ```powershell
 cd mobile
 npm install
 npm start
+```
+
+## Deployment Prep
+
+See `docs/DEPLOYMENT.md` for Render/Fly-style backend setup, Docker notes,
+hosted Postgres migration steps, production CORS examples, EAS build commands,
+icon/splash asset requirements, and the production smoke-test checklist.
+
+Quick checks:
+
+```powershell
+pytest
+cd mobile
+npm run typecheck
+npm run check:auth
+npx expo doctor
 ```

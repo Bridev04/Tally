@@ -312,3 +312,26 @@ Portfolio smoke test:
    Profile/Settings.
 6. Confirm the app remains CSV/manual/paste/synthetic only and all copy stays
    neutral.
+
+## Phase 14 AI Entry
+
+1. Open Add / Import.
+2. Tap AI Entry.
+3. Type `I bought chicken from Jollibee for 200 pesos.`
+4. Show the parsed draft with merchant Jollibee, amount -200 PHP, food category,
+   and today's date.
+5. Confirm that the draft is not saved yet.
+6. Tap Save transaction.
+7. Open Transactions.
+8. Show the new Jollibee transaction under the food category.
+9. Explain: `This is AI-assisted manual entry, not bank sync.`
+10. Try `I bought coffee.`
+11. Confirm Tally asks for the missing amount and does not save anything.
+
+Narration points:
+
+- AI Entry only parses the message the user types.
+- The user reviews and confirms before saving.
+- Tally does not connect to banks, Plaid, FinanceKit, bank APIs, cards, or
+  accounts.
+- Tally does not provide financial advice.

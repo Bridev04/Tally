@@ -82,7 +82,7 @@ export default function ImportScreen() {
     <Screen scroll>
         <View>
           <Text style={styles.title}>Import</Text>
-          <Text style={styles.subtitle}>Add transactions from files, pasted rows, manual entry, or safe synthetic demo data.</Text>
+          <Text style={styles.subtitle}>Add transactions from AI Entry, files, pasted rows, manual entry, or safe synthetic demo data.</Text>
           <View style={styles.badgeRow}>
             <Badge label="No bank connection required" tone="success" />
             <Badge label="Imported data only" tone="info" />
@@ -134,6 +134,13 @@ export default function ImportScreen() {
         </Card>
 
         <View style={styles.options}>
+          <OptionButton
+            description="Describe a transaction in plain language and review it before saving."
+            icon="chatbubble-ellipses-outline"
+            isDisabled={isWorking}
+            label="AI Entry"
+            onPress={() => router.push("./ai-entry")}
+          />
           <OptionButton
             description="Upload a CSV file from iOS Files."
             icon="document-attach-outline"

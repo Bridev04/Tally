@@ -146,3 +146,25 @@ def test_mobile_has_privacy_settings_controls_and_confirmations() -> None:
     assert "/settings/privacy/delete-app-data" in source
     assert "/settings/privacy/delete-account" in source
     assert "We couldn't delete your data. Please try again." in source
+
+
+def test_mobile_has_ai_entry_review_flow_and_safe_copy() -> None:
+    source = read_mobile_source()
+
+    assert "AI Entry" in source
+    assert "Describe a transaction. Tally will turn it into a draft for you to review." in source
+    assert "Review draft" in source
+    assert "This transaction is not saved yet." in source
+    assert "Save transaction" in source
+    assert "Discard" in source
+    assert "parseChatExpense" in source
+    assert "confirmChatExpense" in source
+    assert "/ai/expense/parse" in source
+    assert "/ai/expense/confirm" in source
+    assert "Describe a transaction in plain language and review it before saving." in source
+    assert "This will be saved only after you confirm." in source
+    assert "Not bank sync" in source
+    assert "I couldn't understand that transaction yet." in source
+    assert "you should" not in source.lower()
+    assert "wasteful" not in source.lower()
+    assert "use a credit card" not in source.lower()

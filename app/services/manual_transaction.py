@@ -22,6 +22,9 @@ class ManualTransactionService:
         session: Session,
         user_id: uuid.UUID,
         payload: ManualTransactionRequest,
+        source: str = "manual",
+        file_name: str = "manual-entry",
+        payment_type: str | None = None,
     ) -> Transaction:
         merchant_raw = clean_text(payload.merchant, max_length=255)
         description = clean_text(payload.description, max_length=1000)
@@ -44,9 +47,9 @@ class ManualTransactionService:
         upload = create_upload_batch(
             session=session,
             user_id=user_id,
-            file_name="manual-entry",
+            file_name=file_name,
             total_rows=1,
-            source="manual",
+            source=source,
         )
         transaction = build_transaction(
             user_id=user_id,
@@ -59,7 +62,8 @@ class ManualTransactionService:
             currency=payload.currency,
             category=payload.category.value if payload.category is not None else None,
             category_source="manual" if payload.category is not None else None,
-            source="manual",
+            payment_type=payment_type,
+            source=source,
         )
         session.add(transaction)
         upload.processed_rows = 1

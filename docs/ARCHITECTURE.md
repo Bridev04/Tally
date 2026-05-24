@@ -109,6 +109,21 @@ Responsibilities:
 - Optionally run categorization, recurring detection, anomaly detection, and a
   deterministic monthly report after loading.
 
+Phase 14 adds AI-assisted manual entry through
+`app/services/ai_expense_parser.py` and `/ai/expense` API routes.
+
+Responsibilities:
+
+- Parse one user-provided transaction message into a structured draft.
+- Use deterministic parsing for common expense and income messages, peso
+  formats, relative dates, known merchants, categories, and payment-type hints.
+- Ask one concise clarification question when required fields are missing.
+- Never save from the parse endpoint; only the confirm endpoint creates a
+  transaction after the user reviews the draft.
+- Store confirmed transactions with backend-controlled `source=ai_chat_manual`.
+- Scope confirmation to the authenticated user, reject mass assignment, use
+  schema validation, apply rate limiting, and avoid logging full chat messages.
+
 ## Mobile
 
 The Expo app consumes backend transaction metadata directly. The Transactions
@@ -155,6 +170,12 @@ other scenarios. Empty dashboard, transaction, recurring, insight, and report
 states point users to import transactions or load synthetic demo data without
 implying bank access.
 
+Phase 14 adds `mobile/app/(app)/ai-entry.tsx`. The screen uses the existing
+dark visual system and shows a chat-style input, assistant reply bubbles, and an
+editable transaction draft card. Save is disabled while loading and only calls
+`/ai/expense/confirm` after a draft exists. The Add / Import screen links to AI
+Entry without removing CSV upload, paste import, manual entry, or demo data.
+
 ## Deployment Configuration
 
 Phase 13 keeps deployment configuration explicit and centralized. Backend
@@ -178,7 +199,8 @@ requirements, and smoke-test steps live in `docs/DEPLOYMENT.md`.
 
 Tally does not use AI or LLMs for categorization, subscription detection, or
 budget leak detection. Phase 9 may use an LLM only for neutral explanation text
-after deterministic monthly aggregates are computed. It does not connect to
-banks, Plaid, FinanceKit, account linking, cards, or real financial accounts.
-Categorization, anomaly detection, and monthly reports are transparent
-organization aids, not financial advice.
+after deterministic monthly aggregates are computed. Phase 14 AI Entry parses
+only the user's single message into a draft and requires confirmation before
+saving. It does not connect to banks, Plaid, FinanceKit, account linking, cards,
+or real financial accounts. Categorization, anomaly detection, monthly reports,
+and AI Entry are transparent organization aids, not financial advice.

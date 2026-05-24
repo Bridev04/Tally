@@ -23,7 +23,7 @@ class TransactionUpload(TimestampMixin, table=True):
             name="ck_transaction_uploads_row_counts",
         ),
         CheckConstraint(
-            "source IN ('csv', 'manual', 'paste', 'demo')",
+            "source IN ('csv', 'manual', 'paste', 'demo', 'ai_chat_manual')",
             name="ck_transaction_uploads_source",
         ),
     )

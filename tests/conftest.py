@@ -9,6 +9,7 @@ from sqlmodel import SQLModel, Session, create_engine
 os.environ.setdefault("DATABASE_URL", "sqlite:///:memory:")
 os.environ.setdefault("JWT_SECRET", "test-only-jwt-secret-with-enough-length")
 
+from app.api.routes import ai_expense as ai_expense_routes  # noqa: E402
 from app.api.routes import anomalies as anomaly_routes  # noqa: E402
 from app.api.routes import auth as auth_routes  # noqa: E402
 from app.api.routes import dashboard as dashboard_routes  # noqa: E402
@@ -57,6 +58,7 @@ def client(session: Session):  # noqa: ANN201
     dashboard_routes.dashboard_rate_limiter = None
     subscription_routes.subscription_rate_limiter = None
     transaction_routes.transaction_rate_limiter = None
+    ai_expense_routes.ai_rate_limiter = None
     app.dependency_overrides[get_session] = override_get_session
     yield app
     app.dependency_overrides.clear()
@@ -68,3 +70,4 @@ def client(session: Session):  # noqa: ANN201
     dashboard_routes.dashboard_rate_limiter = None
     subscription_routes.subscription_rate_limiter = None
     transaction_routes.transaction_rate_limiter = None
+    ai_expense_routes.ai_rate_limiter = None

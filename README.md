@@ -183,6 +183,27 @@ Phase 13 does not deploy automatically and does not add secrets. Production
 values belong in the deployment host secret manager and mobile build
 environment, not in git.
 
+## Phase 14
+
+- Protected AI Entry parse and confirm endpoints for AI-assisted manual
+  transaction entry
+- Deterministic natural-language parser for one user-provided message at a time,
+  with safe clarification questions when required fields are missing
+- Structured transaction drafts with amount, date, merchant, description,
+  category, payment type, confidence, and `ai_chat_manual` source
+- Review-before-save confirm flow; parsing never creates a transaction directly
+- Mobile AI Entry screen with chat-style input, assistant replies, editable
+  draft review card, save, discard, and view-transaction actions
+- Add / Import screen entry point for AI Entry alongside CSV, paste, manual, and
+  synthetic demo data flows
+- Tests for parsing, clarification, authentication, mass-assignment rejection,
+  invalid drafts, rate limits, prompt-injection handling, and mobile static copy
+
+AI Entry is AI-assisted manual entry, not bank sync. It only parses the message
+the user types, does not use full transaction history as LLM context, and does
+not automatically save expenses. The user must review and confirm before saving.
+Tally remains neutral and does not provide financial advice.
+
 ## Environment
 
 Copy `.env.example` to `.env` and set real values locally or in your host's
@@ -214,6 +235,8 @@ Required backend variables:
 - `REPORT_RATE_LIMIT_WINDOW_SECONDS`
 - `PRIVACY_RATE_LIMIT_REQUESTS`
 - `PRIVACY_RATE_LIMIT_WINDOW_SECONDS`
+- `AI_RATE_LIMIT_REQUESTS`
+- `AI_RATE_LIMIT_WINDOW_SECONDS`
 - `LLM_ENABLED`
 - `LLM_PROVIDER`
 - `LLM_API_KEY`

@@ -13,6 +13,7 @@ Allowed sources:
 - Manual transaction entry
 - Paste import
 - Synthetic demo data
+- AI-assisted manual entry
 
 Disallowed sources:
 
@@ -237,11 +238,48 @@ Safety expectations:
 - App icon and splash assets may be added later, but missing asset paths must
   not be referenced in config.
 
+## Phase 14 AI Entry
+
+Phase 14 AI Entry is AI-assisted manual transaction entry. It does not connect
+to banks, Plaid, FinanceKit, bank APIs, cards, accounts, or external financial
+data sources.
+
+Safety expectations:
+
+- The parse endpoint accepts only one user-provided message and returns a draft
+  or one clarification question.
+- The parse endpoint never saves transactions.
+- The user must review and confirm before saving.
+- Required fields are amount, date or default today, merchant or description,
+  and expense or income type.
+- Confirm validates the reviewed draft again and creates records only for the
+  authenticated user.
+- Client-supplied `user_id`, IDs, timestamps, demo flags, and internal fields
+  are rejected by strict schemas.
+- Full chat history is not stored.
+- Full chat messages are not written to audit logs.
+- Transaction history, reports, exports, raw CSV contents, pasted import text,
+  passwords, tokens, API keys, and unrelated profile data are not sent to an LLM.
+- If an LLM path is unavailable or unsafe in the future, the backend must use
+  deterministic fallback or a safe clarification response.
+
+Allowed assistant wording:
+
+- `I found a possible transaction. Please review before saving.`
+- `I need the amount before creating a draft.`
+- `This will be saved only after you confirm.`
+- `Based on your message, here is a transaction draft.`
+
+Forbidden assistant wording includes advice, judgment, or recommendations such
+as `you should stop buying`, `this is wasteful`, `cancel this`, `invest this`,
+or `use a credit card`.
+
 ## Security Practices
 
 - Secrets are read from centralized settings and are never exposed to the mobile app.
 - Protected routes require authentication and current-user scoping.
-- Import, auth, transaction, dashboard, subscription, anomaly, report, and privacy routes use rate limiting.
+- Import, auth, transaction, dashboard, subscription, anomaly, report, privacy,
+  and AI Entry routes use rate limiting.
 - Request and upload sizes are limited.
 - Schemas reject unexpected fields to reduce mass-assignment risk.
 - ORM-safe queries are used for database access.

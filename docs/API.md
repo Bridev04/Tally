@@ -94,6 +94,89 @@ Allowed categories are `food`, `transportation`, `rent`, `subscriptions`,
 as manual. It does not accept amount, user, merchant, or other mass-assignment
 fields.
 
+## AI Entry
+
+AI Entry is AI-assisted manual transaction entry. It does not connect to banks,
+Plaid, FinanceKit, bank APIs, cards, or accounts. It only parses the single
+message the authenticated user provides and does not automatically save a
+transaction.
+
+`POST /ai/expense/parse`
+
+Protected and rate limited. Returns a draft or one clarification question. The
+route does not save transactions and does not use transaction history, reports,
+exports, raw CSV contents, pasted import text, credentials, or profile data as
+LLM context.
+
+Request body:
+
+```json
+{
+  "message": "I bought chicken from Jollibee for 200 pesos",
+  "timezone": "Asia/Manila"
+}
+```
+
+Draft response:
+
+```json
+{
+  "reply": "I found a possible transaction. Please review before saving.",
+  "clarification_needed": false,
+  "clarification_question": null,
+  "draft": {
+    "transaction_type": "expense",
+    "transaction_date": "2026-05-24",
+    "merchant": "Jollibee",
+    "description": "Chicken from Jollibee",
+    "amount": "-200.00",
+    "currency": "PHP",
+    "category": "food",
+    "payment_type": "unknown",
+    "confidence": 0.86,
+    "source": "ai_chat_manual"
+  }
+}
+```
+
+Clarification response:
+
+```json
+{
+  "reply": "How much was coffee?",
+  "clarification_needed": true,
+  "clarification_question": "How much was coffee?",
+  "draft": null
+}
+```
+
+`POST /ai/expense/confirm`
+
+Protected and rate limited. Accepts the reviewed draft and validates all fields
+again before saving. The backend ignores client identity fields because the
+transaction is always created for the current authenticated user.
+
+Request body:
+
+```json
+{
+  "draft": {
+    "transaction_type": "expense",
+    "transaction_date": "2026-05-24",
+    "merchant": "Jollibee",
+    "description": "Chicken from Jollibee",
+    "amount": "-200.00",
+    "currency": "PHP",
+    "category": "food",
+    "payment_type": "unknown",
+    "confidence": 0.86,
+    "source": "ai_chat_manual"
+  }
+}
+```
+
+Response includes the saved `transaction` and message `Transaction saved.`.
+
 ## Demo Data
 
 Demo routes are protected, current-user scoped, and rate limited. They load

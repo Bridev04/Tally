@@ -345,6 +345,31 @@ export type ManualTransactionPayload = {
   category?: string;
 };
 
+export type ChatTransactionDraft = {
+  transaction_type: "expense" | "income";
+  transaction_date: string;
+  merchant: string;
+  description: string;
+  amount: string;
+  currency: string;
+  category: string;
+  payment_type: string;
+  confidence: number;
+  source: "ai_chat_manual";
+};
+
+export type ChatExpenseParseResponse = {
+  reply: string;
+  clarification_needed: boolean;
+  clarification_question: string | null;
+  draft: ChatTransactionDraft | null;
+};
+
+export type ChatExpenseConfirmResponse = {
+  message: string;
+  transaction: Transaction;
+};
+
 export type PrivacySummary = {
   user_email: string;
   transaction_count: number;
@@ -683,6 +708,37 @@ export function createManualTransaction(
       body: JSON.stringify(payload),
     },
     "Could not save the transaction.",
+  );
+}
+
+export function parseChatExpense(
+  token: string,
+  message: string,
+  timezone = "Asia/Manila",
+): Promise<ChatExpenseParseResponse> {
+  return request<ChatExpenseParseResponse>(
+    "/ai/expense/parse",
+    {
+      method: "POST",
+      headers: authHeaders(token),
+      body: JSON.stringify({ message, timezone }),
+    },
+    "I couldn't understand that transaction yet.",
+  );
+}
+
+export function confirmChatExpense(
+  token: string,
+  draft: ChatTransactionDraft,
+): Promise<ChatExpenseConfirmResponse> {
+  return request<ChatExpenseConfirmResponse>(
+    "/ai/expense/confirm",
+    {
+      method: "POST",
+      headers: authHeaders(token),
+      body: JSON.stringify({ draft }),
+    },
+    "We couldn't save this transaction. Please try again.",
   );
 }
 

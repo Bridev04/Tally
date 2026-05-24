@@ -25,7 +25,7 @@ class Transaction(TimestampMixin, table=True):
             name="ck_transactions_category_source",
         ),
         CheckConstraint(
-            "source IN ('csv', 'manual', 'paste', 'demo')",
+            "source IN ('csv', 'manual', 'paste', 'demo', 'ai_chat_manual')",
             name="ck_transactions_source",
         ),
         CheckConstraint("length(currency) = 3", name="ck_transactions_currency_length"),

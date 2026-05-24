@@ -28,6 +28,7 @@ from app.schemas.privacy import (
 DEMO_UPLOAD_FILE_NAME = "synthetic-demo-data"
 MANUAL_UPLOAD_FILE_NAME = "manual-entry"
 PASTE_UPLOAD_FILE_NAME = "paste-import"
+AI_CHAT_UPLOAD_FILE_NAME = "ai-chat-manual-entry"
 PRIVACY_NOTES = [
     "Tally does not connect to banks.",
     "Tally does not use Plaid or FinanceKit.",
@@ -259,8 +260,12 @@ class PrivacyService:
         source_names = {upload.file_name for upload in uploads}
         return DataSourcesUsed(
             csv_upload=any(upload.source == "csv" for upload in uploads)
-            or any(name not in {MANUAL_UPLOAD_FILE_NAME, PASTE_UPLOAD_FILE_NAME, DEMO_UPLOAD_FILE_NAME} for name in source_names),
-            manual_entry=any(upload.source == "manual" for upload in uploads) or MANUAL_UPLOAD_FILE_NAME in source_names,
+            or any(
+                name not in {MANUAL_UPLOAD_FILE_NAME, PASTE_UPLOAD_FILE_NAME, DEMO_UPLOAD_FILE_NAME, AI_CHAT_UPLOAD_FILE_NAME}
+                for name in source_names
+            ),
+            manual_entry=any(upload.source in {"manual", "ai_chat_manual"} for upload in uploads)
+            or bool({MANUAL_UPLOAD_FILE_NAME, AI_CHAT_UPLOAD_FILE_NAME} & source_names),
             paste_import=any(upload.source == "paste" for upload in uploads) or PASTE_UPLOAD_FILE_NAME in source_names,
             demo_data=any(upload.is_demo or upload.file_name == DEMO_UPLOAD_FILE_NAME for upload in uploads),
         )

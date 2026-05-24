@@ -7,6 +7,14 @@ Allowed transaction input sources are CSV upload, manual transaction entry, past
 import, and synthetic demo data only. Do not add bank connections, account
 aggregation, or financial-account login flows.
 
+## Latest Git Update
+
+- Merged the Phase 14 AI-assisted expense entry work into `main`
+- Added `babel-preset-expo` as an explicit mobile dev dependency for stable Expo
+  Babel resolution
+- Validated the update with mobile typechecking, mobile auth safety checks, and
+  the backend pytest suite
+
 ## Phase 1
 
 - SQLModel database models

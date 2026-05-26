@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
+import { useTheme } from "@/context/ThemeContext";
 import { colors, radius } from "@/theme";
 
 type BadgeProps = {
@@ -8,9 +9,29 @@ type BadgeProps = {
 };
 
 export function Badge({ label, tone = "neutral" }: BadgeProps) {
+  const { colors: themeColors } = useTheme();
+  const toneStyle =
+    tone === "neutral"
+      ? { backgroundColor: themeColors.surfaceRaised, borderColor: themeColors.borderStrong }
+      : tone === "info"
+        ? { backgroundColor: themeColors.soft, borderColor: themeColors.borderStrong }
+        : tone === "success"
+          ? { backgroundColor: themeColors.glow, borderColor: themeColors.primaryMuted }
+          : tone === "caution"
+            ? { backgroundColor: "rgba(242, 169, 59, 0.12)", borderColor: themeColors.amber }
+            : { backgroundColor: "rgba(255, 95, 87, 0.12)", borderColor: themeColors.danger };
+  const textColor =
+    tone === "success"
+      ? themeColors.primary
+      : tone === "caution"
+        ? themeColors.amber
+        : tone === "danger"
+          ? themeColors.danger
+          : themeColors.textSecondary;
+
   return (
-    <View style={[styles.badge, styles[tone]]}>
-      <Text style={[styles.text, styles[`${tone}Text`]]}>{label}</Text>
+    <View style={[styles.badge, styles[tone], toneStyle]}>
+      <Text style={[styles.text, styles[`${tone}Text`], { color: textColor }]}>{label}</Text>
     </View>
   );
 }

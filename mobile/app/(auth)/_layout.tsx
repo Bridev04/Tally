@@ -2,14 +2,16 @@ import { Redirect, Stack } from "expo-router";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 import { useAuth } from "@/context/AuthContext";
-import { colors } from "@/theme";
+import { useTheme } from "@/context/ThemeContext";
+import { colors as defaultColors } from "@/theme";
 
 export default function AuthLayout() {
   const { isLoading, token } = useAuth();
+  const { colors } = useTheme();
 
   if (isLoading) {
     return (
-      <View style={styles.centered}>
+      <View style={[styles.centered, { backgroundColor: colors.background }]}>
         <ActivityIndicator color={colors.primary} />
       </View>
     );
@@ -25,7 +27,7 @@ export default function AuthLayout() {
 const styles = StyleSheet.create({
   centered: {
     alignItems: "center",
-    backgroundColor: colors.background,
+    backgroundColor: defaultColors.background,
     flex: 1,
     justifyContent: "center",
   },

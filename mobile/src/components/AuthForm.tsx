@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -10,7 +10,8 @@ import {
 } from "react-native";
 
 import { Badge, Card } from "@/components/ui";
-import { colors, radius, spacing, typography } from "@/theme";
+import { useTheme } from "@/context/ThemeContext";
+import { radius, spacing, typography, type AppColors } from "@/theme";
 
 type AuthFormProps = {
   mode: "login" | "register";
@@ -20,6 +21,8 @@ type AuthFormProps = {
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function AuthForm({ mode, onSubmit }: AuthFormProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => makeStyles(colors), [colors]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -136,84 +139,86 @@ export function AuthForm({ mode, onSubmit }: AuthFormProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    gap: spacing.xl,
-    justifyContent: "center",
-  },
-  hero: {
-    gap: spacing.md,
-  },
-  brand: {
-    color: colors.primary,
-    fontSize: 24,
-    fontWeight: "900",
-  },
-  tagline: {
-    color: colors.text,
-    fontSize: 32,
-    fontWeight: "900",
-    lineHeight: 38,
-  },
-  helper: {
-    color: colors.textSecondary,
-    ...typography.body,
-  },
-  badgeRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.sm,
-  },
-  formCard: {
-    gap: spacing.lg,
-  },
-  title: {
-    color: colors.text,
-    fontSize: 26,
-    fontWeight: "900",
-  },
-  fieldGroup: {
-    gap: spacing.sm,
-  },
-  label: {
-    color: colors.textSecondary,
-    ...typography.label,
-  },
-  input: {
-    backgroundColor: colors.backgroundRaised,
-    borderColor: colors.borderStrong,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    color: colors.text,
-    fontSize: 16,
-    minHeight: 52,
-    paddingHorizontal: 14,
-  },
-  error: {
-    color: colors.danger,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  button: {
-    alignItems: "center",
-    backgroundColor: colors.primaryStrong,
-    borderRadius: radius.lg,
-    justifyContent: "center",
-    minHeight: 52,
-  },
-  buttonPressed: {
-    opacity: 0.82,
-  },
-  buttonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: "900",
-  },
-  link: {
-    alignSelf: "center",
-    color: colors.primary,
-    fontSize: 15,
-    fontWeight: "800",
-    paddingVertical: 10,
-  },
-});
+function makeStyles(colors: AppColors) {
+  return StyleSheet.create({
+    container: {
+      gap: spacing.xl,
+      justifyContent: "center",
+    },
+    hero: {
+      gap: spacing.md,
+    },
+    brand: {
+      color: colors.primary,
+      fontSize: 24,
+      fontWeight: "900",
+    },
+    tagline: {
+      color: colors.text,
+      fontSize: 32,
+      fontWeight: "900",
+      lineHeight: 38,
+    },
+    helper: {
+      color: colors.textSecondary,
+      ...typography.body,
+    },
+    badgeRow: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: spacing.sm,
+    },
+    formCard: {
+      gap: spacing.lg,
+    },
+    title: {
+      color: colors.text,
+      fontSize: 26,
+      fontWeight: "900",
+    },
+    fieldGroup: {
+      gap: spacing.sm,
+    },
+    label: {
+      color: colors.textSecondary,
+      ...typography.label,
+    },
+    input: {
+      backgroundColor: colors.backgroundRaised,
+      borderColor: colors.borderStrong,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      color: colors.text,
+      fontSize: 16,
+      minHeight: 52,
+      paddingHorizontal: 14,
+    },
+    error: {
+      color: colors.danger,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    button: {
+      alignItems: "center",
+      backgroundColor: colors.primaryStrong,
+      borderRadius: radius.lg,
+      justifyContent: "center",
+      minHeight: 52,
+    },
+    buttonPressed: {
+      opacity: 0.82,
+    },
+    buttonText: {
+      color: colors.white,
+      fontSize: 16,
+      fontWeight: "900",
+    },
+    link: {
+      alignSelf: "center",
+      color: colors.primary,
+      fontSize: 15,
+      fontWeight: "800",
+      paddingVertical: 10,
+    },
+  });
+}

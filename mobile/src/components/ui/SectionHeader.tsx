@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import { useTheme } from "@/context/ThemeContext";
 import { colors, typography } from "@/theme";
 
 type SectionHeaderProps = {
@@ -9,12 +10,14 @@ type SectionHeaderProps = {
 };
 
 export function SectionHeader({ action, onPress, title }: SectionHeaderProps) {
+  const { colors: themeColors } = useTheme();
+
   return (
     <View style={styles.header}>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={[styles.title, { color: themeColors.text }]}>{title}</Text>
       {action && onPress ? (
         <Pressable accessibilityRole="button" hitSlop={10} onPress={onPress}>
-          <Text style={styles.action}>{action}</Text>
+          <Text style={[styles.action, { color: themeColors.primary }]}>{action}</Text>
         </Pressable>
       ) : null}
     </View>

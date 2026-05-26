@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
+import { useTheme } from "@/context/ThemeContext";
 import { colors, radius, spacing, typography } from "@/theme";
 import { Button } from "./Button";
 import { Card } from "./Card";
@@ -28,13 +29,15 @@ export function EmptyState({
   secondaryLoading,
   title,
 }: EmptyStateProps) {
+  const { colors: themeColors } = useTheme();
+
   return (
     <Card style={styles.stateCard}>
-      <View style={styles.iconCircle}>
-        <Ionicons color={colors.primary} name={icon} size={28} />
+      <View style={[styles.iconCircle, { backgroundColor: themeColors.glow }]}>
+        <Ionicons color={themeColors.primary} name={icon} size={28} />
       </View>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.copy}>{description}</Text>
+      <Text style={[styles.title, { color: themeColors.text }]}>{title}</Text>
+      <Text style={[styles.copy, { color: themeColors.textSecondary }]}>{description}</Text>
       {primaryLabel && onPrimaryPress ? (
         <Button icon="add-circle-outline" label={primaryLabel} loading={primaryLoading} onPress={onPrimaryPress} />
       ) : null}
@@ -52,27 +55,37 @@ export function EmptyState({
 }
 
 export function LoadingState({ rows = 3 }: { rows?: number }) {
+  const { colors: themeColors } = useTheme();
+  const skeletonStyle = {
+    backgroundColor: themeColors.surfaceRaised,
+    borderColor: themeColors.border,
+  };
+
   return (
     <View style={styles.loadingStack}>
-      <View style={[styles.skeleton, styles.skeletonHero]} />
+      <View style={[styles.skeleton, styles.skeletonHero, skeletonStyle]} />
       {Array.from({ length: rows }).map((_, index) => (
-        <View key={index} style={styles.skeleton} />
+        <View key={index} style={[styles.skeleton, skeletonStyle]} />
       ))}
     </View>
   );
 }
 
 export function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+  const { colors: themeColors } = useTheme();
+
   return (
     <Card variant="warning">
-      <Text style={styles.errorTitle}>{message}</Text>
+      <Text style={[styles.errorTitle, { color: themeColors.text }]}>{message}</Text>
       <Button icon="refresh-outline" label="Retry" onPress={onRetry} variant="secondary" />
     </Card>
   );
 }
 
 export function InlineLoading() {
-  return <ActivityIndicator color={colors.primary} />;
+  const { colors: themeColors } = useTheme();
+
+  return <ActivityIndicator color={themeColors.primary} />;
 }
 
 const styles = StyleSheet.create({

@@ -1,5 +1,6 @@
 import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
+import { useTheme } from "@/context/ThemeContext";
 import { colors, radius, spacing, typography } from "@/theme";
 
 type ConfirmModalProps = {
@@ -27,39 +28,55 @@ export function ConfirmModal({
   typedValue,
   visible,
 }: ConfirmModalProps) {
+  const { colors: themeColors } = useTheme();
   const enabled = !busy && (!requiredPhrase || typedValue === requiredPhrase);
 
   return (
     <Modal animationType="fade" onRequestClose={onCancel} transparent visible={visible}>
       <View style={styles.backdrop}>
-        <View style={styles.card}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.body}>{body}</Text>
+        <View style={[styles.card, { backgroundColor: themeColors.elevated, borderColor: themeColors.borderStrong }]}>
+          <Text style={[styles.title, { color: themeColors.text }]}>{title}</Text>
+          <Text style={[styles.body, { color: themeColors.textSecondary }]}>{body}</Text>
           {requiredPhrase ? (
             <View style={styles.confirmBlock}>
-              <Text style={styles.label}>Type {requiredPhrase} to confirm.</Text>
+              <Text style={[styles.label, { color: themeColors.textSecondary }]}>Type {requiredPhrase} to confirm.</Text>
               <TextInput
                 autoCapitalize="characters"
                 editable={!busy}
                 onChangeText={onChangeText}
                 placeholder={requiredPhrase}
-                placeholderTextColor={colors.textMuted}
-                style={styles.input}
+                placeholderTextColor={themeColors.textMuted}
+                style={[
+                  styles.input,
+                  {
+                    backgroundColor: themeColors.surface,
+                    borderColor: themeColors.borderStrong,
+                    color: themeColors.text,
+                  },
+                ]}
                 value={typedValue}
               />
             </View>
           ) : null}
           <View style={styles.actions}>
-            <Pressable accessibilityRole="button" disabled={busy} onPress={onCancel} style={styles.cancelButton}>
-              <Text style={styles.cancelText}>Cancel</Text>
+            <Pressable
+              accessibilityRole="button"
+              disabled={busy}
+              onPress={onCancel}
+              style={[
+                styles.cancelButton,
+                { backgroundColor: themeColors.surfaceRaised, borderColor: themeColors.borderStrong },
+              ]}
+            >
+              <Text style={[styles.cancelText, { color: themeColors.primary }]}>Cancel</Text>
             </Pressable>
             <Pressable
               accessibilityRole="button"
               disabled={!enabled}
               onPress={onConfirm}
-              style={[styles.confirmButton, !enabled && styles.disabled]}
+              style={[styles.confirmButton, { backgroundColor: themeColors.danger }, !enabled && styles.disabled]}
             >
-              {busy ? <ActivityIndicator color={colors.white} /> : <Text style={styles.confirmText}>{confirmLabel}</Text>}
+              {busy ? <ActivityIndicator color={themeColors.white} /> : <Text style={[styles.confirmText, { color: themeColors.white }]}>{confirmLabel}</Text>}
             </Pressable>
           </View>
         </View>
